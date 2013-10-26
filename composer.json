@@ -1,0 +1,34 @@
+{
+    "name": "mlebkowski/roadmap",
+    "authors": [
+        {
+            "name": "Maciej Łebkowski",
+            "email": "m.lebkowski@gmail.com"
+        }
+    ],
+    "require": {
+        "silex/silex": "1.*",
+        "symfony/yaml": "*",
+        "twig/twig": "*",
+        "monolog/monolog": "1.5.*",
+        "igorw/config-service-provider": "*",
+        "symfony/translation": "~2.3",
+        "symfony/config": "~2.3",
+        "symfony/twig-bridge": "*",
+        "nicl/silex-markdown": "*@dev",
+        "filp/whoops": "1.*",
+        "swiftmailer/swiftmailer": "~4.1.2"
+    },
+    "autoload": {
+        "psr-0": {
+            "Nassau": "src/"
+        }
+    },
+    "extra": {
+        "heroku": {
+            "framework": "silex",
+            "document-root": "web",
+            "index-document": "app.php"
+        }
+    }
+}

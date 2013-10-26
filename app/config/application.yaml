@@ -1,0 +1,5 @@
+db.tables:
+  session:
+   - id TEXT
+   - data TEXT
+   - created_at INTEGER
