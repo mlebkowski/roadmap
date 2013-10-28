@@ -2,7 +2,9 @@
 
 namespace Roadmap\Model;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Roadmap\Model\Base\ProjectQuery as BaseProjectQuery;
+use Roadmap\Model\Map\ProjectTableMap;
 
 
 /**
@@ -17,5 +19,15 @@ use Roadmap\Model\Base\ProjectQuery as BaseProjectQuery;
  */
 class ProjectQuery extends BaseProjectQuery
 {
+
+	public function getRecentProjects()
+	{
+		$query = $this->create();
+		$query->filterByState('finished');
+		$query->limit(3);
+		$query->orderByCreatedAt(Criteria::ASC);
+		return $query->find();
+	}
+
 
 } // ProjectQuery

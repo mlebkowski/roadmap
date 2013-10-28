@@ -2,27 +2,27 @@
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:noNamespaceSchemaLocation="http://xsd.propelorm.org/1.6/database.xsd" >
 	<table name="session" phpName="Session">
-		<column name="id" type="CHAR" required="true" primaryKey="true" />
+		<column name="id" type="CHAR" size="32" required="true" primaryKey="true" />
 		<column name="data" type="CHAR" sqlType="TEXT" required="true"/>
 		<column name="created_at" type="INTEGER" required="true"/>
 	</table>
 	<table name="project" phpName="Project">
 		<column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true"/>
-		<column name="title" type="CHAR" required="true"/>
-		<column name="slug" type="CHAR" required="true"/>
+		<column name="title" type="CHAR" size="128" required="true"/>
+		<column name="slug" type="CHAR" size="128" required="true"/>
 		<column name="state" type="CHAR" sqlType="ENUM('new','planned','in-progress','shelved','aborted','finished')" required="true" defaultValue="new"/>
 		<column name="created_at" type="DATE" sqlType="DATETIME" required="true"/>
 	</table>
 	<table name="user" phpName="User">
 		<column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true"/>
-		<column name="email" type="CHAR" required="true"/>
-		<column name="name" type="CHAR" required="true"/>
-		<column name="display_name" type="CHAR" required="true"/>
+		<column name="email" type="CHAR" size="128" required="true"/>
+		<column name="name" type="CHAR" size="128" required="true"/>
+		<column name="picture" type="CHAR" size="255" required="false"/>
 		<column name="created_at" type="DATE" sqlType="DATETIME" required="true"/>
 	</table>
 	<!-- TODO: user_github -->
 
-	<table name="project_user">
+	<table name="project_user" isCrossRef="true">
 		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
 		<column name="user_id" type="integer" required="true"/>
 		<column name="project_id" type="integer" required="true"/>
@@ -38,9 +38,9 @@
 		<column name="id" type="integer" primaryKey="true" required="true" autoIncrement="true"/>
 		<column name="project_id" type="integer" required="true"/>
 		<column name="user_id" type="integer" required="true"/>
-		<column name="activity_type" type="CHAR" required="true"/>
+		<column name="activity_type" type="CHAR" size="24" required="true"/>
 		<column name="created_at" type="date" sqlType="DATETIME" required="true"/>
-		<foreign-key foreignTable="user_id">
+		<foreign-key foreignTable="user">
 			<reference local="user_id" foreign="id"/>
 		</foreign-key>
 		<foreign-key foreignTable="project">
@@ -50,5 +50,14 @@
 
 	<table name="user_v2mom">
 		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="user_id" type="integer" required="true"/>
+        <column name="vision" type="CHAR" sqlType="TEXT" required="true"/>
+        <column name="values" type="CHAR" sqlType="TEXT" required="true"/>
+        <column name="methods" type="CHAR" sqlType="TEXT" required="true"/>
+        <column name="obstacles" type="CHAR" sqlType="TEXT" required="true"/>
+        <column name="created_at" type="DATE" sqlType="DATETIME" required="true"/>
+        <foreign-key foreignTable="user">
+            <reference local="user_id" foreign="id"/>
+        </foreign-key>
 	</table>
 </database>

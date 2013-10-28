@@ -1,0 +1,14 @@
+<config>
+    <propel>
+        <datasources default="roadmap">
+            <datasource id="roadmap">
+                <adapter>mysql</adapter>
+                <connection>
+                    <dsn>mysql:host=localhost;dbname=roadmap.dev</dsn>
+                    <user>roadmap.dev</user>
+                    <password>roadmap.dev</password>
+                </connection>
+            </datasource>
+        </datasources>
+    </propel>
+</config>

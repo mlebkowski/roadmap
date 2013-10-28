@@ -135,7 +135,7 @@ class SessionTableMap extends TableMap
         $this->setPackage('Roadmap.Model');
         $this->setUseIdGenerator(false);
         // columns
-        $this->addPrimaryKey('ID', 'Id', 'CHAR', true, null, null);
+        $this->addPrimaryKey('ID', 'Id', 'CHAR', true, 32, null);
         $this->addColumn('DATA', 'Data', 'CHAR', true, null, null);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'INTEGER', true, null, null);
     } // initialize()

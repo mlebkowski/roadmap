@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
 include dirname(__DIR__) . '/vendor/autoload.php';
 
 $app = new Silex\Application([
+	'path.app' => dirname(__DIR__) . '/app',
 	'path.data' => dirname(__DIR__) . '/data',
 	'path.config' => dirname(__DIR__) . '/app/config',
 	'path.cache' => dirname(__DIR__) . '/cache',
@@ -20,7 +21,8 @@ $app = new Silex\Application([
 $app['debug'] = "1" === getenv('DEBUG');
 
 $app->register(new \Propel\Silex\PropelServiceProvider, [
-	'propel.config_file' => $app['path.config'] . '/propel.generated.conf',
+//	'propel.config_file' => $app['path.config'] . '/propel.generated.conf',
+	'propel.config_file' => $app['path.app'] . '/propel/generated-conf/config.php',
 ]);
 
 $app->register(new Igorw\Silex\ConfigServiceProvider($app['path.config'] . '/application.yaml'));
@@ -31,7 +33,13 @@ $app->register(new Nassau\Silex\Provider\TranslationLoaderProvider, [
 	'translator.loader.path' => $app['path.translations'],
 ]);
 $app->register(new Silex\Provider\TwigServiceProvider, [
-	'twig.path' => [$app['path.views'], $app['path.assets']],
+	'twig.path' => [
+		$app['path.views'],
+		$app['path.views'] . '/pages',
+		$app['path.views'] . '/layouts',
+		$app['path.views'] . '/blocks',
+		$app['path.assets']
+	],
 	'twig.options' => [
 		'cache' => rtrim($app['path.cache'] . '/twig/' . getenv('DEP_VERSION'), '/'),
 		'debug' => $app['debug'],
@@ -56,4 +64,8 @@ session_start();
 $app->register(new Nicl\Silex\MarkdownServiceProvider);
 $app->register(new Nassau\Silex\Provider\TwigNicedateProvider);
 $app->register(new Nassau\Silex\Provider\FiniteStateMachineProvider);
+
+$controllers = new \Roadmap\Provider\ControllersProvider;
+$app->register($controllers);
+$app->mount("/", $controllers);
 return $app;

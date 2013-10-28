@@ -21,18 +21,6 @@ if ($app['debug'])
 	});
 }
 
-$app->get('/', function (Request $request, \Silex\Application $app)
-{
-	$projects = json_decode(file_get_contents($app['path.data'] . '/projects.json'), true);
-
-	/** @var Twig_Environment $twig */
-	$twig = $app['twig'];
-	return $twig->render('pages/projects.page.html.twig', [
-		'projectName' => 'ZnanyLekarz',
-		'projects' => $projects,
-	]);
-});
-
 Request::setTrustedProxies(array('192.0.0.1', '10.0.0.0/8'));
 
 $app->run();

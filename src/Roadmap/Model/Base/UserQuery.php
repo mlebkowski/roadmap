@@ -12,84 +12,88 @@ use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
-use Roadmap\Model\Project as ChildProject;
-use Roadmap\Model\ProjectQuery as ChildProjectQuery;
-use Roadmap\Model\Map\ProjectTableMap;
+use Roadmap\Model\User as ChildUser;
+use Roadmap\Model\UserQuery as ChildUserQuery;
+use Roadmap\Model\Map\UserTableMap;
 
 /**
- * Base class that represents a query for the 'project' table.
+ * Base class that represents a query for the 'user' table.
  *
  *
  *
- * @method     ChildProjectQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildProjectQuery orderByTitle($order = Criteria::ASC) Order by the title column
- * @method     ChildProjectQuery orderBySlug($order = Criteria::ASC) Order by the slug column
- * @method     ChildProjectQuery orderByState($order = Criteria::ASC) Order by the state column
- * @method     ChildProjectQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
+ * @method     ChildUserQuery orderById($order = Criteria::ASC) Order by the id column
+ * @method     ChildUserQuery orderByEmail($order = Criteria::ASC) Order by the email column
+ * @method     ChildUserQuery orderByName($order = Criteria::ASC) Order by the name column
+ * @method     ChildUserQuery orderByPicture($order = Criteria::ASC) Order by the picture column
+ * @method     ChildUserQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  *
- * @method     ChildProjectQuery groupById() Group by the id column
- * @method     ChildProjectQuery groupByTitle() Group by the title column
- * @method     ChildProjectQuery groupBySlug() Group by the slug column
- * @method     ChildProjectQuery groupByState() Group by the state column
- * @method     ChildProjectQuery groupByCreatedAt() Group by the created_at column
+ * @method     ChildUserQuery groupById() Group by the id column
+ * @method     ChildUserQuery groupByEmail() Group by the email column
+ * @method     ChildUserQuery groupByName() Group by the name column
+ * @method     ChildUserQuery groupByPicture() Group by the picture column
+ * @method     ChildUserQuery groupByCreatedAt() Group by the created_at column
  *
- * @method     ChildProjectQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
- * @method     ChildProjectQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
- * @method     ChildProjectQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ * @method     ChildUserQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method     ChildUserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method     ChildUserQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     ChildProjectQuery leftJoinProjectUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the ProjectUser relation
- * @method     ChildProjectQuery rightJoinProjectUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ProjectUser relation
- * @method     ChildProjectQuery innerJoinProjectUser($relationAlias = null) Adds a INNER JOIN clause to the query using the ProjectUser relation
+ * @method     ChildUserQuery leftJoinProjectUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the ProjectUser relation
+ * @method     ChildUserQuery rightJoinProjectUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ProjectUser relation
+ * @method     ChildUserQuery innerJoinProjectUser($relationAlias = null) Adds a INNER JOIN clause to the query using the ProjectUser relation
  *
- * @method     ChildProjectQuery leftJoinProjectActivity($relationAlias = null) Adds a LEFT JOIN clause to the query using the ProjectActivity relation
- * @method     ChildProjectQuery rightJoinProjectActivity($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ProjectActivity relation
- * @method     ChildProjectQuery innerJoinProjectActivity($relationAlias = null) Adds a INNER JOIN clause to the query using the ProjectActivity relation
+ * @method     ChildUserQuery leftJoinProjectActivity($relationAlias = null) Adds a LEFT JOIN clause to the query using the ProjectActivity relation
+ * @method     ChildUserQuery rightJoinProjectActivity($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ProjectActivity relation
+ * @method     ChildUserQuery innerJoinProjectActivity($relationAlias = null) Adds a INNER JOIN clause to the query using the ProjectActivity relation
  *
- * @method     ChildProject findOne(ConnectionInterface $con = null) Return the first ChildProject matching the query
- * @method     ChildProject findOneOrCreate(ConnectionInterface $con = null) Return the first ChildProject matching the query, or a new ChildProject object populated from the query conditions when no match is found
+ * @method     ChildUserQuery leftJoinUserV2mom($relationAlias = null) Adds a LEFT JOIN clause to the query using the UserV2mom relation
+ * @method     ChildUserQuery rightJoinUserV2mom($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserV2mom relation
+ * @method     ChildUserQuery innerJoinUserV2mom($relationAlias = null) Adds a INNER JOIN clause to the query using the UserV2mom relation
  *
- * @method     ChildProject findOneById(int $id) Return the first ChildProject filtered by the id column
- * @method     ChildProject findOneByTitle(string $title) Return the first ChildProject filtered by the title column
- * @method     ChildProject findOneBySlug(string $slug) Return the first ChildProject filtered by the slug column
- * @method     ChildProject findOneByState(string $state) Return the first ChildProject filtered by the state column
- * @method     ChildProject findOneByCreatedAt(string $created_at) Return the first ChildProject filtered by the created_at column
+ * @method     ChildUser findOne(ConnectionInterface $con = null) Return the first ChildUser matching the query
+ * @method     ChildUser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUser matching the query, or a new ChildUser object populated from the query conditions when no match is found
  *
- * @method     array findById(int $id) Return ChildProject objects filtered by the id column
- * @method     array findByTitle(string $title) Return ChildProject objects filtered by the title column
- * @method     array findBySlug(string $slug) Return ChildProject objects filtered by the slug column
- * @method     array findByState(string $state) Return ChildProject objects filtered by the state column
- * @method     array findByCreatedAt(string $created_at) Return ChildProject objects filtered by the created_at column
+ * @method     ChildUser findOneById(int $id) Return the first ChildUser filtered by the id column
+ * @method     ChildUser findOneByEmail(string $email) Return the first ChildUser filtered by the email column
+ * @method     ChildUser findOneByName(string $name) Return the first ChildUser filtered by the name column
+ * @method     ChildUser findOneByPicture(string $picture) Return the first ChildUser filtered by the picture column
+ * @method     ChildUser findOneByCreatedAt(string $created_at) Return the first ChildUser filtered by the created_at column
+ *
+ * @method     array findById(int $id) Return ChildUser objects filtered by the id column
+ * @method     array findByEmail(string $email) Return ChildUser objects filtered by the email column
+ * @method     array findByName(string $name) Return ChildUser objects filtered by the name column
+ * @method     array findByPicture(string $picture) Return ChildUser objects filtered by the picture column
+ * @method     array findByCreatedAt(string $created_at) Return ChildUser objects filtered by the created_at column
  *
  */
-abstract class ProjectQuery extends ModelCriteria
+abstract class UserQuery extends ModelCriteria
 {
 
     /**
-     * Initializes internal state of \Roadmap\Model\Base\ProjectQuery object.
+     * Initializes internal state of \Roadmap\Model\Base\UserQuery object.
      *
      * @param     string $dbName The database name
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'roadmap', $modelName = '\\Roadmap\\Model\\Project', $modelAlias = null)
+    public function __construct($dbName = 'roadmap', $modelName = '\\Roadmap\\Model\\User', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
     /**
-     * Returns a new ChildProjectQuery object.
+     * Returns a new ChildUserQuery object.
      *
      * @param     string $modelAlias The alias of a model in the query
      * @param     Criteria $criteria Optional Criteria to build the query from
      *
-     * @return ChildProjectQuery
+     * @return ChildUserQuery
      */
     public static function create($modelAlias = null, $criteria = null)
     {
-        if ($criteria instanceof \Roadmap\Model\ProjectQuery) {
+        if ($criteria instanceof \Roadmap\Model\UserQuery) {
             return $criteria;
         }
-        $query = new \Roadmap\Model\ProjectQuery();
+        $query = new \Roadmap\Model\UserQuery();
         if (null !== $modelAlias) {
             $query->setModelAlias($modelAlias);
         }
@@ -112,19 +116,19 @@ abstract class ProjectQuery extends ModelCriteria
      * @param mixed $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
-     * @return ChildProject|array|mixed the result, formatted by the current formatter
+     * @return ChildUser|array|mixed the result, formatted by the current formatter
      */
     public function findPk($key, $con = null)
     {
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = ProjectTableMap::getInstanceFromPool((string) $key))) && !$this->formatter) {
+        if ((null !== ($obj = UserTableMap::getInstanceFromPool((string) $key))) && !$this->formatter) {
             // the object is already in the instance pool
             return $obj;
         }
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(ProjectTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(UserTableMap::DATABASE_NAME);
         }
         $this->basePreSelect($con);
         if ($this->formatter || $this->modelAlias || $this->with || $this->select
@@ -143,11 +147,11 @@ abstract class ProjectQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     ConnectionInterface $con A connection object
      *
-     * @return   ChildProject A model object, or null if the key is not found
+     * @return   ChildUser A model object, or null if the key is not found
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, TITLE, SLUG, STATE, CREATED_AT FROM project WHERE ID = :p0';
+        $sql = 'SELECT ID, EMAIL, NAME, PICTURE, CREATED_AT FROM user WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -158,9 +162,9 @@ abstract class ProjectQuery extends ModelCriteria
         }
         $obj = null;
         if ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
-            $obj = new ChildProject();
+            $obj = new ChildUser();
             $obj->hydrate($row);
-            ProjectTableMap::addInstanceToPool($obj, (string) $key);
+            UserTableMap::addInstanceToPool($obj, (string) $key);
         }
         $stmt->closeCursor();
 
@@ -173,7 +177,7 @@ abstract class ProjectQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     ConnectionInterface $con A connection object
      *
-     * @return ChildProject|array|mixed the result, formatted by the current formatter
+     * @return ChildUser|array|mixed the result, formatted by the current formatter
      */
     protected function findPkComplex($key, $con)
     {
@@ -215,12 +219,12 @@ abstract class ProjectQuery extends ModelCriteria
      *
      * @param     mixed $key Primary key to use for the query
      *
-     * @return ChildProjectQuery The current query, for fluid interface
+     * @return ChildUserQuery The current query, for fluid interface
      */
     public function filterByPrimaryKey($key)
     {
 
-        return $this->addUsingAlias(ProjectTableMap::ID, $key, Criteria::EQUAL);
+        return $this->addUsingAlias(UserTableMap::ID, $key, Criteria::EQUAL);
     }
 
     /**
@@ -228,12 +232,12 @@ abstract class ProjectQuery extends ModelCriteria
      *
      * @param     array $keys The list of primary key to use for the query
      *
-     * @return ChildProjectQuery The current query, for fluid interface
+     * @return ChildUserQuery The current query, for fluid interface
      */
     public function filterByPrimaryKeys($keys)
     {
 
-        return $this->addUsingAlias(ProjectTableMap::ID, $keys, Criteria::IN);
+        return $this->addUsingAlias(UserTableMap::ID, $keys, Criteria::IN);
     }
 
     /**
@@ -252,18 +256,18 @@ abstract class ProjectQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildProjectQuery The current query, for fluid interface
+     * @return ChildUserQuery The current query, for fluid interface
      */
     public function filterById($id = null, $comparison = null)
     {
         if (is_array($id)) {
             $useMinMax = false;
             if (isset($id['min'])) {
-                $this->addUsingAlias(ProjectTableMap::ID, $id['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(UserTableMap::ID, $id['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($id['max'])) {
-                $this->addUsingAlias(ProjectTableMap::ID, $id['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(UserTableMap::ID, $id['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -274,94 +278,94 @@ abstract class ProjectQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(ProjectTableMap::ID, $id, $comparison);
+        return $this->addUsingAlias(UserTableMap::ID, $id, $comparison);
     }
 
     /**
-     * Filter the query on the title column
+     * Filter the query on the email column
      *
      * Example usage:
      * <code>
-     * $query->filterByTitle('fooValue');   // WHERE title = 'fooValue'
-     * $query->filterByTitle('%fooValue%'); // WHERE title LIKE '%fooValue%'
+     * $query->filterByEmail('fooValue');   // WHERE email = 'fooValue'
+     * $query->filterByEmail('%fooValue%'); // WHERE email LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $title The value to use as filter.
+     * @param     string $email The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildProjectQuery The current query, for fluid interface
+     * @return ChildUserQuery The current query, for fluid interface
      */
-    public function filterByTitle($title = null, $comparison = null)
+    public function filterByEmail($email = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($title)) {
+            if (is_array($email)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $title)) {
-                $title = str_replace('*', '%', $title);
+            } elseif (preg_match('/[\%\*]/', $email)) {
+                $email = str_replace('*', '%', $email);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(ProjectTableMap::TITLE, $title, $comparison);
+        return $this->addUsingAlias(UserTableMap::EMAIL, $email, $comparison);
     }
 
     /**
-     * Filter the query on the slug column
+     * Filter the query on the name column
      *
      * Example usage:
      * <code>
-     * $query->filterBySlug('fooValue');   // WHERE slug = 'fooValue'
-     * $query->filterBySlug('%fooValue%'); // WHERE slug LIKE '%fooValue%'
+     * $query->filterByName('fooValue');   // WHERE name = 'fooValue'
+     * $query->filterByName('%fooValue%'); // WHERE name LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $slug The value to use as filter.
+     * @param     string $name The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildProjectQuery The current query, for fluid interface
+     * @return ChildUserQuery The current query, for fluid interface
      */
-    public function filterBySlug($slug = null, $comparison = null)
+    public function filterByName($name = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($slug)) {
+            if (is_array($name)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $slug)) {
-                $slug = str_replace('*', '%', $slug);
+            } elseif (preg_match('/[\%\*]/', $name)) {
+                $name = str_replace('*', '%', $name);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(ProjectTableMap::SLUG, $slug, $comparison);
+        return $this->addUsingAlias(UserTableMap::NAME, $name, $comparison);
     }
 
     /**
-     * Filter the query on the state column
+     * Filter the query on the picture column
      *
      * Example usage:
      * <code>
-     * $query->filterByState('fooValue');   // WHERE state = 'fooValue'
-     * $query->filterByState('%fooValue%'); // WHERE state LIKE '%fooValue%'
+     * $query->filterByPicture('fooValue');   // WHERE picture = 'fooValue'
+     * $query->filterByPicture('%fooValue%'); // WHERE picture LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $state The value to use as filter.
+     * @param     string $picture The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildProjectQuery The current query, for fluid interface
+     * @return ChildUserQuery The current query, for fluid interface
      */
-    public function filterByState($state = null, $comparison = null)
+    public function filterByPicture($picture = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($state)) {
+            if (is_array($picture)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $state)) {
-                $state = str_replace('*', '%', $state);
+            } elseif (preg_match('/[\%\*]/', $picture)) {
+                $picture = str_replace('*', '%', $picture);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(ProjectTableMap::STATE, $state, $comparison);
+        return $this->addUsingAlias(UserTableMap::PICTURE, $picture, $comparison);
     }
 
     /**
@@ -382,18 +386,18 @@ abstract class ProjectQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildProjectQuery The current query, for fluid interface
+     * @return ChildUserQuery The current query, for fluid interface
      */
     public function filterByCreatedAt($createdAt = null, $comparison = null)
     {
         if (is_array($createdAt)) {
             $useMinMax = false;
             if (isset($createdAt['min'])) {
-                $this->addUsingAlias(ProjectTableMap::CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(UserTableMap::CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($createdAt['max'])) {
-                $this->addUsingAlias(ProjectTableMap::CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(UserTableMap::CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -404,7 +408,7 @@ abstract class ProjectQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(ProjectTableMap::CREATED_AT, $createdAt, $comparison);
+        return $this->addUsingAlias(UserTableMap::CREATED_AT, $createdAt, $comparison);
     }
 
     /**
@@ -413,13 +417,13 @@ abstract class ProjectQuery extends ModelCriteria
      * @param \Roadmap\Model\ProjectUser|ObjectCollection $projectUser  the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildProjectQuery The current query, for fluid interface
+     * @return ChildUserQuery The current query, for fluid interface
      */
     public function filterByProjectUser($projectUser, $comparison = null)
     {
         if ($projectUser instanceof \Roadmap\Model\ProjectUser) {
             return $this
-                ->addUsingAlias(ProjectTableMap::ID, $projectUser->getProjectId(), $comparison);
+                ->addUsingAlias(UserTableMap::ID, $projectUser->getUserId(), $comparison);
         } elseif ($projectUser instanceof ObjectCollection) {
             return $this
                 ->useProjectUserQuery()
@@ -436,7 +440,7 @@ abstract class ProjectQuery extends ModelCriteria
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return ChildProjectQuery The current query, for fluid interface
+     * @return ChildUserQuery The current query, for fluid interface
      */
     public function joinProjectUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
@@ -486,13 +490,13 @@ abstract class ProjectQuery extends ModelCriteria
      * @param \Roadmap\Model\ProjectActivity|ObjectCollection $projectActivity  the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildProjectQuery The current query, for fluid interface
+     * @return ChildUserQuery The current query, for fluid interface
      */
     public function filterByProjectActivity($projectActivity, $comparison = null)
     {
         if ($projectActivity instanceof \Roadmap\Model\ProjectActivity) {
             return $this
-                ->addUsingAlias(ProjectTableMap::ID, $projectActivity->getProjectId(), $comparison);
+                ->addUsingAlias(UserTableMap::ID, $projectActivity->getUserId(), $comparison);
         } elseif ($projectActivity instanceof ObjectCollection) {
             return $this
                 ->useProjectActivityQuery()
@@ -509,7 +513,7 @@ abstract class ProjectQuery extends ModelCriteria
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return ChildProjectQuery The current query, for fluid interface
+     * @return ChildUserQuery The current query, for fluid interface
      */
     public function joinProjectActivity($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
@@ -554,40 +558,113 @@ abstract class ProjectQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related User object
-     * using the project_user table as cross reference
+     * Filter the query by a related \Roadmap\Model\UserV2mom object
      *
-     * @param User $user the related object to use as filter
+     * @param \Roadmap\Model\UserV2mom|ObjectCollection $userV2mom  the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildProjectQuery The current query, for fluid interface
+     * @return ChildUserQuery The current query, for fluid interface
      */
-    public function filterByUser($user, $comparison = Criteria::EQUAL)
+    public function filterByUserV2mom($userV2mom, $comparison = null)
     {
-        return $this
-            ->useProjectUserQuery()
-            ->filterByUser($user, $comparison)
-            ->endUse();
+        if ($userV2mom instanceof \Roadmap\Model\UserV2mom) {
+            return $this
+                ->addUsingAlias(UserTableMap::ID, $userV2mom->getUserId(), $comparison);
+        } elseif ($userV2mom instanceof ObjectCollection) {
+            return $this
+                ->useUserV2momQuery()
+                ->filterByPrimaryKeys($userV2mom->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByUserV2mom() only accepts arguments of type \Roadmap\Model\UserV2mom or Collection');
+        }
     }
 
     /**
-     * Exclude object from result
+     * Adds a JOIN clause to the query using the UserV2mom relation
      *
-     * @param   ChildProject $project Object to remove from the list of results
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return ChildProjectQuery The current query, for fluid interface
+     * @return ChildUserQuery The current query, for fluid interface
      */
-    public function prune($project = null)
+    public function joinUserV2mom($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
-        if ($project) {
-            $this->addUsingAlias(ProjectTableMap::ID, $project->getId(), Criteria::NOT_EQUAL);
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('UserV2mom');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'UserV2mom');
         }
 
         return $this;
     }
 
     /**
-     * Deletes all rows from the project table.
+     * Use the UserV2mom relation UserV2mom object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Roadmap\Model\UserV2momQuery A secondary query class using the current class as primary query
+     */
+    public function useUserV2momQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinUserV2mom($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'UserV2mom', '\Roadmap\Model\UserV2momQuery');
+    }
+
+    /**
+     * Filter the query by a related Project object
+     * using the project_user table as cross reference
+     *
+     * @param Project $project the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByProject($project, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useProjectUserQuery()
+            ->filterByProject($project, $comparison)
+            ->endUse();
+    }
+
+    /**
+     * Exclude object from result
+     *
+     * @param   ChildUser $user Object to remove from the list of results
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function prune($user = null)
+    {
+        if ($user) {
+            $this->addUsingAlias(UserTableMap::ID, $user->getId(), Criteria::NOT_EQUAL);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Deletes all rows from the user table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
@@ -595,7 +672,7 @@ abstract class ProjectQuery extends ModelCriteria
     public function doDeleteAll(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ProjectTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
         }
         $affectedRows = 0; // initialize var to track total num of affected rows
         try {
@@ -606,8 +683,8 @@ abstract class ProjectQuery extends ModelCriteria
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            ProjectTableMap::clearInstancePool();
-            ProjectTableMap::clearRelatedInstancePool();
+            UserTableMap::clearInstancePool();
+            UserTableMap::clearRelatedInstancePool();
 
             $con->commit();
         } catch (PropelException $e) {
@@ -619,9 +696,9 @@ abstract class ProjectQuery extends ModelCriteria
     }
 
     /**
-     * Performs a DELETE on the database, given a ChildProject or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a ChildUser or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or ChildProject object or primary key or array of primary keys
+     * @param mixed               $values Criteria or ChildUser object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -632,13 +709,13 @@ abstract class ProjectQuery extends ModelCriteria
      public function delete(ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ProjectTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
         }
 
         $criteria = $this;
 
         // Set the correct dbName
-        $criteria->setDbName(ProjectTableMap::DATABASE_NAME);
+        $criteria->setDbName(UserTableMap::DATABASE_NAME);
 
         $affectedRows = 0; // initialize var to track total num of affected rows
 
@@ -648,10 +725,10 @@ abstract class ProjectQuery extends ModelCriteria
             $con->beginTransaction();
 
 
-        ProjectTableMap::removeInstanceFromPool($criteria);
+        UserTableMap::removeInstanceFromPool($criteria);
 
             $affectedRows += ModelCriteria::delete($con);
-            ProjectTableMap::clearRelatedInstancePool();
+            UserTableMap::clearRelatedInstancePool();
             $con->commit();
 
             return $affectedRows;
@@ -661,4 +738,4 @@ abstract class ProjectQuery extends ModelCriteria
         }
     }
 
-} // ProjectQuery
+} // UserQuery

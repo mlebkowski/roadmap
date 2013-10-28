@@ -4,9 +4,10 @@ namespace Roadmap\FSM;
 
 use Finite\StatefulInterface;
 use Finite\StateMachine\ListenableStateMachine;
+use Finite\StateMachine\StateMachine;
 use Roadmap\Model\Project as ProjectModel;
 
-class Project implements StatefulInterface
+class Project
 {
 	const STATE_NEW = 'new';
 	const STATE_PLANNED = 'planned';
@@ -23,35 +24,21 @@ class Project implements StatefulInterface
 	const TRANSITION_RESTORE = 'restore';
 
 	/**
-	 * @var \Finite\StateMachine\ListenableStateMachine
+	 * @var StateMachine
 	 */
-	private $stateMachine;
+	protected $stateMachine;
 
 	/**
-	 * @var \Roadmap\Model\Project
+	 * @param StateMachine $stateMachine
 	 */
-	private $project;
-
-	public function __construct(ListenableStateMachine $stateMachine, ProjectModel $project)
+	public function __construct(StateMachine $stateMachine)
 	{
 		$this->stateMachine = $stateMachine;
-		$this->project = $project;
 	}
 
-	/**
-	 * @param string $finiteState
-	 */
-	public function setFiniteState($finiteState)
+	public function getCurrentState()
 	{
-		$this->project->setState($finiteState);
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getFiniteState()
-	{
-		return $this->project->getState();
+		return $this->stateMachine->getCurrentState();
 	}
 
 	public function canCancel()

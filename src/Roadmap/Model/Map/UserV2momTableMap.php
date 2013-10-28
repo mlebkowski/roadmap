@@ -10,12 +10,12 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Map\TableMapTrait;
-use Roadmap\Model\Project;
-use Roadmap\Model\ProjectQuery;
+use Roadmap\Model\UserV2mom;
+use Roadmap\Model\UserV2momQuery;
 
 
 /**
- * This class defines the structure of the 'project' table.
+ * This class defines the structure of the 'user_v2mom' table.
  *
  *
  *
@@ -25,14 +25,14 @@ use Roadmap\Model\ProjectQuery;
  * (i.e. if it's a text column type).
  *
  */
-class ProjectTableMap extends TableMap
+class UserV2momTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'Roadmap.Model.Map.ProjectTableMap';
+    const CLASS_NAME = 'Roadmap.Model.Map.UserV2momTableMap';
 
     /**
      * The default database name for this class
@@ -42,22 +42,22 @@ class ProjectTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'project';
+    const TABLE_NAME = 'user_v2mom';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Roadmap\\Model\\Project';
+    const OM_CLASS = '\\Roadmap\\Model\\UserV2mom';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Roadmap.Model.Project';
+    const CLASS_DEFAULT = 'Roadmap.Model.UserV2mom';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 7;
 
     /**
      * The number of lazy-loaded columns
@@ -67,32 +67,42 @@ class ProjectTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 7;
 
     /**
      * the column name for the ID field
      */
-    const ID = 'project.ID';
+    const ID = 'user_v2mom.ID';
 
     /**
-     * the column name for the TITLE field
+     * the column name for the USER_ID field
      */
-    const TITLE = 'project.TITLE';
+    const USER_ID = 'user_v2mom.USER_ID';
 
     /**
-     * the column name for the SLUG field
+     * the column name for the VISION field
      */
-    const SLUG = 'project.SLUG';
+    const VISION = 'user_v2mom.VISION';
 
     /**
-     * the column name for the STATE field
+     * the column name for the VALUES field
      */
-    const STATE = 'project.STATE';
+    const VALUES = 'user_v2mom.VALUES';
+
+    /**
+     * the column name for the METHODS field
+     */
+    const METHODS = 'user_v2mom.METHODS';
+
+    /**
+     * the column name for the OBSTACLES field
+     */
+    const OBSTACLES = 'user_v2mom.OBSTACLES';
 
     /**
      * the column name for the CREATED_AT field
      */
-    const CREATED_AT = 'project.CREATED_AT';
+    const CREATED_AT = 'user_v2mom.CREATED_AT';
 
     /**
      * The default string format for model objects of the related table
@@ -106,12 +116,12 @@ class ProjectTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Title', 'Slug', 'State', 'CreatedAt', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'title', 'slug', 'state', 'createdAt', ),
-        self::TYPE_COLNAME       => array(ProjectTableMap::ID, ProjectTableMap::TITLE, ProjectTableMap::SLUG, ProjectTableMap::STATE, ProjectTableMap::CREATED_AT, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'TITLE', 'SLUG', 'STATE', 'CREATED_AT', ),
-        self::TYPE_FIELDNAME     => array('id', 'title', 'slug', 'state', 'created_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id', 'UserId', 'Vision', 'Values', 'Methods', 'Obstacles', 'CreatedAt', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'userId', 'vision', 'values', 'methods', 'obstacles', 'createdAt', ),
+        self::TYPE_COLNAME       => array(UserV2momTableMap::ID, UserV2momTableMap::USER_ID, UserV2momTableMap::VISION, UserV2momTableMap::VALUES, UserV2momTableMap::METHODS, UserV2momTableMap::OBSTACLES, UserV2momTableMap::CREATED_AT, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'USER_ID', 'VISION', 'VALUES', 'METHODS', 'OBSTACLES', 'CREATED_AT', ),
+        self::TYPE_FIELDNAME     => array('id', 'user_id', 'vision', 'values', 'methods', 'obstacles', 'created_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -121,12 +131,12 @@ class ProjectTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Title' => 1, 'Slug' => 2, 'State' => 3, 'CreatedAt' => 4, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'title' => 1, 'slug' => 2, 'state' => 3, 'createdAt' => 4, ),
-        self::TYPE_COLNAME       => array(ProjectTableMap::ID => 0, ProjectTableMap::TITLE => 1, ProjectTableMap::SLUG => 2, ProjectTableMap::STATE => 3, ProjectTableMap::CREATED_AT => 4, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'TITLE' => 1, 'SLUG' => 2, 'STATE' => 3, 'CREATED_AT' => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'title' => 1, 'slug' => 2, 'state' => 3, 'created_at' => 4, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'Vision' => 2, 'Values' => 3, 'Methods' => 4, 'Obstacles' => 5, 'CreatedAt' => 6, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'userId' => 1, 'vision' => 2, 'values' => 3, 'methods' => 4, 'obstacles' => 5, 'createdAt' => 6, ),
+        self::TYPE_COLNAME       => array(UserV2momTableMap::ID => 0, UserV2momTableMap::USER_ID => 1, UserV2momTableMap::VISION => 2, UserV2momTableMap::VALUES => 3, UserV2momTableMap::METHODS => 4, UserV2momTableMap::OBSTACLES => 5, UserV2momTableMap::CREATED_AT => 6, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'USER_ID' => 1, 'VISION' => 2, 'VALUES' => 3, 'METHODS' => 4, 'OBSTACLES' => 5, 'CREATED_AT' => 6, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'vision' => 2, 'values' => 3, 'methods' => 4, 'obstacles' => 5, 'created_at' => 6, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -139,16 +149,18 @@ class ProjectTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('project');
-        $this->setPhpName('Project');
-        $this->setClassName('\\Roadmap\\Model\\Project');
+        $this->setName('user_v2mom');
+        $this->setPhpName('UserV2mom');
+        $this->setClassName('\\Roadmap\\Model\\UserV2mom');
         $this->setPackage('Roadmap.Model');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('TITLE', 'Title', 'CHAR', true, 128, null);
-        $this->addColumn('SLUG', 'Slug', 'CHAR', true, 128, null);
-        $this->addColumn('STATE', 'State', 'CHAR', true, null, 'new');
+        $this->addForeignKey('USER_ID', 'UserId', 'INTEGER', 'user', 'ID', true, null, null);
+        $this->addColumn('VISION', 'Vision', 'CHAR', true, null, null);
+        $this->addColumn('VALUES', 'Values', 'CHAR', true, null, null);
+        $this->addColumn('METHODS', 'Methods', 'CHAR', true, null, null);
+        $this->addColumn('OBSTACLES', 'Obstacles', 'CHAR', true, null, null);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'DATE', true, null, null);
     } // initialize()
 
@@ -157,9 +169,7 @@ class ProjectTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('ProjectUser', '\\Roadmap\\Model\\ProjectUser', RelationMap::ONE_TO_MANY, array('id' => 'project_id', ), null, null, 'ProjectUsers');
-        $this->addRelation('ProjectActivity', '\\Roadmap\\Model\\ProjectActivity', RelationMap::ONE_TO_MANY, array('id' => 'project_id', ), null, null, 'ProjectActivities');
-        $this->addRelation('User', '\\Roadmap\\Model\\User', RelationMap::MANY_TO_MANY, array(), null, null, 'Users');
+        $this->addRelation('User', '\\Roadmap\\Model\\User', RelationMap::MANY_TO_ONE, array('user_id' => 'id', ), null, null);
     } // buildRelations()
 
     /**
@@ -218,7 +228,7 @@ class ProjectTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? ProjectTableMap::CLASS_DEFAULT : ProjectTableMap::OM_CLASS;
+        return $withPrefix ? UserV2momTableMap::CLASS_DEFAULT : UserV2momTableMap::OM_CLASS;
     }
 
     /**
@@ -232,21 +242,21 @@ class ProjectTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
-     * @return array (Project object, last column rank)
+     * @return array (UserV2mom object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = ProjectTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = ProjectTableMap::getInstanceFromPool($key))) {
+        $key = UserV2momTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = UserV2momTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + ProjectTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + UserV2momTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = ProjectTableMap::OM_CLASS;
+            $cls = UserV2momTableMap::OM_CLASS;
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            ProjectTableMap::addInstanceToPool($obj, $key);
+            UserV2momTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -269,8 +279,8 @@ class ProjectTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = ProjectTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = ProjectTableMap::getInstanceFromPool($key))) {
+            $key = UserV2momTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = UserV2momTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
@@ -279,7 +289,7 @@ class ProjectTableMap extends TableMap
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                ProjectTableMap::addInstanceToPool($obj, $key);
+                UserV2momTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -300,16 +310,20 @@ class ProjectTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(ProjectTableMap::ID);
-            $criteria->addSelectColumn(ProjectTableMap::TITLE);
-            $criteria->addSelectColumn(ProjectTableMap::SLUG);
-            $criteria->addSelectColumn(ProjectTableMap::STATE);
-            $criteria->addSelectColumn(ProjectTableMap::CREATED_AT);
+            $criteria->addSelectColumn(UserV2momTableMap::ID);
+            $criteria->addSelectColumn(UserV2momTableMap::USER_ID);
+            $criteria->addSelectColumn(UserV2momTableMap::VISION);
+            $criteria->addSelectColumn(UserV2momTableMap::VALUES);
+            $criteria->addSelectColumn(UserV2momTableMap::METHODS);
+            $criteria->addSelectColumn(UserV2momTableMap::OBSTACLES);
+            $criteria->addSelectColumn(UserV2momTableMap::CREATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
-            $criteria->addSelectColumn($alias . '.TITLE');
-            $criteria->addSelectColumn($alias . '.SLUG');
-            $criteria->addSelectColumn($alias . '.STATE');
+            $criteria->addSelectColumn($alias . '.USER_ID');
+            $criteria->addSelectColumn($alias . '.VISION');
+            $criteria->addSelectColumn($alias . '.VALUES');
+            $criteria->addSelectColumn($alias . '.METHODS');
+            $criteria->addSelectColumn($alias . '.OBSTACLES');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
         }
     }
@@ -323,7 +337,7 @@ class ProjectTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(ProjectTableMap::DATABASE_NAME)->getTable(ProjectTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(UserV2momTableMap::DATABASE_NAME)->getTable(UserV2momTableMap::TABLE_NAME);
     }
 
     /**
@@ -331,16 +345,16 @@ class ProjectTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-      $dbMap = Propel::getServiceContainer()->getDatabaseMap(ProjectTableMap::DATABASE_NAME);
-      if (!$dbMap->hasTable(ProjectTableMap::TABLE_NAME)) {
-        $dbMap->addTableObject(new ProjectTableMap());
+      $dbMap = Propel::getServiceContainer()->getDatabaseMap(UserV2momTableMap::DATABASE_NAME);
+      if (!$dbMap->hasTable(UserV2momTableMap::TABLE_NAME)) {
+        $dbMap->addTableObject(new UserV2momTableMap());
       }
     }
 
     /**
-     * Performs a DELETE on the database, given a Project or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a UserV2mom or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or Project object or primary key or array of primary keys
+     * @param mixed               $values Criteria or UserV2mom object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -351,25 +365,25 @@ class ProjectTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ProjectTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UserV2momTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Roadmap\Model\Project) { // it's a model object
+        } elseif ($values instanceof \Roadmap\Model\UserV2mom) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(ProjectTableMap::DATABASE_NAME);
-            $criteria->add(ProjectTableMap::ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(UserV2momTableMap::DATABASE_NAME);
+            $criteria->add(UserV2momTableMap::ID, (array) $values, Criteria::IN);
         }
 
-        $query = ProjectQuery::create()->mergeWith($criteria);
+        $query = UserV2momQuery::create()->mergeWith($criteria);
 
-        if ($values instanceof Criteria) { ProjectTableMap::clearInstancePool();
+        if ($values instanceof Criteria) { UserV2momTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
-            foreach ((array) $values as $singleval) { ProjectTableMap::removeInstanceFromPool($singleval);
+            foreach ((array) $values as $singleval) { UserV2momTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -377,20 +391,20 @@ class ProjectTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the project table.
+     * Deletes all rows from the user_v2mom table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return ProjectQuery::create()->doDeleteAll($con);
+        return UserV2momQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a Project or Criteria object.
+     * Performs an INSERT on the database, given a UserV2mom or Criteria object.
      *
-     * @param mixed               $criteria Criteria or Project object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or UserV2mom object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -399,22 +413,22 @@ class ProjectTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ProjectTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UserV2momTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from Project object
+            $criteria = $criteria->buildCriteria(); // build Criteria from UserV2mom object
         }
 
-        if ($criteria->containsKey(ProjectTableMap::ID) && $criteria->keyContainsValue(ProjectTableMap::ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ProjectTableMap::ID.')');
+        if ($criteria->containsKey(UserV2momTableMap::ID) && $criteria->keyContainsValue(UserV2momTableMap::ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.UserV2momTableMap::ID.')');
         }
 
 
         // Set the correct dbName
-        $query = ProjectQuery::create()->mergeWith($criteria);
+        $query = UserV2momQuery::create()->mergeWith($criteria);
 
         try {
             // use transaction because $criteria could contain info
@@ -430,7 +444,7 @@ class ProjectTableMap extends TableMap
         return $pk;
     }
 
-} // ProjectTableMap
+} // UserV2momTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-ProjectTableMap::buildTableMap();
+UserV2momTableMap::buildTableMap();

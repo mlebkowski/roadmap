@@ -25,14 +25,16 @@ use Roadmap\Model\ProjectUser as ChildProjectUser;
 use Roadmap\Model\ProjectUserQuery as ChildProjectUserQuery;
 use Roadmap\Model\User as ChildUser;
 use Roadmap\Model\UserQuery as ChildUserQuery;
-use Roadmap\Model\Map\ProjectTableMap;
+use Roadmap\Model\UserV2mom as ChildUserV2mom;
+use Roadmap\Model\UserV2momQuery as ChildUserV2momQuery;
+use Roadmap\Model\Map\UserTableMap;
 
-abstract class Project implements ActiveRecordInterface
+abstract class User implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Roadmap\\Model\\Map\\ProjectTableMap';
+    const TABLE_MAP = '\\Roadmap\\Model\\Map\\UserTableMap';
 
 
     /**
@@ -68,23 +70,22 @@ abstract class Project implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the title field.
+     * The value for the email field.
      * @var        string
      */
-    protected $title;
+    protected $email;
 
     /**
-     * The value for the slug field.
+     * The value for the name field.
      * @var        string
      */
-    protected $slug;
+    protected $name;
 
     /**
-     * The value for the state field.
-     * Note: this column has a database default value of: 'new'
+     * The value for the picture field.
      * @var        string
      */
-    protected $state;
+    protected $picture;
 
     /**
      * The value for the created_at field.
@@ -105,9 +106,15 @@ abstract class Project implements ActiveRecordInterface
     protected $collProjectActivitiesPartial;
 
     /**
-     * @var        ChildUser[] Collection to store aggregation of ChildUser objects.
+     * @var        ObjectCollection|ChildUserV2mom[] Collection to store aggregation of ChildUserV2mom objects.
      */
-    protected $collUsers;
+    protected $collUserV2moms;
+    protected $collUserV2momsPartial;
+
+    /**
+     * @var        ChildProject[] Collection to store aggregation of ChildProject objects.
+     */
+    protected $collProjects;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -121,7 +128,7 @@ abstract class Project implements ActiveRecordInterface
      * An array of objects scheduled for deletion.
      * @var ObjectCollection
      */
-    protected $usersScheduledForDeletion = null;
+    protected $projectsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -136,23 +143,16 @@ abstract class Project implements ActiveRecordInterface
     protected $projectActivitiesScheduledForDeletion = null;
 
     /**
-     * Applies default values to this object.
-     * This method should be called from the object's constructor (or
-     * equivalent initialization method).
-     * @see __construct()
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection
      */
-    public function applyDefaultValues()
-    {
-        $this->state = 'new';
-    }
+    protected $userV2momsScheduledForDeletion = null;
 
     /**
-     * Initializes internal state of Roadmap\Model\Base\Project object.
-     * @see applyDefaults()
+     * Initializes internal state of Roadmap\Model\Base\User object.
      */
     public function __construct()
     {
-        $this->applyDefaultValues();
     }
 
     /**
@@ -244,9 +244,9 @@ abstract class Project implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>Project</code> instance.  If
-     * <code>obj</code> is an instance of <code>Project</code>, delegates to
-     * <code>equals(Project)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>User</code> instance.  If
+     * <code>obj</code> is an instance of <code>User</code>, delegates to
+     * <code>equals(User)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -329,7 +329,7 @@ abstract class Project implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return Project The current object, for fluid interface
+     * @return User The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -361,7 +361,7 @@ abstract class Project implements ActiveRecordInterface
      *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string $data The source data to import from
      *
-     * @return Project The current object, for fluid interface
+     * @return User The current object, for fluid interface
      */
     public function importFrom($parser, $data)
     {
@@ -418,36 +418,36 @@ abstract class Project implements ActiveRecordInterface
     }
 
     /**
-     * Get the [title] column value.
+     * Get the [email] column value.
      *
      * @return   string
      */
-    public function getTitle()
+    public function getEmail()
     {
 
-        return $this->title;
+        return $this->email;
     }
 
     /**
-     * Get the [slug] column value.
+     * Get the [name] column value.
      *
      * @return   string
      */
-    public function getSlug()
+    public function getName()
     {
 
-        return $this->slug;
+        return $this->name;
     }
 
     /**
-     * Get the [state] column value.
+     * Get the [picture] column value.
      *
      * @return   string
      */
-    public function getState()
+    public function getPicture()
     {
 
-        return $this->state;
+        return $this->picture;
     }
 
     /**
@@ -474,7 +474,7 @@ abstract class Project implements ActiveRecordInterface
      * Set the value of [id] column.
      *
      * @param      int $v new value
-     * @return   \Roadmap\Model\Project The current object (for fluent API support)
+     * @return   \Roadmap\Model\User The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -484,7 +484,7 @@ abstract class Project implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[] = ProjectTableMap::ID;
+            $this->modifiedColumns[] = UserTableMap::ID;
         }
 
 
@@ -492,74 +492,74 @@ abstract class Project implements ActiveRecordInterface
     } // setId()
 
     /**
-     * Set the value of [title] column.
+     * Set the value of [email] column.
      *
      * @param      string $v new value
-     * @return   \Roadmap\Model\Project The current object (for fluent API support)
+     * @return   \Roadmap\Model\User The current object (for fluent API support)
      */
-    public function setTitle($v)
+    public function setEmail($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->title !== $v) {
-            $this->title = $v;
-            $this->modifiedColumns[] = ProjectTableMap::TITLE;
+        if ($this->email !== $v) {
+            $this->email = $v;
+            $this->modifiedColumns[] = UserTableMap::EMAIL;
         }
 
 
         return $this;
-    } // setTitle()
+    } // setEmail()
 
     /**
-     * Set the value of [slug] column.
+     * Set the value of [name] column.
      *
      * @param      string $v new value
-     * @return   \Roadmap\Model\Project The current object (for fluent API support)
+     * @return   \Roadmap\Model\User The current object (for fluent API support)
      */
-    public function setSlug($v)
+    public function setName($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->slug !== $v) {
-            $this->slug = $v;
-            $this->modifiedColumns[] = ProjectTableMap::SLUG;
+        if ($this->name !== $v) {
+            $this->name = $v;
+            $this->modifiedColumns[] = UserTableMap::NAME;
         }
 
 
         return $this;
-    } // setSlug()
+    } // setName()
 
     /**
-     * Set the value of [state] column.
+     * Set the value of [picture] column.
      *
      * @param      string $v new value
-     * @return   \Roadmap\Model\Project The current object (for fluent API support)
+     * @return   \Roadmap\Model\User The current object (for fluent API support)
      */
-    public function setState($v)
+    public function setPicture($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->state !== $v) {
-            $this->state = $v;
-            $this->modifiedColumns[] = ProjectTableMap::STATE;
+        if ($this->picture !== $v) {
+            $this->picture = $v;
+            $this->modifiedColumns[] = UserTableMap::PICTURE;
         }
 
 
         return $this;
-    } // setState()
+    } // setPicture()
 
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param      mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return   \Roadmap\Model\Project The current object (for fluent API support)
+     * @return   \Roadmap\Model\User The current object (for fluent API support)
      */
     public function setCreatedAt($v)
     {
@@ -567,7 +567,7 @@ abstract class Project implements ActiveRecordInterface
         if ($this->created_at !== null || $dt !== null) {
             if ($dt !== $this->created_at) {
                 $this->created_at = $dt;
-                $this->modifiedColumns[] = ProjectTableMap::CREATED_AT;
+                $this->modifiedColumns[] = UserTableMap::CREATED_AT;
             }
         } // if either are not null
 
@@ -585,10 +585,6 @@ abstract class Project implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->state !== 'new') {
-                return false;
-            }
-
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -616,19 +612,19 @@ abstract class Project implements ActiveRecordInterface
         try {
 
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ProjectTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : UserTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ProjectTableMap::translateFieldName('Title', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->title = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->email = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ProjectTableMap::translateFieldName('Slug', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->slug = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ProjectTableMap::translateFieldName('State', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->state = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserTableMap::translateFieldName('Picture', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->picture = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ProjectTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00') {
                 $col = null;
             }
@@ -641,10 +637,10 @@ abstract class Project implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = ProjectTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = UserTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating \Roadmap\Model\Project object", 0, $e);
+            throw new PropelException("Error populating \Roadmap\Model\User object", 0, $e);
         }
     }
 
@@ -686,13 +682,13 @@ abstract class Project implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(ProjectTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(UserTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildProjectQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildUserQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -706,7 +702,9 @@ abstract class Project implements ActiveRecordInterface
 
             $this->collProjectActivities = null;
 
-            $this->collUsers = null;
+            $this->collUserV2moms = null;
+
+            $this->collProjects = null;
         } // if (deep)
     }
 
@@ -716,8 +714,8 @@ abstract class Project implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see Project::setDeleted()
-     * @see Project::isDeleted()
+     * @see User::setDeleted()
+     * @see User::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -726,12 +724,12 @@ abstract class Project implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ProjectTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
         }
 
         $con->beginTransaction();
         try {
-            $deleteQuery = ChildProjectQuery::create()
+            $deleteQuery = ChildUserQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -768,7 +766,7 @@ abstract class Project implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ProjectTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
         }
 
         $con->beginTransaction();
@@ -788,7 +786,7 @@ abstract class Project implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                ProjectTableMap::addInstanceToPool($this);
+                UserTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -829,29 +827,29 @@ abstract class Project implements ActiveRecordInterface
                 $this->resetModified();
             }
 
-            if ($this->usersScheduledForDeletion !== null) {
-                if (!$this->usersScheduledForDeletion->isEmpty()) {
+            if ($this->projectsScheduledForDeletion !== null) {
+                if (!$this->projectsScheduledForDeletion->isEmpty()) {
                     $pks = array();
                     $pk  = $this->getPrimaryKey();
-                    foreach ($this->usersScheduledForDeletion->getPrimaryKeys(false) as $remotePk) {
-                        $pks[] = array($pk, $remotePk);
+                    foreach ($this->projectsScheduledForDeletion->getPrimaryKeys(false) as $remotePk) {
+                        $pks[] = array($remotePk, $pk);
                     }
 
                     ProjectUserQuery::create()
                         ->filterByPrimaryKeys($pks)
                         ->delete($con);
-                    $this->usersScheduledForDeletion = null;
+                    $this->projectsScheduledForDeletion = null;
                 }
 
-                foreach ($this->getUsers() as $user) {
-                    if ($user->isModified()) {
-                        $user->save($con);
+                foreach ($this->getProjects() as $project) {
+                    if ($project->isModified()) {
+                        $project->save($con);
                     }
                 }
-            } elseif ($this->collUsers) {
-                foreach ($this->collUsers as $user) {
-                    if ($user->isModified()) {
-                        $user->save($con);
+            } elseif ($this->collProjects) {
+                foreach ($this->collProjects as $project) {
+                    if ($project->isModified()) {
+                        $project->save($con);
                     }
                 }
             }
@@ -890,6 +888,23 @@ abstract class Project implements ActiveRecordInterface
                 }
             }
 
+            if ($this->userV2momsScheduledForDeletion !== null) {
+                if (!$this->userV2momsScheduledForDeletion->isEmpty()) {
+                    \Roadmap\Model\UserV2momQuery::create()
+                        ->filterByPrimaryKeys($this->userV2momsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->userV2momsScheduledForDeletion = null;
+                }
+            }
+
+                if ($this->collUserV2moms !== null) {
+            foreach ($this->collUserV2moms as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             $this->alreadyInSave = false;
 
         }
@@ -910,30 +925,30 @@ abstract class Project implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[] = ProjectTableMap::ID;
+        $this->modifiedColumns[] = UserTableMap::ID;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ProjectTableMap::ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . UserTableMap::ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ProjectTableMap::ID)) {
+        if ($this->isColumnModified(UserTableMap::ID)) {
             $modifiedColumns[':p' . $index++]  = 'ID';
         }
-        if ($this->isColumnModified(ProjectTableMap::TITLE)) {
-            $modifiedColumns[':p' . $index++]  = 'TITLE';
+        if ($this->isColumnModified(UserTableMap::EMAIL)) {
+            $modifiedColumns[':p' . $index++]  = 'EMAIL';
         }
-        if ($this->isColumnModified(ProjectTableMap::SLUG)) {
-            $modifiedColumns[':p' . $index++]  = 'SLUG';
+        if ($this->isColumnModified(UserTableMap::NAME)) {
+            $modifiedColumns[':p' . $index++]  = 'NAME';
         }
-        if ($this->isColumnModified(ProjectTableMap::STATE)) {
-            $modifiedColumns[':p' . $index++]  = 'STATE';
+        if ($this->isColumnModified(UserTableMap::PICTURE)) {
+            $modifiedColumns[':p' . $index++]  = 'PICTURE';
         }
-        if ($this->isColumnModified(ProjectTableMap::CREATED_AT)) {
+        if ($this->isColumnModified(UserTableMap::CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'CREATED_AT';
         }
 
         $sql = sprintf(
-            'INSERT INTO project (%s) VALUES (%s)',
+            'INSERT INTO user (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -945,14 +960,14 @@ abstract class Project implements ActiveRecordInterface
                     case 'ID':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'TITLE':
-                        $stmt->bindValue($identifier, $this->title, PDO::PARAM_STR);
+                    case 'EMAIL':
+                        $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
                         break;
-                    case 'SLUG':
-                        $stmt->bindValue($identifier, $this->slug, PDO::PARAM_STR);
+                    case 'NAME':
+                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
-                    case 'STATE':
-                        $stmt->bindValue($identifier, $this->state, PDO::PARAM_STR);
+                    case 'PICTURE':
+                        $stmt->bindValue($identifier, $this->picture, PDO::PARAM_STR);
                         break;
                     case 'CREATED_AT':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
@@ -1003,7 +1018,7 @@ abstract class Project implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ProjectTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = UserTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -1023,13 +1038,13 @@ abstract class Project implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getTitle();
+                return $this->getEmail();
                 break;
             case 2:
-                return $this->getSlug();
+                return $this->getName();
                 break;
             case 3:
-                return $this->getState();
+                return $this->getPicture();
                 break;
             case 4:
                 return $this->getCreatedAt();
@@ -1057,16 +1072,16 @@ abstract class Project implements ActiveRecordInterface
      */
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
-        if (isset($alreadyDumpedObjects['Project'][$this->getPrimaryKey()])) {
+        if (isset($alreadyDumpedObjects['User'][$this->getPrimaryKey()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Project'][$this->getPrimaryKey()] = true;
-        $keys = ProjectTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['User'][$this->getPrimaryKey()] = true;
+        $keys = UserTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getTitle(),
-            $keys[2] => $this->getSlug(),
-            $keys[3] => $this->getState(),
+            $keys[1] => $this->getEmail(),
+            $keys[2] => $this->getName(),
+            $keys[3] => $this->getPicture(),
             $keys[4] => $this->getCreatedAt(),
         );
         $virtualColumns = $this->virtualColumns;
@@ -1080,6 +1095,9 @@ abstract class Project implements ActiveRecordInterface
             }
             if (null !== $this->collProjectActivities) {
                 $result['ProjectActivities'] = $this->collProjectActivities->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collUserV2moms) {
+                $result['UserV2moms'] = $this->collUserV2moms->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1099,7 +1117,7 @@ abstract class Project implements ActiveRecordInterface
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ProjectTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = UserTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -1119,13 +1137,13 @@ abstract class Project implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setTitle($value);
+                $this->setEmail($value);
                 break;
             case 2:
-                $this->setSlug($value);
+                $this->setName($value);
                 break;
             case 3:
-                $this->setState($value);
+                $this->setPicture($value);
                 break;
             case 4:
                 $this->setCreatedAt($value);
@@ -1152,12 +1170,12 @@ abstract class Project implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = ProjectTableMap::getFieldNames($keyType);
+        $keys = UserTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setTitle($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setSlug($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setState($arr[$keys[3]]);
+        if (array_key_exists($keys[1], $arr)) $this->setEmail($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setName($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setPicture($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setCreatedAt($arr[$keys[4]]);
     }
 
@@ -1168,13 +1186,13 @@ abstract class Project implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(ProjectTableMap::DATABASE_NAME);
+        $criteria = new Criteria(UserTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(ProjectTableMap::ID)) $criteria->add(ProjectTableMap::ID, $this->id);
-        if ($this->isColumnModified(ProjectTableMap::TITLE)) $criteria->add(ProjectTableMap::TITLE, $this->title);
-        if ($this->isColumnModified(ProjectTableMap::SLUG)) $criteria->add(ProjectTableMap::SLUG, $this->slug);
-        if ($this->isColumnModified(ProjectTableMap::STATE)) $criteria->add(ProjectTableMap::STATE, $this->state);
-        if ($this->isColumnModified(ProjectTableMap::CREATED_AT)) $criteria->add(ProjectTableMap::CREATED_AT, $this->created_at);
+        if ($this->isColumnModified(UserTableMap::ID)) $criteria->add(UserTableMap::ID, $this->id);
+        if ($this->isColumnModified(UserTableMap::EMAIL)) $criteria->add(UserTableMap::EMAIL, $this->email);
+        if ($this->isColumnModified(UserTableMap::NAME)) $criteria->add(UserTableMap::NAME, $this->name);
+        if ($this->isColumnModified(UserTableMap::PICTURE)) $criteria->add(UserTableMap::PICTURE, $this->picture);
+        if ($this->isColumnModified(UserTableMap::CREATED_AT)) $criteria->add(UserTableMap::CREATED_AT, $this->created_at);
 
         return $criteria;
     }
@@ -1189,8 +1207,8 @@ abstract class Project implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(ProjectTableMap::DATABASE_NAME);
-        $criteria->add(ProjectTableMap::ID, $this->id);
+        $criteria = new Criteria(UserTableMap::DATABASE_NAME);
+        $criteria->add(UserTableMap::ID, $this->id);
 
         return $criteria;
     }
@@ -1231,16 +1249,16 @@ abstract class Project implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Roadmap\Model\Project (or compatible) type.
+     * @param      object $copyObj An object of \Roadmap\Model\User (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setTitle($this->getTitle());
-        $copyObj->setSlug($this->getSlug());
-        $copyObj->setState($this->getState());
+        $copyObj->setEmail($this->getEmail());
+        $copyObj->setName($this->getName());
+        $copyObj->setPicture($this->getPicture());
         $copyObj->setCreatedAt($this->getCreatedAt());
 
         if ($deepCopy) {
@@ -1257,6 +1275,12 @@ abstract class Project implements ActiveRecordInterface
             foreach ($this->getProjectActivities() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addProjectActivity($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getUserV2moms() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addUserV2mom($relObj->copy($deepCopy));
                 }
             }
 
@@ -1277,7 +1301,7 @@ abstract class Project implements ActiveRecordInterface
      * objects.
      *
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return                 \Roadmap\Model\Project Clone of current object.
+     * @return                 \Roadmap\Model\User Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1306,6 +1330,9 @@ abstract class Project implements ActiveRecordInterface
         }
         if ('ProjectActivity' == $relationName) {
             return $this->initProjectActivities();
+        }
+        if ('UserV2mom' == $relationName) {
+            return $this->initUserV2moms();
         }
     }
 
@@ -1358,7 +1385,7 @@ abstract class Project implements ActiveRecordInterface
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
      * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildProject is new, it will return
+     * If this ChildUser is new, it will return
      * an empty collection or the current collection; the criteria is ignored on a new object.
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
@@ -1375,7 +1402,7 @@ abstract class Project implements ActiveRecordInterface
                 $this->initProjectUsers();
             } else {
                 $collProjectUsers = ChildProjectUserQuery::create(null, $criteria)
-                    ->filterByProject($this)
+                    ->filterByUser($this)
                     ->find($con);
 
                 if (null !== $criteria) {
@@ -1420,7 +1447,7 @@ abstract class Project implements ActiveRecordInterface
      *
      * @param      Collection $projectUsers A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
-     * @return   ChildProject The current object (for fluent API support)
+     * @return   ChildUser The current object (for fluent API support)
      */
     public function setProjectUsers(Collection $projectUsers, ConnectionInterface $con = null)
     {
@@ -1430,7 +1457,7 @@ abstract class Project implements ActiveRecordInterface
         $this->projectUsersScheduledForDeletion = $projectUsersToDelete;
 
         foreach ($projectUsersToDelete as $projectUserRemoved) {
-            $projectUserRemoved->setProject(null);
+            $projectUserRemoved->setUser(null);
         }
 
         $this->collProjectUsers = null;
@@ -1471,7 +1498,7 @@ abstract class Project implements ActiveRecordInterface
             }
 
             return $query
-                ->filterByProject($this)
+                ->filterByUser($this)
                 ->count($con);
         }
 
@@ -1483,7 +1510,7 @@ abstract class Project implements ActiveRecordInterface
      * through the ChildProjectUser foreign key attribute.
      *
      * @param    ChildProjectUser $l ChildProjectUser
-     * @return   \Roadmap\Model\Project The current object (for fluent API support)
+     * @return   \Roadmap\Model\User The current object (for fluent API support)
      */
     public function addProjectUser(ChildProjectUser $l)
     {
@@ -1505,12 +1532,12 @@ abstract class Project implements ActiveRecordInterface
     protected function doAddProjectUser($projectUser)
     {
         $this->collProjectUsers[]= $projectUser;
-        $projectUser->setProject($this);
+        $projectUser->setUser($this);
     }
 
     /**
      * @param  ProjectUser $projectUser The projectUser object to remove.
-     * @return ChildProject The current object (for fluent API support)
+     * @return ChildUser The current object (for fluent API support)
      */
     public function removeProjectUser($projectUser)
     {
@@ -1521,7 +1548,7 @@ abstract class Project implements ActiveRecordInterface
                 $this->projectUsersScheduledForDeletion->clear();
             }
             $this->projectUsersScheduledForDeletion[]= clone $projectUser;
-            $projectUser->setProject(null);
+            $projectUser->setUser(null);
         }
 
         return $this;
@@ -1531,23 +1558,23 @@ abstract class Project implements ActiveRecordInterface
     /**
      * If this collection has already been initialized with
      * an identical criteria, it returns the collection.
-     * Otherwise if this Project is new, it will return
-     * an empty collection; or if this Project has previously
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
      * been saved, it will retrieve related ProjectUsers from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
-     * actually need in Project.
+     * actually need in User.
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
      * @return Collection|ChildProjectUser[] List of ChildProjectUser objects
      */
-    public function getProjectUsersJoinUser($criteria = null, $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getProjectUsersJoinProject($criteria = null, $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
         $query = ChildProjectUserQuery::create(null, $criteria);
-        $query->joinWith('User', $joinBehavior);
+        $query->joinWith('Project', $joinBehavior);
 
         return $this->getProjectUsers($query, $con);
     }
@@ -1601,7 +1628,7 @@ abstract class Project implements ActiveRecordInterface
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
      * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildProject is new, it will return
+     * If this ChildUser is new, it will return
      * an empty collection or the current collection; the criteria is ignored on a new object.
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
@@ -1618,7 +1645,7 @@ abstract class Project implements ActiveRecordInterface
                 $this->initProjectActivities();
             } else {
                 $collProjectActivities = ChildProjectActivityQuery::create(null, $criteria)
-                    ->filterByProject($this)
+                    ->filterByUser($this)
                     ->find($con);
 
                 if (null !== $criteria) {
@@ -1663,7 +1690,7 @@ abstract class Project implements ActiveRecordInterface
      *
      * @param      Collection $projectActivities A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
-     * @return   ChildProject The current object (for fluent API support)
+     * @return   ChildUser The current object (for fluent API support)
      */
     public function setProjectActivities(Collection $projectActivities, ConnectionInterface $con = null)
     {
@@ -1673,7 +1700,7 @@ abstract class Project implements ActiveRecordInterface
         $this->projectActivitiesScheduledForDeletion = $projectActivitiesToDelete;
 
         foreach ($projectActivitiesToDelete as $projectActivityRemoved) {
-            $projectActivityRemoved->setProject(null);
+            $projectActivityRemoved->setUser(null);
         }
 
         $this->collProjectActivities = null;
@@ -1714,7 +1741,7 @@ abstract class Project implements ActiveRecordInterface
             }
 
             return $query
-                ->filterByProject($this)
+                ->filterByUser($this)
                 ->count($con);
         }
 
@@ -1726,7 +1753,7 @@ abstract class Project implements ActiveRecordInterface
      * through the ChildProjectActivity foreign key attribute.
      *
      * @param    ChildProjectActivity $l ChildProjectActivity
-     * @return   \Roadmap\Model\Project The current object (for fluent API support)
+     * @return   \Roadmap\Model\User The current object (for fluent API support)
      */
     public function addProjectActivity(ChildProjectActivity $l)
     {
@@ -1748,12 +1775,12 @@ abstract class Project implements ActiveRecordInterface
     protected function doAddProjectActivity($projectActivity)
     {
         $this->collProjectActivities[]= $projectActivity;
-        $projectActivity->setProject($this);
+        $projectActivity->setUser($this);
     }
 
     /**
      * @param  ProjectActivity $projectActivity The projectActivity object to remove.
-     * @return ChildProject The current object (for fluent API support)
+     * @return ChildUser The current object (for fluent API support)
      */
     public function removeProjectActivity($projectActivity)
     {
@@ -1764,7 +1791,7 @@ abstract class Project implements ActiveRecordInterface
                 $this->projectActivitiesScheduledForDeletion->clear();
             }
             $this->projectActivitiesScheduledForDeletion[]= clone $projectActivity;
-            $projectActivity->setProject(null);
+            $projectActivity->setUser(null);
         }
 
         return $this;
@@ -1774,205 +1801,423 @@ abstract class Project implements ActiveRecordInterface
     /**
      * If this collection has already been initialized with
      * an identical criteria, it returns the collection.
-     * Otherwise if this Project is new, it will return
-     * an empty collection; or if this Project has previously
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
      * been saved, it will retrieve related ProjectActivities from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
-     * actually need in Project.
+     * actually need in User.
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
      * @return Collection|ChildProjectActivity[] List of ChildProjectActivity objects
      */
-    public function getProjectActivitiesJoinUser($criteria = null, $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getProjectActivitiesJoinProject($criteria = null, $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
         $query = ChildProjectActivityQuery::create(null, $criteria);
-        $query->joinWith('User', $joinBehavior);
+        $query->joinWith('Project', $joinBehavior);
 
         return $this->getProjectActivities($query, $con);
     }
 
     /**
-     * Clears out the collUsers collection
+     * Clears out the collUserV2moms collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addUsers()
+     * @see        addUserV2moms()
      */
-    public function clearUsers()
+    public function clearUserV2moms()
     {
-        $this->collUsers = null; // important to set this to NULL since that means it is uninitialized
-        $this->collUsersPartial = null;
+        $this->collUserV2moms = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Initializes the collUsers collection.
+     * Reset is the collUserV2moms collection loaded partially.
+     */
+    public function resetPartialUserV2moms($v = true)
+    {
+        $this->collUserV2momsPartial = $v;
+    }
+
+    /**
+     * Initializes the collUserV2moms collection.
      *
-     * By default this just sets the collUsers collection to an empty collection (like clearUsers());
+     * By default this just sets the collUserV2moms collection to an empty array (like clearcollUserV2moms());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
      * @return void
      */
-    public function initUsers()
+    public function initUserV2moms($overrideExisting = true)
     {
-        $this->collUsers = new ObjectCollection();
-        $this->collUsers->setModel('\Roadmap\Model\User');
+        if (null !== $this->collUserV2moms && !$overrideExisting) {
+            return;
+        }
+        $this->collUserV2moms = new ObjectCollection();
+        $this->collUserV2moms->setModel('\Roadmap\Model\UserV2mom');
     }
 
     /**
-     * Gets a collection of ChildUser objects related by a many-to-many relationship
-     * to the current object by way of the project_user cross-reference table.
+     * Gets an array of ChildUserV2mom objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
      * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildProject is new, it will return
+     * If this ChildUser is new, it will return
      * an empty collection or the current collection; the criteria is ignored on a new object.
      *
-     * @param      Criteria $criteria Optional query object to filter the query
-     * @param      ConnectionInterface $con Optional connection object
-     *
-     * @return ObjectCollection|ChildUser[] List of ChildUser objects
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return Collection|ChildUserV2mom[] List of ChildUserV2mom objects
+     * @throws PropelException
      */
-    public function getUsers($criteria = null, ConnectionInterface $con = null)
+    public function getUserV2moms($criteria = null, ConnectionInterface $con = null)
     {
-        if (null === $this->collUsers || null !== $criteria) {
-            if ($this->isNew() && null === $this->collUsers) {
+        $partial = $this->collUserV2momsPartial && !$this->isNew();
+        if (null === $this->collUserV2moms || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collUserV2moms) {
                 // return empty collection
-                $this->initUsers();
+                $this->initUserV2moms();
             } else {
-                $collUsers = ChildUserQuery::create(null, $criteria)
-                    ->filterByProject($this)
+                $collUserV2moms = ChildUserV2momQuery::create(null, $criteria)
+                    ->filterByUser($this)
                     ->find($con);
+
                 if (null !== $criteria) {
-                    return $collUsers;
+                    if (false !== $this->collUserV2momsPartial && count($collUserV2moms)) {
+                        $this->initUserV2moms(false);
+
+                        foreach ($collUserV2moms as $obj) {
+                            if (false == $this->collUserV2moms->contains($obj)) {
+                                $this->collUserV2moms->append($obj);
+                            }
+                        }
+
+                        $this->collUserV2momsPartial = true;
+                    }
+
+                    $collUserV2moms->getInternalIterator()->rewind();
+
+                    return $collUserV2moms;
                 }
-                $this->collUsers = $collUsers;
+
+                if ($partial && $this->collUserV2moms) {
+                    foreach ($this->collUserV2moms as $obj) {
+                        if ($obj->isNew()) {
+                            $collUserV2moms[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collUserV2moms = $collUserV2moms;
+                $this->collUserV2momsPartial = false;
             }
         }
 
-        return $this->collUsers;
+        return $this->collUserV2moms;
     }
 
     /**
-     * Sets a collection of User objects related by a many-to-many relationship
-     * to the current object by way of the project_user cross-reference table.
+     * Sets a collection of UserV2mom objects related by a one-to-many relationship
+     * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param  Collection $users A Propel collection.
-     * @param  ConnectionInterface $con Optional connection object
-     * @return ChildProject The current object (for fluent API support)
+     * @param      Collection $userV2moms A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return   ChildUser The current object (for fluent API support)
      */
-    public function setUsers(Collection $users, ConnectionInterface $con = null)
+    public function setUserV2moms(Collection $userV2moms, ConnectionInterface $con = null)
     {
-        $this->clearUsers();
-        $currentUsers = $this->getUsers();
+        $userV2momsToDelete = $this->getUserV2moms(new Criteria(), $con)->diff($userV2moms);
 
-        $this->usersScheduledForDeletion = $currentUsers->diff($users);
 
-        foreach ($users as $user) {
-            if (!$currentUsers->contains($user)) {
-                $this->doAddUser($user);
-            }
+        $this->userV2momsScheduledForDeletion = $userV2momsToDelete;
+
+        foreach ($userV2momsToDelete as $userV2momRemoved) {
+            $userV2momRemoved->setUser(null);
         }
 
-        $this->collUsers = $users;
+        $this->collUserV2moms = null;
+        foreach ($userV2moms as $userV2mom) {
+            $this->addUserV2mom($userV2mom);
+        }
+
+        $this->collUserV2moms = $userV2moms;
+        $this->collUserV2momsPartial = false;
 
         return $this;
     }
 
     /**
-     * Gets the number of ChildUser objects related by a many-to-many relationship
+     * Returns the number of related UserV2mom objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related UserV2mom objects.
+     * @throws PropelException
+     */
+    public function countUserV2moms(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collUserV2momsPartial && !$this->isNew();
+        if (null === $this->collUserV2moms || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collUserV2moms) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getUserV2moms());
+            }
+
+            $query = ChildUserV2momQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collUserV2moms);
+    }
+
+    /**
+     * Method called to associate a ChildUserV2mom object to this object
+     * through the ChildUserV2mom foreign key attribute.
+     *
+     * @param    ChildUserV2mom $l ChildUserV2mom
+     * @return   \Roadmap\Model\User The current object (for fluent API support)
+     */
+    public function addUserV2mom(ChildUserV2mom $l)
+    {
+        if ($this->collUserV2moms === null) {
+            $this->initUserV2moms();
+            $this->collUserV2momsPartial = true;
+        }
+
+        if (!in_array($l, $this->collUserV2moms->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddUserV2mom($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param UserV2mom $userV2mom The userV2mom object to add.
+     */
+    protected function doAddUserV2mom($userV2mom)
+    {
+        $this->collUserV2moms[]= $userV2mom;
+        $userV2mom->setUser($this);
+    }
+
+    /**
+     * @param  UserV2mom $userV2mom The userV2mom object to remove.
+     * @return ChildUser The current object (for fluent API support)
+     */
+    public function removeUserV2mom($userV2mom)
+    {
+        if ($this->getUserV2moms()->contains($userV2mom)) {
+            $this->collUserV2moms->remove($this->collUserV2moms->search($userV2mom));
+            if (null === $this->userV2momsScheduledForDeletion) {
+                $this->userV2momsScheduledForDeletion = clone $this->collUserV2moms;
+                $this->userV2momsScheduledForDeletion->clear();
+            }
+            $this->userV2momsScheduledForDeletion[]= clone $userV2mom;
+            $userV2mom->setUser(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collProjects collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addProjects()
+     */
+    public function clearProjects()
+    {
+        $this->collProjects = null; // important to set this to NULL since that means it is uninitialized
+        $this->collProjectsPartial = null;
+    }
+
+    /**
+     * Initializes the collProjects collection.
+     *
+     * By default this just sets the collProjects collection to an empty collection (like clearProjects());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initProjects()
+    {
+        $this->collProjects = new ObjectCollection();
+        $this->collProjects->setModel('\Roadmap\Model\Project');
+    }
+
+    /**
+     * Gets a collection of ChildProject objects related by a many-to-many relationship
+     * to the current object by way of the project_user cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildProject[] List of ChildProject objects
+     */
+    public function getProjects($criteria = null, ConnectionInterface $con = null)
+    {
+        if (null === $this->collProjects || null !== $criteria) {
+            if ($this->isNew() && null === $this->collProjects) {
+                // return empty collection
+                $this->initProjects();
+            } else {
+                $collProjects = ChildProjectQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    return $collProjects;
+                }
+                $this->collProjects = $collProjects;
+            }
+        }
+
+        return $this->collProjects;
+    }
+
+    /**
+     * Sets a collection of Project objects related by a many-to-many relationship
+     * to the current object by way of the project_user cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $projects A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return ChildUser The current object (for fluent API support)
+     */
+    public function setProjects(Collection $projects, ConnectionInterface $con = null)
+    {
+        $this->clearProjects();
+        $currentProjects = $this->getProjects();
+
+        $this->projectsScheduledForDeletion = $currentProjects->diff($projects);
+
+        foreach ($projects as $project) {
+            if (!$currentProjects->contains($project)) {
+                $this->doAddProject($project);
+            }
+        }
+
+        $this->collProjects = $projects;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of ChildProject objects related by a many-to-many relationship
      * to the current object by way of the project_user cross-reference table.
      *
      * @param      Criteria $criteria Optional query object to filter the query
      * @param      boolean $distinct Set to true to force count distinct
      * @param      ConnectionInterface $con Optional connection object
      *
-     * @return int the number of related ChildUser objects
+     * @return int the number of related ChildProject objects
      */
-    public function countUsers($criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countProjects($criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        if (null === $this->collUsers || null !== $criteria) {
-            if ($this->isNew() && null === $this->collUsers) {
+        if (null === $this->collProjects || null !== $criteria) {
+            if ($this->isNew() && null === $this->collProjects) {
                 return 0;
             } else {
-                $query = ChildUserQuery::create(null, $criteria);
+                $query = ChildProjectQuery::create(null, $criteria);
                 if ($distinct) {
                     $query->distinct();
                 }
 
                 return $query
-                    ->filterByProject($this)
+                    ->filterByUser($this)
                     ->count($con);
             }
         } else {
-            return count($this->collUsers);
+            return count($this->collProjects);
         }
     }
 
     /**
-     * Associate a ChildUser object to this object
+     * Associate a ChildProject object to this object
      * through the project_user cross reference table.
      *
-     * @param  ChildUser $user The ChildProjectUser object to relate
-     * @return ChildProject The current object (for fluent API support)
+     * @param  ChildProject $project The ChildProjectUser object to relate
+     * @return ChildUser The current object (for fluent API support)
      */
-    public function addUser(ChildUser $user)
+    public function addProject(ChildProject $project)
     {
-        if ($this->collUsers === null) {
-            $this->initUsers();
+        if ($this->collProjects === null) {
+            $this->initProjects();
         }
 
-        if (!$this->collUsers->contains($user)) { // only add it if the **same** object is not already associated
-            $this->doAddUser($user);
-            $this->collUsers[] = $user;
+        if (!$this->collProjects->contains($project)) { // only add it if the **same** object is not already associated
+            $this->doAddProject($project);
+            $this->collProjects[] = $project;
         }
 
         return $this;
     }
 
     /**
-     * @param    User $user The user object to add.
+     * @param    Project $project The project object to add.
      */
-    protected function doAddUser($user)
+    protected function doAddProject($project)
     {
         $projectUser = new ChildProjectUser();
-        $projectUser->setUser($user);
+        $projectUser->setProject($project);
         $this->addProjectUser($projectUser);
         // set the back reference to this object directly as using provided method either results
         // in endless loop or in multiple relations
-        if (!$user->getProjects()->contains($this)) {
-            $foreignCollection   = $user->getProjects();
+        if (!$project->getUsers()->contains($this)) {
+            $foreignCollection   = $project->getUsers();
             $foreignCollection[] = $this;
         }
     }
 
     /**
-     * Remove a ChildUser object to this object
+     * Remove a ChildProject object to this object
      * through the project_user cross reference table.
      *
-     * @param ChildUser $user The ChildProjectUser object to relate
-     * @return ChildProject The current object (for fluent API support)
+     * @param ChildProject $project The ChildProjectUser object to relate
+     * @return ChildUser The current object (for fluent API support)
      */
-    public function removeUser(ChildUser $user)
+    public function removeProject(ChildProject $project)
     {
-        if ($this->getUsers()->contains($user)) {
-            $this->collUsers->remove($this->collUsers->search($user));
+        if ($this->getProjects()->contains($project)) {
+            $this->collProjects->remove($this->collProjects->search($project));
 
-            if (null === $this->usersScheduledForDeletion) {
-                $this->usersScheduledForDeletion = clone $this->collUsers;
-                $this->usersScheduledForDeletion->clear();
+            if (null === $this->projectsScheduledForDeletion) {
+                $this->projectsScheduledForDeletion = clone $this->collProjects;
+                $this->projectsScheduledForDeletion->clear();
             }
 
-            $this->usersScheduledForDeletion[] = $user;
+            $this->projectsScheduledForDeletion[] = $project;
         }
 
         return $this;
@@ -1984,13 +2229,12 @@ abstract class Project implements ActiveRecordInterface
     public function clear()
     {
         $this->id = null;
-        $this->title = null;
-        $this->slug = null;
-        $this->state = null;
+        $this->email = null;
+        $this->name = null;
+        $this->picture = null;
         $this->created_at = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
-        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);
@@ -2018,8 +2262,13 @@ abstract class Project implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collUsers) {
-                foreach ($this->collUsers as $o) {
+            if ($this->collUserV2moms) {
+                foreach ($this->collUserV2moms as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collProjects) {
+                foreach ($this->collProjects as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -2033,10 +2282,14 @@ abstract class Project implements ActiveRecordInterface
             $this->collProjectActivities->clearIterator();
         }
         $this->collProjectActivities = null;
-        if ($this->collUsers instanceof Collection) {
-            $this->collUsers->clearIterator();
+        if ($this->collUserV2moms instanceof Collection) {
+            $this->collUserV2moms->clearIterator();
         }
-        $this->collUsers = null;
+        $this->collUserV2moms = null;
+        if ($this->collProjects instanceof Collection) {
+            $this->collProjects->clearIterator();
+        }
+        $this->collProjects = null;
     }
 
     /**
@@ -2046,7 +2299,7 @@ abstract class Project implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(ProjectTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(UserTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**
