@@ -2,6 +2,21 @@ projects: Projects
 team: Team
 you: Your Profile
 
-overwiew: Projects overview for %project%
+overview: Projects overview for %project%
 
 recent: recent
+
+nicedate: %month% %day%, %year%
+months:
+ - January
+ - February
+ - March
+ - April
+ - May
+ - June
+ - July
+ - August
+ - September
+ - October
+ - November
+ - December

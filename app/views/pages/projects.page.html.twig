@@ -1,6 +1,6 @@
 {% extends 'layouts/roadmap.layout.html.twig' %}
 
-{% block title %}{{ "overview"|trans({ "project": projectName }) }}{% endblock %}
+{% block title %}{{ "overview"|trans({ "%project%": projectName }) }}{% endblock %}
 {% block content %}
     <div class="project-list" id="recent-projects">
         <p class="project-list-type">{{ "recent"|trans }}</p>
@@ -12,13 +12,13 @@
                     <p class="date text-muted">{{ project.date }}</p>
                 </div>
                 <div class="col-md-4">
-                    <ul class="people list-unstyled">
+                    <ul class="people list-unstyled pull-right">
                         {% for user in project.users %}
                         <li>
                             <img src="{{ user.picture }}" title="{{ user.name.first }} {{ user.name.last }}" class="img-circle">
                         </li>
                         {% endfor %}
-                        <li class="assing-yourself">
+                        <li class="assign-yourself">
                             <i class="fa fa-check-square-o"></i>
                         </li>
 
@@ -48,10 +48,12 @@
         }
         .project h3 {
             font-size: 2.5em;
+            margin-top: .4em;
             font-family: 'museo_slab500', serif;
         }
         .project .date {
             font-style: italic;
+            margin-top: -.5em;
         }
         .project {
             margin-bottom: 2em;;
@@ -64,19 +66,44 @@
             width: 64px;
             height: 64px;
         }
-        .people .assing-yourself {
+        .people .assign-yourself {
             font-size: 48px;
             color: #666;
             margin-left: 15px;
         }
-        .people .assing-yourself:hover {
+        .people .assign-yourself:hover {
             color: #111;
             cursor: pointer;
+        }
+
+
+        .project-list {
+            border-top: 1px dotted silver;
+            padding-top:1px;
+            margin-top: 2em;
+        }
+        .project-list-type {
+            background-color: white;
+            margin: -.8em auto 2em;
+            padding: 0 1em;
+            font-style: italic;
+            color: #999;
+            display: block;
+            width: 7em;
+            text-align: ;
         }
     </style>
     <script type="text/javascript">
         $(".people img").tooltip({
-            "placement": "bottom",
+            "placement": "bottom"
+        });
+        $(".people").on('click', '.assign-yourself', function () {
+            var src = 'https://1.gravatar.com/avatar/78fd997a650fcb4ab88ffe059a240114?r=x&s=64';
+            $(this)
+                    .removeClass('assign-yourself')
+                    .html('<img src="'+src+'" class="img-circle" title="maciej lebkowski">')
+                    .find("img").tooltip({ "placement": "bottom" });
+
         });
     </script>
 {% endblock %}

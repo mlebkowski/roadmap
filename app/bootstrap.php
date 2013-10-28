@@ -1,5 +1,7 @@
 <?php
 
+use Propel\Runtime\Connection\ConnectionWrapper;
+use Propel\Runtime\Propel;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
 
@@ -17,9 +19,11 @@ $app = new Silex\Application([
 
 $app['debug'] = "1" === getenv('DEBUG');
 
+$app->register(new \Propel\Silex\PropelServiceProvider, [
+	'propel.config_file' => $app['path.config'] . '/propel.generated.conf',
+]);
 
 $app->register(new Igorw\Silex\ConfigServiceProvider($app['path.config'] . '/application.yaml'));
-$app->register(new Nassau\Silex\Provider\DatabaseProvider);
 $app->register(new Silex\Provider\TranslationServiceProvider, [
 	'nassau.translation.languages' => ['pl', 'en']
 ]);
@@ -38,7 +42,9 @@ $app->register(new Silex\Provider\TwigServiceProvider, [
 $app->register(new Silex\Provider\ServiceControllerServiceProvider);
 $app->register(new Silex\Provider\SessionServiceProvider, [
 	'session.storage.handler' => function (Application $app) {
-		return new PdoSessionHandler($app['db'], [
+		/** @var ConnectionWrapper $connectionInterface */
+		$connectionInterface = Propel::getConnection();
+		return new PdoSessionHandler($connectionInterface->getWrappedConnection(), [
 			'db_table' => 'session',
 			'db_id_col' => 'id',
 			'db_data_col' => 'data',
@@ -46,6 +52,8 @@ $app->register(new Silex\Provider\SessionServiceProvider, [
 		]);
 	},
 ]);
+session_start();
 $app->register(new Nicl\Silex\MarkdownServiceProvider);
-
+$app->register(new Nassau\Silex\Provider\TwigNicedateProvider);
+$app->register(new Nassau\Silex\Provider\FiniteStateMachineProvider);
 return $app;

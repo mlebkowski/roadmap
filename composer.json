@@ -17,11 +17,15 @@
         "symfony/twig-bridge": "*",
         "nicl/silex-markdown": "*@dev",
         "filp/whoops": "1.*",
-        "swiftmailer/swiftmailer": "~4.1.2"
+        "swiftmailer/swiftmailer": "~4.1.2",
+        "yohang/finite": "dev-master",
+        "propel/propel": "2.0.0-alpha2",
+        "propel/propel-service-provider": "2.*@dev"
     },
     "autoload": {
         "psr-0": {
-            "Nassau": "src/"
+            "Nassau": "src/",
+            "Roadmap": "src/"
         }
     },
     "extra": {

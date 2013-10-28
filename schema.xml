@@ -1,0 +1,54 @@
+<database name="roadmap" defaultIdMethod="native" namespace="Roadmap\Model"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:noNamespaceSchemaLocation="http://xsd.propelorm.org/1.6/database.xsd" >
+	<table name="session" phpName="Session">
+		<column name="id" type="CHAR" required="true" primaryKey="true" />
+		<column name="data" type="CHAR" sqlType="TEXT" required="true"/>
+		<column name="created_at" type="INTEGER" required="true"/>
+	</table>
+	<table name="project" phpName="Project">
+		<column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true"/>
+		<column name="title" type="CHAR" required="true"/>
+		<column name="slug" type="CHAR" required="true"/>
+		<column name="state" type="CHAR" sqlType="ENUM('new','planned','in-progress','shelved','aborted','finished')" required="true" defaultValue="new"/>
+		<column name="created_at" type="DATE" sqlType="DATETIME" required="true"/>
+	</table>
+	<table name="user" phpName="User">
+		<column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true"/>
+		<column name="email" type="CHAR" required="true"/>
+		<column name="name" type="CHAR" required="true"/>
+		<column name="display_name" type="CHAR" required="true"/>
+		<column name="created_at" type="DATE" sqlType="DATETIME" required="true"/>
+	</table>
+	<!-- TODO: user_github -->
+
+	<table name="project_user">
+		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+		<column name="user_id" type="integer" required="true"/>
+		<column name="project_id" type="integer" required="true"/>
+		<column name="created_at" type="date" sqlType="DATETIME" required="true"/>
+		<foreign-key foreignTable="project">
+			<reference local="project_id" foreign="id"/>
+		</foreign-key>
+		<foreign-key foreignTable="user">
+			<reference local="user_id" foreign="id"/>
+		</foreign-key>
+	</table>
+	<table name="project_activity">
+		<column name="id" type="integer" primaryKey="true" required="true" autoIncrement="true"/>
+		<column name="project_id" type="integer" required="true"/>
+		<column name="user_id" type="integer" required="true"/>
+		<column name="activity_type" type="CHAR" required="true"/>
+		<column name="created_at" type="date" sqlType="DATETIME" required="true"/>
+		<foreign-key foreignTable="user_id">
+			<reference local="user_id" foreign="id"/>
+		</foreign-key>
+		<foreign-key foreignTable="project">
+			<reference local="project_id" foreign="id"/>
+		</foreign-key>
+	</table>
+
+	<table name="user_v2mom">
+		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+	</table>
+</database>

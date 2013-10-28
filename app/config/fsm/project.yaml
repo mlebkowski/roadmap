@@ -1,0 +1,44 @@
+class: Roadmap\Model\Project
+states:
+  new:
+    type: initial
+  planned:
+    type: normal
+  in-progress:
+    type: normal
+  shelved:
+    type: normal
+  aborted:
+    type: final
+  finished:
+    type: final
+
+transitions:
+  research:
+    from:
+      - "new"
+    to: "planned"
+  start:
+    from:
+      - "new"
+      - "planned"
+    to: "in-progress"
+  delay:
+    from:
+      - "planned"
+      - "in-progress"
+    to: "shelved"
+  restore:
+    from:
+      - "shelved"
+    to: "planned"
+  cancel:
+    from:
+      - "planned"
+      - "in-progress"
+    to: "aborted"
+  deploy:
+    from:
+      - "planned"
+      - "in-progress"
+    to: "finished"

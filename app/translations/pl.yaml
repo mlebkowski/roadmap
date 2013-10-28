@@ -2,6 +2,22 @@ projects: Projekty
 team: Zespół
 you: Twój Profil
 
-overwiew: Podsumowanie projektów dla %project%
+overview: Podsumowanie projektów dla %project%
 
 recent: ostatnie
+
+
+nicedate: %day% %month% %year%
+months:
+ - stycznia
+ - lutego
+ - marca
+ - kwietnia
+ - maja
+ - czerwca
+ - lipca
+ - sierpnia
+ - września
+ - października
+ - listopada
+ - grudnia
