@@ -42,13 +42,13 @@ class UsersController extends AuthorizationAwareController
 		$v2mom = $profile->getV2mom($this->getAccount());
 		$version = $version ?: $v2mom->getLastVersionNumber();
 		$isLast = $v2mom->getLastVersionNumber() == (int) $version;
-		$v2momVersion = $v2mom->getOneVersion($version);
+
 
 
 		return [
 			'user.page.twig',
 			'profile' => $profile,
-			'v2mom' => $v2momVersion,
+			'v2mom' => $isLast ? $v2mom : $v2mom->getOneVersion($version),
 			'isLast' => $isLast,
 		];
 	}
