@@ -1,0 +1,106 @@
+{% extends 'layouts/roadmap.layout.twig' %}
+{% if profile.equals(user) %}
+    {% set activeMenu = "you" %}
+{% else %}
+    {% set activeMenu = "team" %}
+{% endif %}
+
+{% block title %}{{ "title.profile"|trans({"%name%": profile.name}) }}{% endblock %}
+{% block content %}
+    <div class="col-md-6 col-md-offset-3" id="user-profile">
+    <h2>
+        {{ profile.name }}
+    </h2>
+
+
+    <form method="post" action="/you">
+    {% if v2mom.isNew and profile.equals(user) %}
+        <p class="alert alert-info">{{ "message.first-time-v2mom"|trans }}</p>
+
+        <h3>Vision</h3>
+        <p>{{ "v2mom.vision"|trans }}</p>
+        <h3>Values</h3>
+        <p>{{ "v2mom.values"|trans }}</p>
+        <h3>Methods</h3>
+        <p>{{ "v2mom.methods"|trans }}</p>
+        <h3>Obstacles</h3>
+        <p>{{ "v2mom.obstacles"|trans }}</p>
+
+        <button data-is-new="true" data-toggle="edit" class="btn btn-success" data-save-text="{{ "save"|trans }}">
+            {{ "start-editing"|trans }}
+        </button>
+
+    {% elseif v2mom.isNew %}
+        <p class="alert alert-warning">{{ "message.no-v2mom"|trans }}</p>
+    {% else %}
+        <div class="row">
+        {% if v2mom.version > 1 %}
+            <p class="col-lg-6">
+                <a class="btn btn-default" href="/user/{{ profile.login }}/{{ v2mom.version - 1 }}">
+                    &larr; {{ "show previous"|trans }}
+                </a>
+            </p>
+        {% endif %}
+        {% if not isLast %}
+            <p class="col-lg-6{% if v2mom.version == 1 %} col-lg-offset-6{% endif %} ">
+                <a class="btn pull-right btn-default" href="/user/{{ profile.login }}">
+                    {{ "show most recent"|trans }} &raquo;
+                </a>
+            </p>
+        {% endif %}
+        </div>
+        {% if not isLast %}
+            <p class="alert alert-info">{{ "message.v2mom-version"|trans({"%date%": v2mom.updatedAt|nicedate}) }}</p>
+        {% endif %}
+        <h3>Vision</h3>
+        <p>{{ v2mom.vision }}</p>
+        <h3>Values</h3>
+        <p>{{ v2mom.values }}</p>
+        <h3>Methods</h3>
+        <p>{{ v2mom.methods }}</p>
+        <h3>Obstacles</h3>
+        <p>{{ v2mom.obstacles }}</p>
+
+        <button class="btn btn-default" data-toggle="edit" data-save-text="{{ "save"|trans }}">
+            {{ "edit"|trans }}
+        </button>
+    {% endif %}
+    </form>
+        <script type="text/javascript">
+            $('button[data-toggle=edit]').click(function () {
+                var $this = $(this),
+                    isNew = $this.attr('data-is-new'),
+                    label = $this.attr('data-save-text');
+
+                $this.siblings('p:not(.alert)').each(function () {
+                    var $p = $(this),
+                        textarea = $('<textarea class="form-control input-lg"/>');
+
+                    isNew ? textarea.attr('placeholder', $p.text()) : textarea.val($p.text());
+                    textarea.attr('name', $p.prev('h3').text().toLowerCase());
+                    $p.replaceWith(textarea);
+                });
+
+                $this.replaceWith('<button type="submit" class="btn btn-primary">'+ label +'</button>')
+            });
+
+        </script>
+
+    </div>
+
+    <div class="col-md-3 col-md-offset-1" style="display:none">
+        <h3>Activities</h3>
+        <ul class="list-unstyled">
+        {% for activity in profile.projectActivities|reverse|slice(0, 10) %}
+            <li>
+                {{ ("user.activity." ~ activity.activityType) | trans({
+                    "%project%": activity.project.title,
+                    "%date%": activity.createdAt|nicedate
+                }) | raw }}
+            </li>
+        {% else %}
+            <li><p class="alert alert-info">{{ "message.no-activities"|trans }}</p></li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

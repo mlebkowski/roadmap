@@ -87,10 +87,10 @@ abstract class UserV2mom implements ActiveRecordInterface
     protected $vision;
 
     /**
-     * The value for the values field.
+     * The value for the vals field.
      * @var        string
      */
-    protected $values;
+    protected $vals;
 
     /**
      * The value for the methods field.
@@ -477,14 +477,14 @@ abstract class UserV2mom implements ActiveRecordInterface
     }
 
     /**
-     * Get the [values] column value.
+     * Get the [vals] column value.
      *
      * @return   string
      */
     public function getValues()
     {
 
-        return $this->values;
+        return $this->vals;
     }
 
     /**
@@ -653,7 +653,7 @@ abstract class UserV2mom implements ActiveRecordInterface
     } // setVision()
 
     /**
-     * Set the value of [values] column.
+     * Set the value of [vals] column.
      *
      * @param      string $v new value
      * @return   \Roadmap\Model\UserV2mom The current object (for fluent API support)
@@ -664,9 +664,9 @@ abstract class UserV2mom implements ActiveRecordInterface
             $v = (string) $v;
         }
 
-        if ($this->values !== $v) {
-            $this->values = $v;
-            $this->modifiedColumns[] = UserV2momTableMap::VALUES;
+        if ($this->vals !== $v) {
+            $this->vals = $v;
+            $this->modifiedColumns[] = UserV2momTableMap::VALS;
         }
 
 
@@ -832,7 +832,7 @@ abstract class UserV2mom implements ActiveRecordInterface
             $this->vision = (null !== $col) ? (string) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserV2momTableMap::translateFieldName('Values', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->values = (null !== $col) ? (string) $col : null;
+            $this->vals = (null !== $col) ? (string) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserV2momTableMap::translateFieldName('Methods', TableMap::TYPE_PHPNAME, $indexType)];
             $this->methods = (null !== $col) ? (string) $col : null;
@@ -1149,8 +1149,8 @@ abstract class UserV2mom implements ActiveRecordInterface
         if ($this->isColumnModified(UserV2momTableMap::VISION)) {
             $modifiedColumns[':p' . $index++]  = 'VISION';
         }
-        if ($this->isColumnModified(UserV2momTableMap::VALUES)) {
-            $modifiedColumns[':p' . $index++]  = 'VALUES';
+        if ($this->isColumnModified(UserV2momTableMap::VALS)) {
+            $modifiedColumns[':p' . $index++]  = 'VALS';
         }
         if ($this->isColumnModified(UserV2momTableMap::METHODS)) {
             $modifiedColumns[':p' . $index++]  = 'METHODS';
@@ -1190,8 +1190,8 @@ abstract class UserV2mom implements ActiveRecordInterface
                     case 'VISION':
                         $stmt->bindValue($identifier, $this->vision, PDO::PARAM_STR);
                         break;
-                    case 'VALUES':
-                        $stmt->bindValue($identifier, $this->values, PDO::PARAM_STR);
+                    case 'VALS':
+                        $stmt->bindValue($identifier, $this->vals, PDO::PARAM_STR);
                         break;
                     case 'METHODS':
                         $stmt->bindValue($identifier, $this->methods, PDO::PARAM_STR);
@@ -1468,7 +1468,7 @@ abstract class UserV2mom implements ActiveRecordInterface
         if ($this->isColumnModified(UserV2momTableMap::USER_ID)) $criteria->add(UserV2momTableMap::USER_ID, $this->user_id);
         if ($this->isColumnModified(UserV2momTableMap::ACCOUNT_ID)) $criteria->add(UserV2momTableMap::ACCOUNT_ID, $this->account_id);
         if ($this->isColumnModified(UserV2momTableMap::VISION)) $criteria->add(UserV2momTableMap::VISION, $this->vision);
-        if ($this->isColumnModified(UserV2momTableMap::VALUES)) $criteria->add(UserV2momTableMap::VALUES, $this->values);
+        if ($this->isColumnModified(UserV2momTableMap::VALS)) $criteria->add(UserV2momTableMap::VALS, $this->vals);
         if ($this->isColumnModified(UserV2momTableMap::METHODS)) $criteria->add(UserV2momTableMap::METHODS, $this->methods);
         if ($this->isColumnModified(UserV2momTableMap::OBSTACLES)) $criteria->add(UserV2momTableMap::OBSTACLES, $this->obstacles);
         if ($this->isColumnModified(UserV2momTableMap::CREATED_AT)) $criteria->add(UserV2momTableMap::CREATED_AT, $this->created_at);
@@ -1936,7 +1936,7 @@ abstract class UserV2mom implements ActiveRecordInterface
         $this->user_id = null;
         $this->account_id = null;
         $this->vision = null;
-        $this->values = null;
+        $this->vals = null;
         $this->methods = null;
         $this->obstacles = null;
         $this->created_at = null;

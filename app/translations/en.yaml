@@ -12,10 +12,14 @@ title:
 
 
 more: more
-
+edit: Edit
+save: Save
+start-editing: Start editing
 
 message:
   no-activities: The activity feed is empty
+  no-v2mom: There is no v2mom to show at this time
+  v2mom-version: This is an earlier version of the v2mom. It was last edited %date%.
   first-time-v2mom: >
       This is your first time on this page. Look closely at what each of this keywords mean
       and edit them using a button on the right.

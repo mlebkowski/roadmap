@@ -100,7 +100,7 @@
         <column name="user_id" type="integer" required="true" />
         <column name="account_id" type="integer" required="true" />
         <column name="vision" type="CHAR" sqlType="TEXT" required="true"/>
-        <column name="values" type="CHAR" sqlType="TEXT" required="true"/>
+        <column name="vals" phpName="Values" type="CHAR" sqlType="TEXT" required="true"/>
         <column name="methods" type="CHAR" sqlType="TEXT" required="true"/>
         <column name="obstacles" type="CHAR" sqlType="TEXT" required="true"/>
         <foreign-key foreignTable="user">

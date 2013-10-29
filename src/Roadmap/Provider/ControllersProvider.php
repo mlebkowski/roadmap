@@ -49,6 +49,8 @@ class ControllersProvider implements ServiceProviderInterface, ControllerProvide
 		$controllers->get('/you', 'controller.users:showProfileAction');
 		$controllers->get('/user/{login}/{version}', 'controller.users:showProfileAction')->value('version', null);
 
+		$controllers->post('/you', 'controller.users:saveV2mom');
+
 		/** @noinspection PhpUndefinedMethodInspection */
 		$controllers->value('github.scope', $app['github.scope']);
 		/** @noinspection PhpUndefinedMethodInspection */

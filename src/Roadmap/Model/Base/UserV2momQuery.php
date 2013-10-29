@@ -25,7 +25,7 @@ use Roadmap\Model\Map\UserV2momTableMap;
  * @method     ChildUserV2momQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  * @method     ChildUserV2momQuery orderByAccountId($order = Criteria::ASC) Order by the account_id column
  * @method     ChildUserV2momQuery orderByVision($order = Criteria::ASC) Order by the vision column
- * @method     ChildUserV2momQuery orderByValues($order = Criteria::ASC) Order by the values column
+ * @method     ChildUserV2momQuery orderByValues($order = Criteria::ASC) Order by the vals column
  * @method     ChildUserV2momQuery orderByMethods($order = Criteria::ASC) Order by the methods column
  * @method     ChildUserV2momQuery orderByObstacles($order = Criteria::ASC) Order by the obstacles column
  * @method     ChildUserV2momQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
@@ -36,7 +36,7 @@ use Roadmap\Model\Map\UserV2momTableMap;
  * @method     ChildUserV2momQuery groupByUserId() Group by the user_id column
  * @method     ChildUserV2momQuery groupByAccountId() Group by the account_id column
  * @method     ChildUserV2momQuery groupByVision() Group by the vision column
- * @method     ChildUserV2momQuery groupByValues() Group by the values column
+ * @method     ChildUserV2momQuery groupByValues() Group by the vals column
  * @method     ChildUserV2momQuery groupByMethods() Group by the methods column
  * @method     ChildUserV2momQuery groupByObstacles() Group by the obstacles column
  * @method     ChildUserV2momQuery groupByCreatedAt() Group by the created_at column
@@ -66,7 +66,7 @@ use Roadmap\Model\Map\UserV2momTableMap;
  * @method     ChildUserV2mom findOneByUserId(int $user_id) Return the first ChildUserV2mom filtered by the user_id column
  * @method     ChildUserV2mom findOneByAccountId(int $account_id) Return the first ChildUserV2mom filtered by the account_id column
  * @method     ChildUserV2mom findOneByVision(string $vision) Return the first ChildUserV2mom filtered by the vision column
- * @method     ChildUserV2mom findOneByValues(string $values) Return the first ChildUserV2mom filtered by the values column
+ * @method     ChildUserV2mom findOneByValues(string $vals) Return the first ChildUserV2mom filtered by the vals column
  * @method     ChildUserV2mom findOneByMethods(string $methods) Return the first ChildUserV2mom filtered by the methods column
  * @method     ChildUserV2mom findOneByObstacles(string $obstacles) Return the first ChildUserV2mom filtered by the obstacles column
  * @method     ChildUserV2mom findOneByCreatedAt(string $created_at) Return the first ChildUserV2mom filtered by the created_at column
@@ -77,7 +77,7 @@ use Roadmap\Model\Map\UserV2momTableMap;
  * @method     array findByUserId(int $user_id) Return ChildUserV2mom objects filtered by the user_id column
  * @method     array findByAccountId(int $account_id) Return ChildUserV2mom objects filtered by the account_id column
  * @method     array findByVision(string $vision) Return ChildUserV2mom objects filtered by the vision column
- * @method     array findByValues(string $values) Return ChildUserV2mom objects filtered by the values column
+ * @method     array findByValues(string $vals) Return ChildUserV2mom objects filtered by the vals column
  * @method     array findByMethods(string $methods) Return ChildUserV2mom objects filtered by the methods column
  * @method     array findByObstacles(string $obstacles) Return ChildUserV2mom objects filtered by the obstacles column
  * @method     array findByCreatedAt(string $created_at) Return ChildUserV2mom objects filtered by the created_at column
@@ -178,7 +178,7 @@ abstract class UserV2momQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, USER_ID, ACCOUNT_ID, VISION, VALUES, METHODS, OBSTACLES, CREATED_AT, UPDATED_AT, VERSION FROM user_v2mom WHERE ID = :p0';
+        $sql = 'SELECT ID, USER_ID, ACCOUNT_ID, VISION, VALS, METHODS, OBSTACLES, CREATED_AT, UPDATED_AT, VERSION FROM user_v2mom WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -424,12 +424,12 @@ abstract class UserV2momQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the values column
+     * Filter the query on the vals column
      *
      * Example usage:
      * <code>
-     * $query->filterByValues('fooValue');   // WHERE values = 'fooValue'
-     * $query->filterByValues('%fooValue%'); // WHERE values LIKE '%fooValue%'
+     * $query->filterByValues('fooValue');   // WHERE vals = 'fooValue'
+     * $query->filterByValues('%fooValue%'); // WHERE vals LIKE '%fooValue%'
      * </code>
      *
      * @param     string $values The value to use as filter.
@@ -449,7 +449,7 @@ abstract class UserV2momQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserV2momTableMap::VALUES, $values, $comparison);
+        return $this->addUsingAlias(UserV2momTableMap::VALS, $values, $comparison);
     }
 
     /**

@@ -27,7 +27,7 @@ class UserProvider implements ServiceProviderInterface
 		});
 		$app['account-manager'] = $app->share(function (Application $app)
 		{
-			return new AccountManager($app['domain.base'], $app['twig'], $app['session']);
+			return new AccountManager($app['domain.base'], $app['user-manager']);
 		});
 
 		$app['authorization-aware'] = new \ArrayObject;

@@ -43,17 +43,26 @@ class UserManager
 		}
 		$this->accessToken = $authorization['access_token'];
 
-		$this->user = $this->session->get(self::KEY_USER);
+		$userId = $this->session->get(self::KEY_USER);
+		$this->user = UserQuery::create()->findPk($userId);
 		if (null === $this->user)
 		{
 			$user = $this->prepareUser();
 			$this->prepareAccounts();
 
-			$this->session->set(self::KEY_USER, $user);
+			$this->session->set(self::KEY_USER, $user->getId());
 		}
 
 		$request->attributes->set(self::KEY_USER, $this->user);
 
+	}
+
+	/**
+	 * @return User
+	 */
+	public function getUser()
+	{
+		return $this->user;
 	}
 
 	private function fetch($path)
@@ -100,4 +109,5 @@ class UserManager
 			$user->save();
 		}
 	}
+
 }

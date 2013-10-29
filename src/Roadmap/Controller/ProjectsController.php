@@ -35,7 +35,7 @@ class ProjectsController extends AuthorizationAwareController
 
 
 		return [
-			'projects.page.html.twig',
+			'projects.page.twig',
 			'recent' => $this->attachStateMachine($recent->getResults(), 0, 3),
 			'finished' => $this->attachStateMachine($recent->getResults(), 1),
 			'hasArchive' => $recent->haveToPaginate(),
@@ -47,7 +47,7 @@ class ProjectsController extends AuthorizationAwareController
 	public function addProjectForm(Request $request, $data = [])
 	{
 		return [
-			'add-project.page.html.twig'
+			'add-project.page.twig'
 		] + $data;
 	}
 

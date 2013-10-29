@@ -9,27 +9,22 @@ use Roadmap\Model\User;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class AccountManager
 {
 	const KEY_ACCOUNT = 'account';
 
 	private $baseDomain;
-	/**
-	 * @var \Symfony\Component\HttpFoundation\Session\Session
-	 */
-	private $session;
-	/**
-	 * @var \Twig_Environment
-	 */
-	private $twig;
 
-	public function __construct($baseDomain, \Twig_Environment $twig, Session $session)
+	/**
+	 * @var UserManager
+	 */
+	private $userManager;
+
+	public function __construct($baseDomain, UserManager $userManager)
 	{
 		$this->baseDomain = $baseDomain;
-		$this->session = $session;
-		$this->twig = $twig;
+		$this->userManager = $userManager;
 	}
 
 	/**
@@ -40,7 +35,7 @@ class AccountManager
 	public function onBeforeRequest(Request $request)
 	{
 		/** @var User $user */
-		$user = $this->session->get('user');
+		$user = $this->userManager->getUser();
 		if (null === $user)
 		{
 			return null;
@@ -79,7 +74,7 @@ class AccountManager
 	 * @param $user
 	 * @return RedirectResponse|Response
 	 */
-	private function chooseAccount($user)
+	private function chooseAccount(User $user)
 	{
 		if (1 === $user->getAccounts()->count()) {
 			$name = $user->getAccounts()->getFirst()->getName();
@@ -87,10 +82,11 @@ class AccountManager
 			return new RedirectResponse($url);
 		}
 
-		return new Response($this->twig->render('choose.page.html.twig', [
+		return [
+			'choose.page.twig',
 			'baseDomain' => $this->baseDomain,
 			'choices' => $user->getAccounts(),
-		]));
+		];
 	}
 
 

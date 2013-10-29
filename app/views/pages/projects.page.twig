@@ -1,4 +1,4 @@
-{% extends 'layouts/roadmap.layout.html.twig' %}
+{% extends 'layouts/roadmap.layout.twig' %}
 {% set activeMenu = "projects" %}
 
 {% block title %}{{ "title.overview"|trans({ "%accountName%": account.name }) }}{% endblock %}
@@ -9,7 +9,7 @@
         <ul class="list-unstyled">
             {% for project in recent %}
             <li class="project row">
-                {% include 'project.block.html.twig' with {"project": project} %}
+                {% include 'project.block.twig' with {"project": project} %}
             </li>
             {% endfor %}
         </ul>
@@ -24,7 +24,7 @@
         <ul class="list-unstyled">
             {% for project in ongoing %}
             <li class="project row">
-                {% include 'project.block.html.twig' with {"project": project} %}
+                {% include 'project.block.twig' with {"project": project} %}
             </li>
             {% endfor %}
         </ul>
@@ -36,7 +36,7 @@
         <ul class="list-unstyled">
             {% for project in new %}
             <li class="project row">
-                {% include 'blocks/project.block.html.twig' with {"project": project} %}
+                {% include 'blocks/project.block.twig' with {"project": project} %}
             </li>
             {% endfor %}
         </ul>
@@ -49,7 +49,7 @@
         <ul class="list-unstyled">
             {% for project in finished %}
             <li class="project row">
-                {% include 'blocks/project.block.html.twig' with {"project": project} %}
+                {% include 'blocks/project.block.twig' with {"project": project} %}
             </li>
             {% endfor %}
         </ul>

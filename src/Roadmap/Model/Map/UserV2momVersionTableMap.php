@@ -90,9 +90,9 @@ class UserV2momVersionTableMap extends TableMap
     const VISION = 'user_v2mom_version.VISION';
 
     /**
-     * the column name for the VALUES field
+     * the column name for the VALS field
      */
-    const VALUES = 'user_v2mom_version.VALUES';
+    const VALS = 'user_v2mom_version.VALS';
 
     /**
      * the column name for the METHODS field
@@ -133,9 +133,9 @@ class UserV2momVersionTableMap extends TableMap
     protected static $fieldNames = array (
         self::TYPE_PHPNAME       => array('Id', 'UserId', 'AccountId', 'Vision', 'Values', 'Methods', 'Obstacles', 'CreatedAt', 'UpdatedAt', 'Version', ),
         self::TYPE_STUDLYPHPNAME => array('id', 'userId', 'accountId', 'vision', 'values', 'methods', 'obstacles', 'createdAt', 'updatedAt', 'version', ),
-        self::TYPE_COLNAME       => array(UserV2momVersionTableMap::ID, UserV2momVersionTableMap::USER_ID, UserV2momVersionTableMap::ACCOUNT_ID, UserV2momVersionTableMap::VISION, UserV2momVersionTableMap::VALUES, UserV2momVersionTableMap::METHODS, UserV2momVersionTableMap::OBSTACLES, UserV2momVersionTableMap::CREATED_AT, UserV2momVersionTableMap::UPDATED_AT, UserV2momVersionTableMap::VERSION, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'USER_ID', 'ACCOUNT_ID', 'VISION', 'VALUES', 'METHODS', 'OBSTACLES', 'CREATED_AT', 'UPDATED_AT', 'VERSION', ),
-        self::TYPE_FIELDNAME     => array('id', 'user_id', 'account_id', 'vision', 'values', 'methods', 'obstacles', 'created_at', 'updated_at', 'version', ),
+        self::TYPE_COLNAME       => array(UserV2momVersionTableMap::ID, UserV2momVersionTableMap::USER_ID, UserV2momVersionTableMap::ACCOUNT_ID, UserV2momVersionTableMap::VISION, UserV2momVersionTableMap::VALS, UserV2momVersionTableMap::METHODS, UserV2momVersionTableMap::OBSTACLES, UserV2momVersionTableMap::CREATED_AT, UserV2momVersionTableMap::UPDATED_AT, UserV2momVersionTableMap::VERSION, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'USER_ID', 'ACCOUNT_ID', 'VISION', 'VALS', 'METHODS', 'OBSTACLES', 'CREATED_AT', 'UPDATED_AT', 'VERSION', ),
+        self::TYPE_FIELDNAME     => array('id', 'user_id', 'account_id', 'vision', 'vals', 'methods', 'obstacles', 'created_at', 'updated_at', 'version', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
@@ -148,9 +148,9 @@ class UserV2momVersionTableMap extends TableMap
     protected static $fieldKeys = array (
         self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'AccountId' => 2, 'Vision' => 3, 'Values' => 4, 'Methods' => 5, 'Obstacles' => 6, 'CreatedAt' => 7, 'UpdatedAt' => 8, 'Version' => 9, ),
         self::TYPE_STUDLYPHPNAME => array('id' => 0, 'userId' => 1, 'accountId' => 2, 'vision' => 3, 'values' => 4, 'methods' => 5, 'obstacles' => 6, 'createdAt' => 7, 'updatedAt' => 8, 'version' => 9, ),
-        self::TYPE_COLNAME       => array(UserV2momVersionTableMap::ID => 0, UserV2momVersionTableMap::USER_ID => 1, UserV2momVersionTableMap::ACCOUNT_ID => 2, UserV2momVersionTableMap::VISION => 3, UserV2momVersionTableMap::VALUES => 4, UserV2momVersionTableMap::METHODS => 5, UserV2momVersionTableMap::OBSTACLES => 6, UserV2momVersionTableMap::CREATED_AT => 7, UserV2momVersionTableMap::UPDATED_AT => 8, UserV2momVersionTableMap::VERSION => 9, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'USER_ID' => 1, 'ACCOUNT_ID' => 2, 'VISION' => 3, 'VALUES' => 4, 'METHODS' => 5, 'OBSTACLES' => 6, 'CREATED_AT' => 7, 'UPDATED_AT' => 8, 'VERSION' => 9, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'account_id' => 2, 'vision' => 3, 'values' => 4, 'methods' => 5, 'obstacles' => 6, 'created_at' => 7, 'updated_at' => 8, 'version' => 9, ),
+        self::TYPE_COLNAME       => array(UserV2momVersionTableMap::ID => 0, UserV2momVersionTableMap::USER_ID => 1, UserV2momVersionTableMap::ACCOUNT_ID => 2, UserV2momVersionTableMap::VISION => 3, UserV2momVersionTableMap::VALS => 4, UserV2momVersionTableMap::METHODS => 5, UserV2momVersionTableMap::OBSTACLES => 6, UserV2momVersionTableMap::CREATED_AT => 7, UserV2momVersionTableMap::UPDATED_AT => 8, UserV2momVersionTableMap::VERSION => 9, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'USER_ID' => 1, 'ACCOUNT_ID' => 2, 'VISION' => 3, 'VALS' => 4, 'METHODS' => 5, 'OBSTACLES' => 6, 'CREATED_AT' => 7, 'UPDATED_AT' => 8, 'VERSION' => 9, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'account_id' => 2, 'vision' => 3, 'vals' => 4, 'methods' => 5, 'obstacles' => 6, 'created_at' => 7, 'updated_at' => 8, 'version' => 9, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
@@ -174,7 +174,7 @@ class UserV2momVersionTableMap extends TableMap
         $this->addColumn('USER_ID', 'UserId', 'INTEGER', true, null, null);
         $this->addColumn('ACCOUNT_ID', 'AccountId', 'INTEGER', true, null, null);
         $this->addColumn('VISION', 'Vision', 'CHAR', true, null, null);
-        $this->addColumn('VALUES', 'Values', 'CHAR', true, null, null);
+        $this->addColumn('VALS', 'Values', 'CHAR', true, null, null);
         $this->addColumn('METHODS', 'Methods', 'CHAR', true, null, null);
         $this->addColumn('OBSTACLES', 'Obstacles', 'CHAR', true, null, null);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
@@ -381,7 +381,7 @@ class UserV2momVersionTableMap extends TableMap
             $criteria->addSelectColumn(UserV2momVersionTableMap::USER_ID);
             $criteria->addSelectColumn(UserV2momVersionTableMap::ACCOUNT_ID);
             $criteria->addSelectColumn(UserV2momVersionTableMap::VISION);
-            $criteria->addSelectColumn(UserV2momVersionTableMap::VALUES);
+            $criteria->addSelectColumn(UserV2momVersionTableMap::VALS);
             $criteria->addSelectColumn(UserV2momVersionTableMap::METHODS);
             $criteria->addSelectColumn(UserV2momVersionTableMap::OBSTACLES);
             $criteria->addSelectColumn(UserV2momVersionTableMap::CREATED_AT);
@@ -392,7 +392,7 @@ class UserV2momVersionTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.USER_ID');
             $criteria->addSelectColumn($alias . '.ACCOUNT_ID');
             $criteria->addSelectColumn($alias . '.VISION');
-            $criteria->addSelectColumn($alias . '.VALUES');
+            $criteria->addSelectColumn($alias . '.VALS');
             $criteria->addSelectColumn($alias . '.METHODS');
             $criteria->addSelectColumn($alias . '.OBSTACLES');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
