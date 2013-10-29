@@ -4,6 +4,7 @@ namespace Roadmap\Provider;
 
 use ArrayObject;
 use Roadmap\Controller\ProjectsController;
+use Roadmap\Controller\UsersController;
 use Roadmap\User\AccountManager;
 use Roadmap\User\UserManager;
 use Silex\Application;
@@ -36,12 +37,16 @@ class ControllersProvider implements ServiceProviderInterface, ControllerProvide
 		$controllers->get('/add-project', 'controller.projects:addProjectForm');
 		$controllers->post('/add-project', 'controller.projects:saveProject');
 
+		$controllers->post('/project/{slug}', 'controller.projects:transitionProject');
+
 		$controllers->post('/project/{slug}/{assign}', 'controller.projects:assignToProject')
 			->assert('assing', '/^(assing|resign)$/')
 			->convert('assing', function ($value) {
 				return $value === 'assign';
 			});
 
+		$controllers->get('/you', 'controller.users:showProfileAction');
+		$controllers->get('/user/{login}/{version}', 'controller.users:showProfileAction')->value('version', null);
 
 		/** @noinspection PhpUndefinedMethodInspection */
 		$controllers->value('github.scope', $app['github.scope']);
@@ -89,6 +94,10 @@ class ControllersProvider implements ServiceProviderInterface, ControllerProvide
 		{
 			return new ProjectsController($app['fsm.factory']);
 		});
+		$app['controller.users'] = $app->share(function (Application $app)
+		{
+			return new UsersController;
+		});
 	}
 
 	/**
@@ -103,6 +112,7 @@ class ControllersProvider implements ServiceProviderInterface, ControllerProvide
 		/** @var ArrayObject $collection */
 		$collection = $app['authorization-aware'];
 		$collection->append('controller.projects');
+		$collection->append('controller.users');
 	}
 
 

@@ -1,6 +1,7 @@
 {% extends "layouts/roadmap.layout.html.twig" %}
+{% set activeMenu = "add-project" %}
 
-{% block title %}{{ "add-project"|trans }}{% endblock %}
+{% block title %}{{ "title.add-project"|trans({"%accountName%": account.name}) }}{% endblock %}
 
 {% block content %}
     <form method="post" class="col-md-6 col-md-offset-3">

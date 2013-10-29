@@ -3,12 +3,21 @@ projects: Projekty
 team: Zespół
 you: Twój Profil
 
-overview: Podsumowanie projektów dla %project%
+title:
+  overview: Podsumowanie projektów dla %accountName%
+  add-project: Dodaj projekt do %accountName%
+  choose: Wybierz organizację
+  profile: %name% -- profil
 
 more: więcej
 
-choose_organization: Wybierz organizację
 no_organizations: Nie jesteś członkiem żadnej organizacji na Githubie. <a href="%url%">Możesz ją założyć!</a>
+
+v2mom:
+  vision: Your companys (or yours) grand vision. This is the master plan you’re trying to achieve
+  values: Those are tie breakers. Whenever you’ve hit a dead end, look up to your values and decide what to do next.
+  methods: What’s needed to be done, to achieve your goals
+  obstacles: Write down everything that could stop you and… avoid it at all cost! Do not let those reasons interfere with your plan.
 
 
 project:

@@ -46,6 +46,12 @@ class Project
 		return $this->stateMachine->getCurrentState()->isFinal();
 	}
 
+	public function apply($transition)
+	{
+		return $this->stateMachine->apply($transition);
+	}
+
+
 
 	public function canCancel()
 	{

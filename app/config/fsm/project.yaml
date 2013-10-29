@@ -34,6 +34,8 @@ transitions:
     to: "planned"
   cancel:
     from:
+      - "new"
+      - "shelved"
       - "planned"
       - "in-progress"
     to: "aborted"

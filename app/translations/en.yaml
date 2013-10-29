@@ -3,13 +3,34 @@ projects: Projects
 team: Team
 you: Your Profile
 
-overview: Projects overview for %project%
+title:
+  overview: Projects overview for %accountName%
+  add-project: Add project for %accountName%
+  choose: Choose your organization
+  profile: %name%’s profile
 
 
 more: more
 
-choose_organization: Choose your organization
-no_organizations: You are not a part of any organization on Github. <a href="%url%">Create one!</a>
+
+message:
+  no-activities: The activity feed is empty
+  first-time-v2mom: >
+      This is your first time on this page. Look closely at what each of this keywords mean
+      and edit them using a button on the right.
+  no-organizations: You are not a part of any organization on Github. <a href="%url%">Create one!</a>
+
+v2mom:
+  vision: Your companys (or yours) grand vision. This is the master plan you’re trying to achieve
+  values: Those are tie breakers. Whenever you’ve hit a dead end, look up to your values and decide what to do next.
+  methods: What’s needed to be done, to achieve your goals
+  obstacles: Write down everything that could stop you and… avoid it at all cost! Do not let those reasons interfere with your plan.
+
+user:
+  activity:
+    create: at %date% created <code>%project%</code>
+    assign: at %date% assigned themself to <code>%project%</code>
+    resing: at %date% resigned themself from <code>%project%</code>
 
 project:
   transition:

@@ -1,6 +1,7 @@
 {% extends 'layouts/roadmap.layout.html.twig' %}
+{% set activeMenu = "projects" %}
 
-{% block title %}{{ "overview"|trans({ "%project%": account.name }) }}{% endblock %}
+{% block title %}{{ "title.overview"|trans({ "%accountName%": account.name }) }}{% endblock %}
 {% block content %}
     <div class="project-list" id="recent">
         <p class="project-list-type">{{ "project.group.recent"|trans }}</p>
@@ -34,7 +35,7 @@
         <ul class="list-unstyled">
             {% for project in new %}
             <li class="project row">
-                {% include 'project.block.html.twig' with {"project": project} %}
+                {% include 'blocks/project.block.html.twig' with {"project": project} %}
             </li>
             {% endfor %}
         </ul>
@@ -47,7 +48,7 @@
         <ul class="list-unstyled">
             {% for project in finished %}
             <li class="project row">
-                {% include 'project.block.html.twig' with {"project": project} %}
+                {% include 'blocks/project.block.html.twig' with {"project": project} %}
             </li>
             {% endfor %}
         </ul>
@@ -58,6 +59,22 @@
     <script type="text/javascript">
         $(".people img").tooltip({
             "placement": "bottom"
+        });
+        $('.project-transition').on('click', 'li', function () {
+            var $this = $(this),
+                    slug = $this.parents('.dropdown-menu').attr('data-slug'),
+                    transition = $this.attr('data-transition');
+            $.ajax({
+                'method': 'POST',
+                'url': '/project/' + slug,
+                'data': {"transition": transition},
+                'beforeSend': function () {
+                    $this.parents('.project-transition').find('i').removeClass().addClass('spinner spinner16');
+                },
+                'complete': function () {
+                    window.location.replace(window.location.href.replace(/$|#.*/, ''));
+                }
+            });
         });
         $(".people").on('click', '.assign-yourself', function () {
             var $this = $(this);

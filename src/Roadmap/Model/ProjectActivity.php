@@ -15,7 +15,7 @@ class ProjectActivity extends BaseProjectActivity
 	const ACTIVITY_RESTORE = 'restore';
 	const ACTIVITY_CANCEL = 'cancel';
 
-	const ACTIVITY_ASSIGN = 'assing';
+	const ACTIVITY_ASSIGN = 'assign';
 	const ACTIVITY_RESIGN = 'resing';
 
 }

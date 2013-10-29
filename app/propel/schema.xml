@@ -7,7 +7,7 @@
 		<column name="created_at" type="INTEGER" required="true"/>
 	</table>
     
-    <table name="account" phpName="Account">
+    <table name="account">
         <column name="id" type="integer" required="true" autoIncrement="true" primaryKey="true"/>
         <column name="name" type="CHAR" size="128"/>
         <column name="avatar_url" type="CHAR" size="255" required="true"/>

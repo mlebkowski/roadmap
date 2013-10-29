@@ -2,29 +2,39 @@
     <h3>
         <a href="/project/{{ project.slug }}">{{ project.title }}</a>
         {% if not project.stateMachine.isFinal %}
-        <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                <i class="fa fa-cog"></i>
-            </button>
-            <ul class="dropdown-menu" role="menu">
+        <div class="btn-group project-transition">
+            <i class="fa fa-cog" data-toggle="dropdown"></i>
+            <ul class="dropdown-menu" role="menu" data-slug="{{ project.slug }}">
                 {% if project.stateMachine.canResearch %}
-                <li><a href="#">{{ "project.transition.research"|trans }}</a></li>
+                <li data-transition="research">
+                    <a>{{ "project.transition.research"|trans }}</a>
+                </li>
                 {% endif %}
                 {% if project.stateMachine.canStart %}
-                <li><a href="#">{{ "project.transition.start"|trans }}</a></li>
+                <li data-transition="start">
+                    <a>{{ "project.transition.start"|trans }}</a>
+                </li>
                 {% endif %}
                 {% if project.stateMachine.canDeploy %}
-                <li><a href="#">{{ "project.transition.deploy"|trans }}</a></li>
+                <li data-transition="deploy">
+                    <a>{{ "project.transition.deploy"|trans }}</a>
+                </li>
                 {% endif %}
                 {% if project.stateMachine.canDelay %}
-                <li><a href="#">{{ "project.transition.delay"|trans }}</a></li>
+                <li data-transition="delay">
+                    <a>{{ "project.transition.delay"|trans }}</a>
+                </li>
                 {% endif %}
                 {% if project.stateMachine.canRestore %}
-                <li><a href="#">{{ "project.transition.restore"|trans }}</a></li>
+                <li data-transition="restore">
+                    <a>{{ "project.transition.restore"|trans }}</a>
+                </li>
                 {% endif %}
                 {% if project.stateMachine.canCancel %}
                 <li class="divider"></li>
-                <li><a href="#" class="btn-danger">{{ "project.transition.cancel"|trans }}</a></li>
+                <li data-transition="cancel">
+                    <a class="btn-danger">{{ "project.transition.cancel"|trans }}</a>
+                </li>
                 {% endif %}
             </ul>
         </div>

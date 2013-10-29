@@ -8,10 +8,18 @@
             </div>
 
             <ul class="nav navbar-nav navbar-right">
-                <li class=""><a href="/add-project">{{ "add-project"|trans }}</a></li>
-                <li class="active"><a href="/">{{ "projects"|trans }}</a></li>
-                <li><a href="/team">{{ "team"|trans }}</a></li>
-                <li><a href="/you">{{ "you"|trans }}</a></li>
+                <li{% if activeMenu == "add-project" %} class="active"{% endif %}>
+                    <a href="/add-project">{{ "add-project"|trans }}</a>
+                </li>
+                <li{% if activeMenu == "projects" %} class="active"{% endif %}>
+                    <a href="/">{{ "projects"|trans }}</a>
+                </li>
+                <li{% if activeMenu == "team" %} class="active"{% endif %}>
+                    <a href="/team">{{ "team"|trans }}</a>
+                </li>
+                <li{% if activeMenu == "you" %} class="active"{% endif %}>
+                    <a href="/you">{{ "you"|trans }}</a>
+                </li>
             </ul>
         </div></nav>
     </div>

@@ -1,0 +1,43 @@
+{% extends 'layouts/roadmap.layout.html.twig' %}
+{% if profile.equals(user) %}
+    {% set activeMenu = "you" %}
+{% else %}
+    {% set activeMenu = "team" %}
+{% endif %}
+
+{% block title %}{{ "title.profile"|trans({"%name%": profile.name}) }}{% endblock %}
+{% block content %}
+    <div class="col-md-5 col-md-offset-2" id="user-profile">
+    <h2>
+        {{ profile.name }}
+    </h2>
+
+    {% if v2mom.isNew and profile.equals(user) %}
+    <p class="alert alert-info">{{ "message.first-time-v2mom"|trans }}</p>
+    {% endif %}
+
+    <h3>Vision</h3>
+    <p>{{ v2mom.vision|default( "v2mom.vision"|trans ) }}</p>
+    <h3>Values</h3>
+    <p>{{ v2mom.values|default( "v2mom.values"|trans ) }}</p>
+    <h3>Methods</h3>
+    <p>{{ v2mom.methods|default( "v2mom.methods"|trans ) }}</p>
+    <h3>Obstacles</h3>
+    <p>{{ v2mom.obstacles|default( "v2mom.obstacles"|trans ) }}</p>
+    </div>
+    <div class="col-md-3 col-md-offset-1">
+        <h3>Activities</h3>
+        <ul class="list-unstyled">
+        {% for activity in profile.projectActivities|slice(1, 10) %}
+            <li>
+                {{ ("user.activity." ~ activity.activityType) | trans({
+                    "%project%": activity.project.title,
+                    "%date%": activity.createdAt|nicedate
+                }) | raw }}
+            </li>
+        {% else %}
+            <li><p class="alert alert-info">{{ "message.no-activities"|trans }}</p></li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

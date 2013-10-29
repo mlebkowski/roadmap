@@ -14,7 +14,7 @@
 }
 body {
 	font-family: 'Open sans', sans-serif;
-	padding-top: 60px;
+	padding: 60px 0 120px;
 }
 .navbar-brand img {
 	margin: -10px 0 -4px;
@@ -27,8 +27,16 @@ body {
 		font-size: 2.5em;
 		margin-top: .4em;
 		font-family: 'museo_slab500', serif;
+
+		.project-transition .fa {
+			font-size: .6em;
+			color: #666;
+			vertical-align: middle;
+			cursor: pointer;
+		}
 	}
-	 .date {
+
+	.date {
 		font-style: italic;
 		margin-top: -.5em;
 	}
@@ -94,7 +102,11 @@ body {
 	border-top:6px solid rgba(0,174,239,.8);
 	border-radius:100%;
 }
-
+.spinner16 {
+	height:16px;
+	width:16px;
+	margin: 0px;
+}
 @-webkit-keyframes rotation {
 	from {-webkit-transform: rotate(0deg);}
 	to {-webkit-transform: rotate(359deg);}

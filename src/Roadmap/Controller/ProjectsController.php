@@ -6,55 +6,32 @@ use Finite\Factory\PimpleFactory;
 use Nassau\GitHub\AuthorizationFlow;
 use Propel\Runtime\Collection\Collection;
 use Roadmap\FSM\Project as FSMProject;
-use Roadmap\Model\Account;
 use Roadmap\Model\Project;
 use Roadmap\Model\ProjectActivity;
 use Roadmap\Model\ProjectQuery;
-use Roadmap\Model\User;
 use Roadmap\User\AccountManager;
-use Roadmap\User\AuthorizationAwareInterface;
 use Roadmap\User\UserManager;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class ProjectsController implements AuthorizationAwareInterface
+class ProjectsController extends AuthorizationAwareController
 {
 	/**
 	 * @var PimpleFactory
 	 */
 	private $factory;
 
-	/**
-	 * @var Account
-	 */
-	private $account;
-
-	/**
-	 * @var User
-	 */
-	private $user;
-
 	public function __construct(PimpleFactory $factory)
 	{
 		$this->factory = $factory;
 	}
 
-	public function setAccount(Account $account = null)
-	{
-		$this->account = $account;
-	}
-
-	public function setUser(User $user = null)
-	{
-		$this->user = $user;
-	}
-
 	public function mainAction(Request $request, Application $app)
 	{
-		$recent = ProjectQuery::create()->getRecentProjects($this->account);
-		$ongoing = ProjectQuery::create()->getOngoingProjects($this->account);
-		$new = ProjectQuery::create()->getNewProjects($this->account);
+		$recent = ProjectQuery::create()->getRecentProjects($this->getAccount());
+		$ongoing = ProjectQuery::create()->getOngoingProjects($this->getAccount());
+		$new = ProjectQuery::create()->getNewProjects($this->getAccount());
 
 
 		return [
@@ -82,13 +59,13 @@ class ProjectsController implements AuthorizationAwareInterface
 		}
 
 		$project = new Project;
-		$project->setAccount($this->account);
-		$project->addUser($this->user);
+		$project->setAccount($this->getAccount());
+		$project->addUser($this->getUser());
 		$project->setTitle($request->request->get('title'));
 		$activity = new ProjectActivity;
 
 		$activity->setActivityType(ProjectActivity::ACTIVITY_CREATE);
-		$activity->setUser($this->user);
+		$activity->setUser($this->getUser());
 
 		$project->addProjectActivity($activity);
 
@@ -96,10 +73,39 @@ class ProjectsController implements AuthorizationAwareInterface
 		return new RedirectResponse('/');
 	}
 
+	public function transitionProject($slug, Request $request)
+	{
+		$projectList = ProjectQuery::create()
+			->filterByAccount($this->getAccount())
+			->filterBySlug($slug)
+			->find();
+		if (0 === $projectList->count())
+		{
+			return "";
+		}
+
+		/** @var Project $project */
+		list ($project) = $this->attachStateMachine($projectList);
+		$transition = $request->request->get('transition');
+
+		if ($project->getStateMachine()->getCurrentState()->can($transition))
+		{
+			$activity = new ProjectActivity;
+			$activity->setUser($this->getUser());
+			$activity->setActivityType($transition);
+
+			$project->getStateMachine()->apply($transition);
+			$project->addProjectActivity($activity);
+			$project->save();
+		}
+
+		return "";
+	}
+
 	public function assignToProject($slug, $assign)
 	{
 		$projects = ProjectQuery::create()
-			->filterByAccount($this->account)
+			->filterByAccount($this->getAccount())
 			->filterBySlug($slug)
 			->find();
 
@@ -115,32 +121,32 @@ class ProjectsController implements AuthorizationAwareInterface
 			return "";
 		}
 
-		if ($assign && false === $project->getUsers()->contains($this->user))
+		if ($assign && false === $project->getUsers()->contains($this->getUser()))
 		{
 			$activity = new ProjectActivity;
-			$activity->setUser($this->user);
+			$activity->setUser($this->getUser());
 			$activity->setActivityType(ProjectActivity::ACTIVITY_ASSIGN);
 
 			$project->addProjectActivity($activity);
-			$project->addUser($this->user);
+			$project->addUser($this->getUser());
 			$project->save();
 
 		}
-		elseif (!$assign && $project->getUsers()->contains($this->user))
+		elseif (!$assign && $project->getUsers()->contains($this->getUser()))
 		{
 			$activity = new ProjectActivity;
-			$activity->setUser($this->user);
+			$activity->setUser($this->getUser());
 			$activity->setActivityType(ProjectActivity::ACTIVITY_RESIGN);
 
 			$project->addProjectActivity($activity);
-			$project->removeUser($this->user);
+			$project->removeUser($this->getUser());
 			$project->save();
 		}
 
 		return [
 			'blocks/assign-yourself.twig',
 			'project' => $project,
-			'user' => $this->user,
+			'user' => $this->getUser(),
 			'force' => true,
 		];
 	}

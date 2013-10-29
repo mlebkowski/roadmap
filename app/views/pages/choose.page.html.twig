@@ -1,6 +1,6 @@
 {% extends 'layouts/base.layout.html.twig' %}
 
-{% block title %}{{ "choose_organization"|trans }}{% endblock %}
+{% block title %}{{ "title.choose"|trans }}{% endblock %}
 {% block body %}
     <div id="choose-project" class="container">
 
@@ -14,7 +14,7 @@
             </li>
         {% else %}
             <p class="alert alert-warning">
-                {{ "no_organizations"|trans({ "%url%": "https://github.com/account/organizations/new" })|raw }}
+                {{ "message.no-organizations"|trans({ "%url%": "https://github.com/account/organizations/new" })|raw }}
             </p>
         {% endfor %}
         </ul>
