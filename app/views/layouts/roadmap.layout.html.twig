@@ -1,17 +1,19 @@
 {% extends 'layouts/base.layout.html.twig' %}
 {% block body %}
     <div class="container" id="roadmap-app">
-        <nav class="navbar navbar-default" role="navigation">
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation"><div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="#">{{ projectName }}</a>
+                <a class="navbar-brand" href="/">
+                    <img src="{{ account.avatarUrl }}" width="24" height="24"> {{ account.name }}</a>
             </div>
 
             <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="/projects">{{ "projects"|trans }}</a></li>
+                <li class=""><a href="/add-project">{{ "add-project"|trans }}</a></li>
+                <li class="active"><a href="/">{{ "projects"|trans }}</a></li>
                 <li><a href="/team">{{ "team"|trans }}</a></li>
                 <li><a href="/you">{{ "you"|trans }}</a></li>
             </ul>
-        </nav>
+        </div></nav>
     </div>
 
     <div id="content" class="container">{% block content %}{% endblock %}</div>

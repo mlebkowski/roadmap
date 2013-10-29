@@ -1,0 +1,116 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800);
+@font-face {
+	font-family: 'museo_slab100';
+	src: url('http://randomuser.me/fonts/Museo100-Regular.otf');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'museo_slab500';
+	src: url('http://randomuser.me/fonts/Museo_Slab_500_2-webfont.eot');
+	src: url('http://randomuser.me/fonts/Museo_Slab_500_2-webfont.eot?#iefix') format('embedded-opentype'), url('http://randomuser.me/fonts/Museo_Slab_500_2-webfont.woff') format('woff'), url('http://randomuser.me/fonts/Museo_Slab_500_2-webfont.ttf') format('truetype'), url('http://randomuser.me/fonts/Museo_Slab_500_2-webfont.svg#museo_slab500') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+body {
+	font-family: 'Open sans', sans-serif;
+	padding-top: 60px;
+}
+.navbar-brand img {
+	margin: -10px 0 -4px;
+}
+
+.project {
+	margin-bottom: 2em;
+
+	h3 {
+		font-size: 2.5em;
+		margin-top: .4em;
+		font-family: 'museo_slab500', serif;
+	}
+	 .date {
+		font-style: italic;
+		margin-top: -.5em;
+	}
+}
+.people {
+	li {
+		float: left;
+		margin-right: 8px;
+	}
+	img {
+		width: 64px;
+		height: 64px;
+	}
+
+	.assign-yourself {
+		font-size: 48px;
+		color: #666;
+		margin-left: 15px;
+	}
+	.assign-yourself:hover {
+		color: #111;
+		cursor: pointer;
+	}
+}
+
+
+.project-list {
+	border-top: 1px dotted silver;
+	padding-top:1px;
+	margin-top: 2em;
+
+	&:after {
+		display: table;
+		content: " ";
+		clear: both;
+	}
+
+	.project-list-type {
+		background-color: white;
+		margin: -.8em auto 2em;
+		padding: 0 1em;
+		font-style: italic;
+		color: #999;
+		display: block;
+		width: 7em;
+		text-align: center;
+	}
+}
+
+.spinner {
+	height:48px;
+	width:48px;
+	margin: 8px;
+	position:relative;
+	display:block;
+	-webkit-animation: rotation .6s infinite linear;
+	-moz-animation: rotation .6s infinite linear;
+	-o-animation: rotation .6s infinite linear;
+	animation: rotation .6s infinite linear;
+	border-left:6px solid rgba(0,174,239,.15);
+	border-right:6px solid rgba(0,174,239,.15);
+	border-bottom:6px solid rgba(0,174,239,.15);
+	border-top:6px solid rgba(0,174,239,.8);
+	border-radius:100%;
+}
+
+@-webkit-keyframes rotation {
+	from {-webkit-transform: rotate(0deg);}
+	to {-webkit-transform: rotate(359deg);}
+}
+
+@-moz-keyframes rotation {
+	from {-moz-transform: rotate(0deg);}
+	to {-moz-transform: rotate(359deg);}
+}
+
+@-o-keyframes rotation {
+	from {-o-transform: rotate(0deg);}
+	to {-o-transform: rotate(359deg);}
+}
+
+@keyframes rotation {
+	from {transform: rotate(0deg);}
+	to {transform: rotate(359deg);}
+}

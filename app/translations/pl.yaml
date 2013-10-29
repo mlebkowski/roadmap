@@ -1,10 +1,30 @@
+add-project: Nowy projekt
 projects: Projekty
 team: Zespół
 you: Twój Profil
 
 overview: Podsumowanie projektów dla %project%
 
-recent: ostatnie
+more: więcej
+
+choose_organization: Wybierz organizację
+no_organizations: Nie jesteś członkiem żadnej organizacji na Githubie. <a href="%url%">Możesz ją założyć!</a>
+
+
+project:
+  transition:
+    research: Przygotuj projekt
+    start: Rozpocznij kodowanie
+    delay: Zostaw na później
+    restore: Przywróć
+    cancel: Przerwij i anuluj
+    deploy: Zakończ
+  group:
+    recent: ostatnie
+    ongoing: trwające
+    finished: zakończone
+    new: oczekujące
+
 
 
 nicedate: %day% %month% %year%

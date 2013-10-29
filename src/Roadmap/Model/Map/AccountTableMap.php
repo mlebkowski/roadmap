@@ -10,12 +10,12 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Map\TableMapTrait;
-use Roadmap\Model\User;
-use Roadmap\Model\UserQuery;
+use Roadmap\Model\Account;
+use Roadmap\Model\AccountQuery;
 
 
 /**
- * This class defines the structure of the 'user' table.
+ * This class defines the structure of the 'account' table.
  *
  *
  *
@@ -25,14 +25,14 @@ use Roadmap\Model\UserQuery;
  * (i.e. if it's a text column type).
  *
  */
-class UserTableMap extends TableMap
+class AccountTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'Roadmap.Model.Map.UserTableMap';
+    const CLASS_NAME = 'Roadmap.Model.Map.AccountTableMap';
 
     /**
      * The default database name for this class
@@ -42,22 +42,22 @@ class UserTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'user';
+    const TABLE_NAME = 'account';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Roadmap\\Model\\User';
+    const OM_CLASS = '\\Roadmap\\Model\\Account';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Roadmap.Model.User';
+    const CLASS_DEFAULT = 'Roadmap.Model.Account';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 7;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -67,42 +67,32 @@ class UserTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 7;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the ID field
      */
-    const ID = 'user.ID';
-
-    /**
-     * the column name for the LOGIN field
-     */
-    const LOGIN = 'user.LOGIN';
+    const ID = 'account.ID';
 
     /**
      * the column name for the NAME field
      */
-    const NAME = 'user.NAME';
+    const NAME = 'account.NAME';
 
     /**
-     * the column name for the GRAVATAR_HASH field
+     * the column name for the AVATAR_URL field
      */
-    const GRAVATAR_HASH = 'user.GRAVATAR_HASH';
-
-    /**
-     * the column name for the PICTURE field
-     */
-    const PICTURE = 'user.PICTURE';
+    const AVATAR_URL = 'account.AVATAR_URL';
 
     /**
      * the column name for the CREATED_AT field
      */
-    const CREATED_AT = 'user.CREATED_AT';
+    const CREATED_AT = 'account.CREATED_AT';
 
     /**
      * the column name for the UPDATED_AT field
      */
-    const UPDATED_AT = 'user.UPDATED_AT';
+    const UPDATED_AT = 'account.UPDATED_AT';
 
     /**
      * The default string format for model objects of the related table
@@ -116,12 +106,12 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Login', 'Name', 'GravatarHash', 'Picture', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'login', 'name', 'gravatarHash', 'picture', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(UserTableMap::ID, UserTableMap::LOGIN, UserTableMap::NAME, UserTableMap::GRAVATAR_HASH, UserTableMap::PICTURE, UserTableMap::CREATED_AT, UserTableMap::UPDATED_AT, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'LOGIN', 'NAME', 'GRAVATAR_HASH', 'PICTURE', 'CREATED_AT', 'UPDATED_AT', ),
-        self::TYPE_FIELDNAME     => array('id', 'login', 'name', 'gravatar_hash', 'picture', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'AvatarUrl', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'name', 'avatarUrl', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(AccountTableMap::ID, AccountTableMap::NAME, AccountTableMap::AVATAR_URL, AccountTableMap::CREATED_AT, AccountTableMap::UPDATED_AT, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'NAME', 'AVATAR_URL', 'CREATED_AT', 'UPDATED_AT', ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'avatar_url', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -131,12 +121,12 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Login' => 1, 'Name' => 2, 'GravatarHash' => 3, 'Picture' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'login' => 1, 'name' => 2, 'gravatarHash' => 3, 'picture' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
-        self::TYPE_COLNAME       => array(UserTableMap::ID => 0, UserTableMap::LOGIN => 1, UserTableMap::NAME => 2, UserTableMap::GRAVATAR_HASH => 3, UserTableMap::PICTURE => 4, UserTableMap::CREATED_AT => 5, UserTableMap::UPDATED_AT => 6, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'LOGIN' => 1, 'NAME' => 2, 'GRAVATAR_HASH' => 3, 'PICTURE' => 4, 'CREATED_AT' => 5, 'UPDATED_AT' => 6, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'login' => 1, 'name' => 2, 'gravatar_hash' => 3, 'picture' => 4, 'created_at' => 5, 'updated_at' => 6, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'AvatarUrl' => 2, 'CreatedAt' => 3, 'UpdatedAt' => 4, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'name' => 1, 'avatarUrl' => 2, 'createdAt' => 3, 'updatedAt' => 4, ),
+        self::TYPE_COLNAME       => array(AccountTableMap::ID => 0, AccountTableMap::NAME => 1, AccountTableMap::AVATAR_URL => 2, AccountTableMap::CREATED_AT => 3, AccountTableMap::UPDATED_AT => 4, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'NAME' => 1, 'AVATAR_URL' => 2, 'CREATED_AT' => 3, 'UPDATED_AT' => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'avatar_url' => 2, 'created_at' => 3, 'updated_at' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -149,17 +139,15 @@ class UserTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('user');
-        $this->setPhpName('User');
-        $this->setClassName('\\Roadmap\\Model\\User');
+        $this->setName('account');
+        $this->setPhpName('Account');
+        $this->setClassName('\\Roadmap\\Model\\Account');
         $this->setPackage('Roadmap.Model');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('LOGIN', 'Login', 'CHAR', true, 128, null);
-        $this->addColumn('NAME', 'Name', 'CHAR', true, 128, null);
-        $this->addColumn('GRAVATAR_HASH', 'GravatarHash', 'CHAR', true, 40, null);
-        $this->addColumn('PICTURE', 'Picture', 'CHAR', false, 255, null);
+        $this->addColumn('NAME', 'Name', 'CHAR', false, 128, null);
+        $this->addColumn('AVATAR_URL', 'AvatarUrl', 'CHAR', true, 255, null);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
@@ -169,12 +157,10 @@ class UserTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('AccountUser', '\\Roadmap\\Model\\AccountUser', RelationMap::ONE_TO_MANY, array('id' => 'user_id', ), null, null, 'AccountUsers');
-        $this->addRelation('ProjectUser', '\\Roadmap\\Model\\ProjectUser', RelationMap::ONE_TO_MANY, array('id' => 'user_id', ), null, null, 'ProjectUsers');
-        $this->addRelation('ProjectActivity', '\\Roadmap\\Model\\ProjectActivity', RelationMap::ONE_TO_MANY, array('id' => 'user_id', ), null, null, 'ProjectActivities');
-        $this->addRelation('UserV2mom', '\\Roadmap\\Model\\UserV2mom', RelationMap::ONE_TO_MANY, array('id' => 'user_id', ), null, null, 'UserV2moms');
-        $this->addRelation('Account', '\\Roadmap\\Model\\Account', RelationMap::MANY_TO_MANY, array(), null, null, 'Accounts');
-        $this->addRelation('Project', '\\Roadmap\\Model\\Project', RelationMap::MANY_TO_MANY, array(), null, null, 'Projects');
+        $this->addRelation('Project', '\\Roadmap\\Model\\Project', RelationMap::ONE_TO_MANY, array('id' => 'account_id', ), null, null, 'Projects');
+        $this->addRelation('AccountUser', '\\Roadmap\\Model\\AccountUser', RelationMap::ONE_TO_MANY, array('id' => 'account_id', ), null, null, 'AccountUsers');
+        $this->addRelation('UserV2mom', '\\Roadmap\\Model\\UserV2mom', RelationMap::ONE_TO_MANY, array('id' => 'account_id', ), null, null, 'UserV2moms');
+        $this->addRelation('User', '\\Roadmap\\Model\\User', RelationMap::MANY_TO_MANY, array(), null, null, 'Users');
     } // buildRelations()
 
     /**
@@ -246,7 +232,7 @@ class UserTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? UserTableMap::CLASS_DEFAULT : UserTableMap::OM_CLASS;
+        return $withPrefix ? AccountTableMap::CLASS_DEFAULT : AccountTableMap::OM_CLASS;
     }
 
     /**
@@ -260,21 +246,21 @@ class UserTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
-     * @return array (User object, last column rank)
+     * @return array (Account object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = UserTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = UserTableMap::getInstanceFromPool($key))) {
+        $key = AccountTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = AccountTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + UserTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + AccountTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = UserTableMap::OM_CLASS;
+            $cls = AccountTableMap::OM_CLASS;
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            UserTableMap::addInstanceToPool($obj, $key);
+            AccountTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -297,8 +283,8 @@ class UserTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = UserTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = UserTableMap::getInstanceFromPool($key))) {
+            $key = AccountTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = AccountTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
@@ -307,7 +293,7 @@ class UserTableMap extends TableMap
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                UserTableMap::addInstanceToPool($obj, $key);
+                AccountTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -328,19 +314,15 @@ class UserTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(UserTableMap::ID);
-            $criteria->addSelectColumn(UserTableMap::LOGIN);
-            $criteria->addSelectColumn(UserTableMap::NAME);
-            $criteria->addSelectColumn(UserTableMap::GRAVATAR_HASH);
-            $criteria->addSelectColumn(UserTableMap::PICTURE);
-            $criteria->addSelectColumn(UserTableMap::CREATED_AT);
-            $criteria->addSelectColumn(UserTableMap::UPDATED_AT);
+            $criteria->addSelectColumn(AccountTableMap::ID);
+            $criteria->addSelectColumn(AccountTableMap::NAME);
+            $criteria->addSelectColumn(AccountTableMap::AVATAR_URL);
+            $criteria->addSelectColumn(AccountTableMap::CREATED_AT);
+            $criteria->addSelectColumn(AccountTableMap::UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
-            $criteria->addSelectColumn($alias . '.LOGIN');
             $criteria->addSelectColumn($alias . '.NAME');
-            $criteria->addSelectColumn($alias . '.GRAVATAR_HASH');
-            $criteria->addSelectColumn($alias . '.PICTURE');
+            $criteria->addSelectColumn($alias . '.AVATAR_URL');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
             $criteria->addSelectColumn($alias . '.UPDATED_AT');
         }
@@ -355,7 +337,7 @@ class UserTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(UserTableMap::DATABASE_NAME)->getTable(UserTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(AccountTableMap::DATABASE_NAME)->getTable(AccountTableMap::TABLE_NAME);
     }
 
     /**
@@ -363,16 +345,16 @@ class UserTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-      $dbMap = Propel::getServiceContainer()->getDatabaseMap(UserTableMap::DATABASE_NAME);
-      if (!$dbMap->hasTable(UserTableMap::TABLE_NAME)) {
-        $dbMap->addTableObject(new UserTableMap());
+      $dbMap = Propel::getServiceContainer()->getDatabaseMap(AccountTableMap::DATABASE_NAME);
+      if (!$dbMap->hasTable(AccountTableMap::TABLE_NAME)) {
+        $dbMap->addTableObject(new AccountTableMap());
       }
     }
 
     /**
-     * Performs a DELETE on the database, given a User or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Account or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or User object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Account object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -383,25 +365,25 @@ class UserTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(AccountTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Roadmap\Model\User) { // it's a model object
+        } elseif ($values instanceof \Roadmap\Model\Account) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(UserTableMap::DATABASE_NAME);
-            $criteria->add(UserTableMap::ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(AccountTableMap::DATABASE_NAME);
+            $criteria->add(AccountTableMap::ID, (array) $values, Criteria::IN);
         }
 
-        $query = UserQuery::create()->mergeWith($criteria);
+        $query = AccountQuery::create()->mergeWith($criteria);
 
-        if ($values instanceof Criteria) { UserTableMap::clearInstancePool();
+        if ($values instanceof Criteria) { AccountTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
-            foreach ((array) $values as $singleval) { UserTableMap::removeInstanceFromPool($singleval);
+            foreach ((array) $values as $singleval) { AccountTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -409,20 +391,20 @@ class UserTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the user table.
+     * Deletes all rows from the account table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return UserQuery::create()->doDeleteAll($con);
+        return AccountQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a User or Criteria object.
+     * Performs an INSERT on the database, given a Account or Criteria object.
      *
-     * @param mixed               $criteria Criteria or User object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Account object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -431,22 +413,22 @@ class UserTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(AccountTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from User object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Account object
         }
 
-        if ($criteria->containsKey(UserTableMap::ID) && $criteria->keyContainsValue(UserTableMap::ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.UserTableMap::ID.')');
+        if ($criteria->containsKey(AccountTableMap::ID) && $criteria->keyContainsValue(AccountTableMap::ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.AccountTableMap::ID.')');
         }
 
 
         // Set the correct dbName
-        $query = UserQuery::create()->mergeWith($criteria);
+        $query = AccountQuery::create()->mergeWith($criteria);
 
         try {
             // use transaction because $criteria could contain info
@@ -462,7 +444,7 @@ class UserTableMap extends TableMap
         return $pk;
     }
 
-} // UserTableMap
+} // AccountTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-UserTableMap::buildTableMap();
+AccountTableMap::buildTableMap();

@@ -12,7 +12,6 @@ class User extends BaseUser
 			's' => $size,
 			'd' => $this->getPicture()
 		]);
-		$hash = md5(strtolower(trim($this->getEmail())));
-		return 'http://www.gravatar.com/avatar/' . $hash . '?' . $query;
+		return 'http://www.gravatar.com/avatar/' . $this->getGravatarHash() . '?' . $query;
 	}
 }

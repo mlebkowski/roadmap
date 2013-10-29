@@ -57,7 +57,7 @@ class ProjectActivityTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -67,7 +67,7 @@ class ProjectActivityTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
      * the column name for the ID field
@@ -95,6 +95,11 @@ class ProjectActivityTableMap extends TableMap
     const CREATED_AT = 'project_activity.CREATED_AT';
 
     /**
+     * the column name for the UPDATED_AT field
+     */
+    const UPDATED_AT = 'project_activity.UPDATED_AT';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -106,12 +111,12 @@ class ProjectActivityTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'ProjectId', 'UserId', 'ActivityType', 'CreatedAt', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'projectId', 'userId', 'activityType', 'createdAt', ),
-        self::TYPE_COLNAME       => array(ProjectActivityTableMap::ID, ProjectActivityTableMap::PROJECT_ID, ProjectActivityTableMap::USER_ID, ProjectActivityTableMap::ACTIVITY_TYPE, ProjectActivityTableMap::CREATED_AT, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'PROJECT_ID', 'USER_ID', 'ACTIVITY_TYPE', 'CREATED_AT', ),
-        self::TYPE_FIELDNAME     => array('id', 'project_id', 'user_id', 'activity_type', 'created_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id', 'ProjectId', 'UserId', 'ActivityType', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'projectId', 'userId', 'activityType', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(ProjectActivityTableMap::ID, ProjectActivityTableMap::PROJECT_ID, ProjectActivityTableMap::USER_ID, ProjectActivityTableMap::ACTIVITY_TYPE, ProjectActivityTableMap::CREATED_AT, ProjectActivityTableMap::UPDATED_AT, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'PROJECT_ID', 'USER_ID', 'ACTIVITY_TYPE', 'CREATED_AT', 'UPDATED_AT', ),
+        self::TYPE_FIELDNAME     => array('id', 'project_id', 'user_id', 'activity_type', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -121,12 +126,12 @@ class ProjectActivityTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'ProjectId' => 1, 'UserId' => 2, 'ActivityType' => 3, 'CreatedAt' => 4, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'projectId' => 1, 'userId' => 2, 'activityType' => 3, 'createdAt' => 4, ),
-        self::TYPE_COLNAME       => array(ProjectActivityTableMap::ID => 0, ProjectActivityTableMap::PROJECT_ID => 1, ProjectActivityTableMap::USER_ID => 2, ProjectActivityTableMap::ACTIVITY_TYPE => 3, ProjectActivityTableMap::CREATED_AT => 4, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'PROJECT_ID' => 1, 'USER_ID' => 2, 'ACTIVITY_TYPE' => 3, 'CREATED_AT' => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'project_id' => 1, 'user_id' => 2, 'activity_type' => 3, 'created_at' => 4, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'ProjectId' => 1, 'UserId' => 2, 'ActivityType' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'projectId' => 1, 'userId' => 2, 'activityType' => 3, 'createdAt' => 4, 'updatedAt' => 5, ),
+        self::TYPE_COLNAME       => array(ProjectActivityTableMap::ID => 0, ProjectActivityTableMap::PROJECT_ID => 1, ProjectActivityTableMap::USER_ID => 2, ProjectActivityTableMap::ACTIVITY_TYPE => 3, ProjectActivityTableMap::CREATED_AT => 4, ProjectActivityTableMap::UPDATED_AT => 5, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'PROJECT_ID' => 1, 'USER_ID' => 2, 'ACTIVITY_TYPE' => 3, 'CREATED_AT' => 4, 'UPDATED_AT' => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'project_id' => 1, 'user_id' => 2, 'activity_type' => 3, 'created_at' => 4, 'updated_at' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -149,7 +154,8 @@ class ProjectActivityTableMap extends TableMap
         $this->addForeignKey('PROJECT_ID', 'ProjectId', 'INTEGER', 'project', 'ID', true, null, null);
         $this->addForeignKey('USER_ID', 'UserId', 'INTEGER', 'user', 'ID', true, null, null);
         $this->addColumn('ACTIVITY_TYPE', 'ActivityType', 'CHAR', true, 24, null);
-        $this->addColumn('CREATED_AT', 'CreatedAt', 'DATE', true, null, null);
+        $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -160,6 +166,19 @@ class ProjectActivityTableMap extends TableMap
         $this->addRelation('User', '\\Roadmap\\Model\\User', RelationMap::MANY_TO_ONE, array('user_id' => 'id', ), null, null);
         $this->addRelation('Project', '\\Roadmap\\Model\\Project', RelationMap::MANY_TO_ONE, array('project_id' => 'id', ), null, null);
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', ),
+        );
+    } // getBehaviors()
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -304,12 +323,14 @@ class ProjectActivityTableMap extends TableMap
             $criteria->addSelectColumn(ProjectActivityTableMap::USER_ID);
             $criteria->addSelectColumn(ProjectActivityTableMap::ACTIVITY_TYPE);
             $criteria->addSelectColumn(ProjectActivityTableMap::CREATED_AT);
+            $criteria->addSelectColumn(ProjectActivityTableMap::UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.PROJECT_ID');
             $criteria->addSelectColumn($alias . '.USER_ID');
             $criteria->addSelectColumn($alias . '.ACTIVITY_TYPE');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
+            $criteria->addSelectColumn($alias . '.UPDATED_AT');
         }
     }
 

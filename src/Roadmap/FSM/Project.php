@@ -41,6 +41,12 @@ class Project
 		return $this->stateMachine->getCurrentState();
 	}
 
+	public function isFinal()
+	{
+		return $this->stateMachine->getCurrentState()->isFinal();
+	}
+
+
 	public function canCancel()
 	{
 		return $this->stateMachine->can(self::TRANSITION_CANCEL);
@@ -84,6 +90,27 @@ class Project
 		$this->stateMachine->apply(self::TRANSITION_START);
 		// TODO:
 	}
+
+	public function canDelay()
+	{
+		return $this->stateMachine->can(self::TRANSITION_DELAY);
+	}
+	public function delay()
+	{
+		$this->stateMachine->apply(self::TRANSITION_DELAY);
+		// TODO:
+	}
+	public function canRestore()
+	{
+		return $this->stateMachine->can(self::TRANSITION_RESTORE);
+	}
+	public function restore()
+	{
+		$this->stateMachine->apply(self::TRANSITION_RESTORE);
+		// TODO:
+	}
+
+
 
 	public function canAssign()
 	{

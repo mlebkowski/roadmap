@@ -1,0 +1,13 @@
+{% if project.stateMachine.canAssign %}
+    {% if project.users.contains(user) %}
+        {% if force is defined  %}
+        <li>
+            <img src="{{ user.gravatar }}" title="{{ user.name }}" class="img-circle">
+        </li>
+        {% endif %}
+    {% else %}
+    <li class="assign-yourself" data-slug="{{ project.slug }}">
+        <i class="fa fa-check-square-o"></i>
+    </li>
+    {% endif %}
+{% endif %}

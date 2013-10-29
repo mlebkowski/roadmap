@@ -1,0 +1,38 @@
+{% extends 'layouts/base.layout.html.twig' %}
+
+{% block title %}{{ "choose_organization"|trans }}{% endblock %}
+{% block body %}
+    <div id="choose-project" class="container">
+
+        <ul class="list-unstyled col-md-6 col-md-offset-3">
+        {% for account in choices %}
+            <li class="choice">
+                <a href="http://{{ account.name|lower }}.{{ baseDomain }}">
+                    <img src="{{ account.avatarUrl }}" alt="{{ account.name }}">
+                    {{ account.name }}
+                </a>
+            </li>
+        {% else %}
+            <p class="alert alert-warning">
+                {{ "no_organizations"|trans({ "%url%": "https://github.com/account/organizations/new" })|raw }}
+            </p>
+        {% endfor %}
+        </ul>
+    </div>
+    <style type="text/css">
+        #choose-project {
+            padding-top: 60px;
+        }
+        ul {
+            text-align: center
+        }
+        ul li {
+            display: inline-block;
+            margin: 10px;
+        }
+        ul li img {
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+{% endblock %}

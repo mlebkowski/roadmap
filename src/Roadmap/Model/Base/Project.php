@@ -17,6 +17,8 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\PropelDateTime;
+use Roadmap\Model\Account as ChildAccount;
+use Roadmap\Model\AccountQuery as ChildAccountQuery;
 use Roadmap\Model\Project as ChildProject;
 use Roadmap\Model\ProjectActivity as ChildProjectActivity;
 use Roadmap\Model\ProjectActivityQuery as ChildProjectActivityQuery;
@@ -68,6 +70,12 @@ abstract class Project implements ActiveRecordInterface
     protected $id;
 
     /**
+     * The value for the account_id field.
+     * @var        int
+     */
+    protected $account_id;
+
+    /**
      * The value for the title field.
      * @var        string
      */
@@ -91,6 +99,17 @@ abstract class Project implements ActiveRecordInterface
      * @var        string
      */
     protected $created_at;
+
+    /**
+     * The value for the updated_at field.
+     * @var        string
+     */
+    protected $updated_at;
+
+    /**
+     * @var        Account
+     */
+    protected $aAccount;
 
     /**
      * @var        ObjectCollection|ChildProjectUser[] Collection to store aggregation of ChildProjectUser objects.
@@ -418,6 +437,17 @@ abstract class Project implements ActiveRecordInterface
     }
 
     /**
+     * Get the [account_id] column value.
+     *
+     * @return   int
+     */
+    public function getAccountId()
+    {
+
+        return $this->account_id;
+    }
+
+    /**
      * Get the [title] column value.
      *
      * @return   string
@@ -457,7 +487,7 @@ abstract class Project implements ActiveRecordInterface
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
      *                            If format is NULL, then the raw \DateTime object will be returned.
      *
-     * @return mixed Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00
+     * @return mixed Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
@@ -467,6 +497,26 @@ abstract class Project implements ActiveRecordInterface
             return $this->created_at;
         } else {
             return $this->created_at instanceof \DateTime ? $this->created_at->format($format) : null;
+        }
+    }
+
+    /**
+     * Get the [optionally formatted] temporal [updated_at] column value.
+     *
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw \DateTime object will be returned.
+     *
+     * @return mixed Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getUpdatedAt($format = NULL)
+    {
+        if ($format === null) {
+            return $this->updated_at;
+        } else {
+            return $this->updated_at instanceof \DateTime ? $this->updated_at->format($format) : null;
         }
     }
 
@@ -490,6 +540,31 @@ abstract class Project implements ActiveRecordInterface
 
         return $this;
     } // setId()
+
+    /**
+     * Set the value of [account_id] column.
+     *
+     * @param      int $v new value
+     * @return   \Roadmap\Model\Project The current object (for fluent API support)
+     */
+    public function setAccountId($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->account_id !== $v) {
+            $this->account_id = $v;
+            $this->modifiedColumns[] = ProjectTableMap::ACCOUNT_ID;
+        }
+
+        if ($this->aAccount !== null && $this->aAccount->getId() !== $v) {
+            $this->aAccount = null;
+        }
+
+
+        return $this;
+    } // setAccountId()
 
     /**
      * Set the value of [title] column.
@@ -576,6 +651,27 @@ abstract class Project implements ActiveRecordInterface
     } // setCreatedAt()
 
     /**
+     * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
+     *
+     * @param      mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
+     * @return   \Roadmap\Model\Project The current object (for fluent API support)
+     */
+    public function setUpdatedAt($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
+        if ($this->updated_at !== null || $dt !== null) {
+            if ($dt !== $this->updated_at) {
+                $this->updated_at = $dt;
+                $this->modifiedColumns[] = ProjectTableMap::UPDATED_AT;
+            }
+        } // if either are not null
+
+
+        return $this;
+    } // setUpdatedAt()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -619,20 +715,29 @@ abstract class Project implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ProjectTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ProjectTableMap::translateFieldName('Title', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ProjectTableMap::translateFieldName('AccountId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->account_id = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ProjectTableMap::translateFieldName('Title', TableMap::TYPE_PHPNAME, $indexType)];
             $this->title = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ProjectTableMap::translateFieldName('Slug', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ProjectTableMap::translateFieldName('Slug', TableMap::TYPE_PHPNAME, $indexType)];
             $this->slug = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ProjectTableMap::translateFieldName('State', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ProjectTableMap::translateFieldName('State', TableMap::TYPE_PHPNAME, $indexType)];
             $this->state = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ProjectTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00') {
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ProjectTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ProjectTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -641,7 +746,7 @@ abstract class Project implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = ProjectTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 7; // 7 = ProjectTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \Roadmap\Model\Project object", 0, $e);
@@ -663,6 +768,9 @@ abstract class Project implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
+        if ($this->aAccount !== null && $this->account_id !== $this->aAccount->getId()) {
+            $this->aAccount = null;
+        }
     } // ensureConsistency
 
     /**
@@ -702,6 +810,7 @@ abstract class Project implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->aAccount = null;
             $this->collProjectUsers = null;
 
             $this->collProjectActivities = null;
@@ -775,10 +884,28 @@ abstract class Project implements ActiveRecordInterface
         $isInsert = $this->isNew();
         try {
             $ret = $this->preSave($con);
+            // sluggable behavior
+
+            if ($this->isColumnModified(ProjectTableMap::SLUG) && $this->getSlug()) {
+                $this->setSlug($this->makeSlugUnique($this->getSlug()));
+            } elseif (!$this->getSlug()) {
+                $this->setSlug($this->createSlug());
+            }
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+                if (!$this->isColumnModified(ProjectTableMap::CREATED_AT)) {
+                    $this->setCreatedAt(time());
+                }
+                if (!$this->isColumnModified(ProjectTableMap::UPDATED_AT)) {
+                    $this->setUpdatedAt(time());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
+                // timestampable behavior
+                if ($this->isModified() && !$this->isColumnModified(ProjectTableMap::UPDATED_AT)) {
+                    $this->setUpdatedAt(time());
+                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -817,6 +944,18 @@ abstract class Project implements ActiveRecordInterface
         $affectedRows = 0; // initialize var to track total num of affected rows
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
+
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aAccount !== null) {
+                if ($this->aAccount->isModified() || $this->aAccount->isNew()) {
+                    $affectedRows += $this->aAccount->save($con);
+                }
+                $this->setAccount($this->aAccount);
+            }
 
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
@@ -919,6 +1058,9 @@ abstract class Project implements ActiveRecordInterface
         if ($this->isColumnModified(ProjectTableMap::ID)) {
             $modifiedColumns[':p' . $index++]  = 'ID';
         }
+        if ($this->isColumnModified(ProjectTableMap::ACCOUNT_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'ACCOUNT_ID';
+        }
         if ($this->isColumnModified(ProjectTableMap::TITLE)) {
             $modifiedColumns[':p' . $index++]  = 'TITLE';
         }
@@ -930,6 +1072,9 @@ abstract class Project implements ActiveRecordInterface
         }
         if ($this->isColumnModified(ProjectTableMap::CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'CREATED_AT';
+        }
+        if ($this->isColumnModified(ProjectTableMap::UPDATED_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'UPDATED_AT';
         }
 
         $sql = sprintf(
@@ -945,6 +1090,9 @@ abstract class Project implements ActiveRecordInterface
                     case 'ID':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
+                    case 'ACCOUNT_ID':
+                        $stmt->bindValue($identifier, $this->account_id, PDO::PARAM_INT);
+                        break;
                     case 'TITLE':
                         $stmt->bindValue($identifier, $this->title, PDO::PARAM_STR);
                         break;
@@ -956,6 +1104,9 @@ abstract class Project implements ActiveRecordInterface
                         break;
                     case 'CREATED_AT':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'UPDATED_AT':
+                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1023,16 +1174,22 @@ abstract class Project implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getTitle();
+                return $this->getAccountId();
                 break;
             case 2:
-                return $this->getSlug();
+                return $this->getTitle();
                 break;
             case 3:
-                return $this->getState();
+                return $this->getSlug();
                 break;
             case 4:
+                return $this->getState();
+                break;
+            case 5:
                 return $this->getCreatedAt();
+                break;
+            case 6:
+                return $this->getUpdatedAt();
                 break;
             default:
                 return null;
@@ -1064,10 +1221,12 @@ abstract class Project implements ActiveRecordInterface
         $keys = ProjectTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getTitle(),
-            $keys[2] => $this->getSlug(),
-            $keys[3] => $this->getState(),
-            $keys[4] => $this->getCreatedAt(),
+            $keys[1] => $this->getAccountId(),
+            $keys[2] => $this->getTitle(),
+            $keys[3] => $this->getSlug(),
+            $keys[4] => $this->getState(),
+            $keys[5] => $this->getCreatedAt(),
+            $keys[6] => $this->getUpdatedAt(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1075,6 +1234,9 @@ abstract class Project implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
+            if (null !== $this->aAccount) {
+                $result['Account'] = $this->aAccount->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
             if (null !== $this->collProjectUsers) {
                 $result['ProjectUsers'] = $this->collProjectUsers->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
@@ -1119,16 +1281,22 @@ abstract class Project implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setTitle($value);
+                $this->setAccountId($value);
                 break;
             case 2:
-                $this->setSlug($value);
+                $this->setTitle($value);
                 break;
             case 3:
-                $this->setState($value);
+                $this->setSlug($value);
                 break;
             case 4:
+                $this->setState($value);
+                break;
+            case 5:
                 $this->setCreatedAt($value);
+                break;
+            case 6:
+                $this->setUpdatedAt($value);
                 break;
         } // switch()
     }
@@ -1155,10 +1323,12 @@ abstract class Project implements ActiveRecordInterface
         $keys = ProjectTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setTitle($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setSlug($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setState($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setCreatedAt($arr[$keys[4]]);
+        if (array_key_exists($keys[1], $arr)) $this->setAccountId($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setTitle($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setSlug($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setState($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setCreatedAt($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setUpdatedAt($arr[$keys[6]]);
     }
 
     /**
@@ -1171,10 +1341,12 @@ abstract class Project implements ActiveRecordInterface
         $criteria = new Criteria(ProjectTableMap::DATABASE_NAME);
 
         if ($this->isColumnModified(ProjectTableMap::ID)) $criteria->add(ProjectTableMap::ID, $this->id);
+        if ($this->isColumnModified(ProjectTableMap::ACCOUNT_ID)) $criteria->add(ProjectTableMap::ACCOUNT_ID, $this->account_id);
         if ($this->isColumnModified(ProjectTableMap::TITLE)) $criteria->add(ProjectTableMap::TITLE, $this->title);
         if ($this->isColumnModified(ProjectTableMap::SLUG)) $criteria->add(ProjectTableMap::SLUG, $this->slug);
         if ($this->isColumnModified(ProjectTableMap::STATE)) $criteria->add(ProjectTableMap::STATE, $this->state);
         if ($this->isColumnModified(ProjectTableMap::CREATED_AT)) $criteria->add(ProjectTableMap::CREATED_AT, $this->created_at);
+        if ($this->isColumnModified(ProjectTableMap::UPDATED_AT)) $criteria->add(ProjectTableMap::UPDATED_AT, $this->updated_at);
 
         return $criteria;
     }
@@ -1238,10 +1410,12 @@ abstract class Project implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
+        $copyObj->setAccountId($this->getAccountId());
         $copyObj->setTitle($this->getTitle());
         $copyObj->setSlug($this->getSlug());
         $copyObj->setState($this->getState());
         $copyObj->setCreatedAt($this->getCreatedAt());
+        $copyObj->setUpdatedAt($this->getUpdatedAt());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1288,6 +1462,57 @@ abstract class Project implements ActiveRecordInterface
         $this->copyInto($copyObj, $deepCopy);
 
         return $copyObj;
+    }
+
+    /**
+     * Declares an association between this object and a ChildAccount object.
+     *
+     * @param                  ChildAccount $v
+     * @return                 \Roadmap\Model\Project The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setAccount(ChildAccount $v = null)
+    {
+        if ($v === null) {
+            $this->setAccountId(NULL);
+        } else {
+            $this->setAccountId($v->getId());
+        }
+
+        $this->aAccount = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildAccount object, it will not be re-added.
+        if ($v !== null) {
+            $v->addProject($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildAccount object
+     *
+     * @param      ConnectionInterface $con Optional Connection object.
+     * @return                 ChildAccount The associated ChildAccount object.
+     * @throws PropelException
+     */
+    public function getAccount(ConnectionInterface $con = null)
+    {
+        if ($this->aAccount === null && ($this->account_id !== null)) {
+            $this->aAccount = ChildAccountQuery::create()->findPk($this->account_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aAccount->addProjects($this);
+             */
+        }
+
+        return $this->aAccount;
     }
 
 
@@ -1984,10 +2209,12 @@ abstract class Project implements ActiveRecordInterface
     public function clear()
     {
         $this->id = null;
+        $this->account_id = null;
         $this->title = null;
         $this->slug = null;
         $this->state = null;
         $this->created_at = null;
+        $this->updated_at = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();
@@ -2037,6 +2264,7 @@ abstract class Project implements ActiveRecordInterface
             $this->collUsers->clearIterator();
         }
         $this->collUsers = null;
+        $this->aAccount = null;
     }
 
     /**
@@ -2047,6 +2275,124 @@ abstract class Project implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(ProjectTableMap::DEFAULT_STRING_FORMAT);
+    }
+
+    // timestampable behavior
+
+    /**
+     * Mark the current object so that the update date doesn't get updated during next save
+     *
+     * @return     ChildProject The current object (for fluent API support)
+     */
+    public function keepUpdateDateUnchanged()
+    {
+        $this->modifiedColumns[] = ProjectTableMap::UPDATED_AT;
+
+        return $this;
+    }
+
+    // sluggable behavior
+
+    /**
+     * Create a unique slug based on the object
+     *
+     * @return string The object slug
+     */
+    protected function createSlug()
+    {
+        $slug = $this->createRawSlug();
+        $slug = $this->limitSlugSize($slug);
+        $slug = $this->makeSlugUnique($slug);
+
+        return $slug;
+    }
+
+    /**
+     * Create the slug from the appropriate columns
+     *
+     * @return string
+     */
+    protected function createRawSlug()
+    {
+        return '' . $this->cleanupSlugPart($this->getTitle()) . '';
+    }
+
+    /**
+     * Cleanup a string to make a slug of it
+     * Removes special characters, replaces blanks with a separator, and trim it
+     *
+     * @param     string $slug        the text to slugify
+     * @param     string $replacement the separator used by slug
+     * @return    string               the slugified text
+     */
+    protected static function cleanupSlugPart($slug, $replacement = '-')
+    {
+        // transliterate
+        if (function_exists('iconv')) {
+            $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
+        }
+
+        // lowercase
+        if (function_exists('mb_strtolower')) {
+            $slug = mb_strtolower($slug);
+        } else {
+            $slug = strtolower($slug);
+        }
+
+        // remove accents resulting from OSX's iconv
+        $slug = str_replace(array('\'', '`', '^'), '', $slug);
+
+        // replace non letter or digits with separator
+        $slug = preg_replace('/\W+/', $replacement, $slug);
+
+        // trim
+        $slug = trim($slug, $replacement);
+
+        if (empty($slug)) {
+            return 'n-a';
+        }
+
+        return $slug;
+    }
+
+
+    /**
+     * Make sure the slug is short enough to accommodate the column size
+     *
+     * @param    string $slug            the slug to check
+     *
+     * @return string                        the truncated slug
+     */
+    protected static function limitSlugSize($slug, $incrementReservedSpace = 3)
+    {
+        // check length, as suffix could put it over maximum
+        if (strlen($slug) > (128 - $incrementReservedSpace)) {
+            $slug = substr($slug, 0, 128 - $incrementReservedSpace);
+        }
+
+        return $slug;
+    }
+
+
+    /**
+     * Get the slug, ensuring its uniqueness
+     *
+     * @param    string $slug            the slug to check
+     * @param    string $separator the separator used by slug
+     * @return string                        the unique slug
+     */
+    protected function makeSlugUnique($slug, $separator = '-', $increment = 0)
+    {
+        $slug2 = empty($increment) ? $slug : $slug . $separator . $increment;
+        $slugAlreadyExists = ChildProjectQuery::create()
+            ->filterBySlug($slug2)
+            ->prune($this)
+            ->count();
+        if ($slugAlreadyExists) {
+            return $this->makeSlugUnique($slug, $separator, ++$increment);
+        } else {
+            return $slug2;
+        }
     }
 
     /**

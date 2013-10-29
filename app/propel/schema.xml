@@ -6,58 +6,114 @@
 		<column name="data" type="CHAR" sqlType="TEXT" required="true"/>
 		<column name="created_at" type="INTEGER" required="true"/>
 	</table>
+    
+    <table name="account" phpName="Account">
+        <column name="id" type="integer" required="true" autoIncrement="true" primaryKey="true"/>
+        <column name="name" type="CHAR" size="128"/>
+        <column name="avatar_url" type="CHAR" size="255" required="true"/>
+        <behavior name="timestampable"/>
+        <unique>
+            <unique-column name="name"/>
+        </unique>
+    </table>
 	<table name="project" phpName="Project">
 		<column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="account_id" type="integer" required="true"/>
 		<column name="title" type="CHAR" size="128" required="true"/>
 		<column name="slug" type="CHAR" size="128" required="true"/>
 		<column name="state" type="CHAR" sqlType="ENUM('new','planned','in-progress','shelved','aborted','finished')" required="true" defaultValue="new"/>
-		<column name="created_at" type="DATE" sqlType="DATETIME" required="true"/>
+        <foreign-key foreignTable="account">
+            <reference local="account_id" foreign="id"/>
+        </foreign-key>
+        <unique>
+            <unique-column name="account_id"/>
+            <unique-column name="slug"/>
+        </unique>
+        <behavior name="timestampable"/>
+        <behavior name="sluggable">
+            <parameter name="slug_column" value="slug"/>
+            <parameter name="slug_pattern" value="{Title}"/>
+            <parameter name="permanent" value="true" />
+        </behavior>
 	</table>
 	<table name="user" phpName="User">
 		<column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true"/>
-		<column name="email" type="CHAR" size="128" required="true"/>
+		<column name="login" type="CHAR" size="128" required="true"/>
 		<column name="name" type="CHAR" size="128" required="true"/>
-		<column name="picture" type="CHAR" size="255" required="false"/>
-		<column name="created_at" type="DATE" sqlType="DATETIME" required="true"/>
+        <column name="gravatar_hash" type="CHAR" size="40" required="true"/>
+        <column name="picture" type="CHAR" size="255" required="false"/>
+        <unique>
+            <unique-column name="login"/>
+        </unique>
+        <behavior name="timestampable"/>
 	</table>
-	<!-- TODO: user_github -->
+
+    <table name="account_user" isCrossRef="true">
+        <column name="id" type="integer" required="true" autoIncrement="true" primaryKey="true"/>
+        <column name="user_id" type="integer" required="true"/>
+        <column name="account_id" type="integer" required="true"/>
+        <foreign-key foreignTable="account">
+            <reference local="account_id" foreign="id"/>
+        </foreign-key>
+        <foreign-key foreignTable="user">
+            <reference local="user_id" foreign="id"/>
+        </foreign-key>
+        <unique>
+            <unique-column name="user_id"/>
+            <unique-column name="account_id"/>
+        </unique>
+    </table>
 
 	<table name="project_user" isCrossRef="true">
 		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
 		<column name="user_id" type="integer" required="true"/>
 		<column name="project_id" type="integer" required="true"/>
-		<column name="created_at" type="date" sqlType="DATETIME" required="true"/>
 		<foreign-key foreignTable="project">
 			<reference local="project_id" foreign="id"/>
 		</foreign-key>
 		<foreign-key foreignTable="user">
 			<reference local="user_id" foreign="id"/>
 		</foreign-key>
-	</table>
+        <unique>
+            <unique-column name="user_id"/>
+            <unique-column name="project_id"/>
+        </unique>
+        <behavior name="timestampable"/>
+
+    </table>
 	<table name="project_activity">
 		<column name="id" type="integer" primaryKey="true" required="true" autoIncrement="true"/>
 		<column name="project_id" type="integer" required="true"/>
 		<column name="user_id" type="integer" required="true"/>
 		<column name="activity_type" type="CHAR" size="24" required="true"/>
-		<column name="created_at" type="date" sqlType="DATETIME" required="true"/>
 		<foreign-key foreignTable="user">
 			<reference local="user_id" foreign="id"/>
 		</foreign-key>
 		<foreign-key foreignTable="project">
 			<reference local="project_id" foreign="id"/>
 		</foreign-key>
+        <behavior name="timestampable"/>
 	</table>
 
 	<table name="user_v2mom">
 		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="user_id" type="integer" required="true"/>
+        <column name="user_id" type="integer" required="true" />
+        <column name="account_id" type="integer" required="true" />
         <column name="vision" type="CHAR" sqlType="TEXT" required="true"/>
         <column name="values" type="CHAR" sqlType="TEXT" required="true"/>
         <column name="methods" type="CHAR" sqlType="TEXT" required="true"/>
         <column name="obstacles" type="CHAR" sqlType="TEXT" required="true"/>
-        <column name="created_at" type="DATE" sqlType="DATETIME" required="true"/>
         <foreign-key foreignTable="user">
             <reference local="user_id" foreign="id"/>
         </foreign-key>
+        <foreign-key foreignTable="account">
+            <reference local="account_id" foreign="id"/>
+        </foreign-key>
+        <unique>
+            <unique-column name="user_id"/>
+            <unique-column name="account_id"/>
+        </unique>
+        <behavior name="versionable"/>
+        <behavior name="timestampable"/>
 	</table>
 </database>

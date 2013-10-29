@@ -7,6 +7,10 @@ $manager->setConfiguration(array (
   'dsn' => 'mysql:host=localhost;dbname=roadmap.dev',
   'user' => 'roadmap.dev',
   'password' => 'roadmap.dev',
+  'settings' =>
+  array (
+    'charset' => 'utf8',
+  ),
 ));
 $manager->setName('roadmap');
 $serviceContainer->setConnectionManager('roadmap', $manager);

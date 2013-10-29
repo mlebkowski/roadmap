@@ -20,12 +20,30 @@ use Roadmap\Model\Map\ProjectTableMap;
 class ProjectQuery extends BaseProjectQuery
 {
 
-	public function getRecentProjects()
+	public function getRecentProjects(Account $account)
 	{
 		$query = $this->create();
 		$query->filterByState('finished');
-		$query->limit(3);
-		$query->orderByCreatedAt(Criteria::ASC);
+		$query->orderByCreatedAt(Criteria::DESC);
+		$query->filterByAccount($account);
+		return $query->paginate(1, 10);
+	}
+
+	public function getOngoingProjects(Account $account)
+	{
+		$query = $this->create();
+		$query->filterByState(['in-progress', 'planned']);
+		$query->orderByCreatedAt(Criteria::DESC);
+		$query->filterByAccount($account);
+		return $query->find();
+	}
+
+	public function getNewProjects(Account $account)
+	{
+		$query = $this->create();
+		$query->filterByState('new');
+		$query->orderByCreatedAt(Criteria::DESC);
+		$query->filterByAccount($account);
 		return $query->find();
 	}
 

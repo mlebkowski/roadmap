@@ -60,10 +60,13 @@ $app->register(new Silex\Provider\SessionServiceProvider, [
 		]);
 	},
 ]);
-session_start();
+
 $app->register(new Nicl\Silex\MarkdownServiceProvider);
 $app->register(new Nassau\Silex\Provider\TwigNicedateProvider);
 $app->register(new Nassau\Silex\Provider\FiniteStateMachineProvider);
+
+$app->register(new Nassau\Silex\Provider\GithubAuthorizationFlowProvider);
+$app->register(new Roadmap\Provider\UserProvider);
 
 $controllers = new \Roadmap\Provider\ControllersProvider;
 $app->register($controllers);

@@ -23,19 +23,25 @@ use Roadmap\Model\Map\UserV2momTableMap;
  *
  * @method     ChildUserV2momQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildUserV2momQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
+ * @method     ChildUserV2momQuery orderByAccountId($order = Criteria::ASC) Order by the account_id column
  * @method     ChildUserV2momQuery orderByVision($order = Criteria::ASC) Order by the vision column
  * @method     ChildUserV2momQuery orderByValues($order = Criteria::ASC) Order by the values column
  * @method     ChildUserV2momQuery orderByMethods($order = Criteria::ASC) Order by the methods column
  * @method     ChildUserV2momQuery orderByObstacles($order = Criteria::ASC) Order by the obstacles column
  * @method     ChildUserV2momQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
+ * @method     ChildUserV2momQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
+ * @method     ChildUserV2momQuery orderByVersion($order = Criteria::ASC) Order by the version column
  *
  * @method     ChildUserV2momQuery groupById() Group by the id column
  * @method     ChildUserV2momQuery groupByUserId() Group by the user_id column
+ * @method     ChildUserV2momQuery groupByAccountId() Group by the account_id column
  * @method     ChildUserV2momQuery groupByVision() Group by the vision column
  * @method     ChildUserV2momQuery groupByValues() Group by the values column
  * @method     ChildUserV2momQuery groupByMethods() Group by the methods column
  * @method     ChildUserV2momQuery groupByObstacles() Group by the obstacles column
  * @method     ChildUserV2momQuery groupByCreatedAt() Group by the created_at column
+ * @method     ChildUserV2momQuery groupByUpdatedAt() Group by the updated_at column
+ * @method     ChildUserV2momQuery groupByVersion() Group by the version column
  *
  * @method     ChildUserV2momQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildUserV2momQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -45,28 +51,49 @@ use Roadmap\Model\Map\UserV2momTableMap;
  * @method     ChildUserV2momQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
  * @method     ChildUserV2momQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
  *
+ * @method     ChildUserV2momQuery leftJoinAccount($relationAlias = null) Adds a LEFT JOIN clause to the query using the Account relation
+ * @method     ChildUserV2momQuery rightJoinAccount($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Account relation
+ * @method     ChildUserV2momQuery innerJoinAccount($relationAlias = null) Adds a INNER JOIN clause to the query using the Account relation
+ *
+ * @method     ChildUserV2momQuery leftJoinUserV2momVersion($relationAlias = null) Adds a LEFT JOIN clause to the query using the UserV2momVersion relation
+ * @method     ChildUserV2momQuery rightJoinUserV2momVersion($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserV2momVersion relation
+ * @method     ChildUserV2momQuery innerJoinUserV2momVersion($relationAlias = null) Adds a INNER JOIN clause to the query using the UserV2momVersion relation
+ *
  * @method     ChildUserV2mom findOne(ConnectionInterface $con = null) Return the first ChildUserV2mom matching the query
  * @method     ChildUserV2mom findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUserV2mom matching the query, or a new ChildUserV2mom object populated from the query conditions when no match is found
  *
  * @method     ChildUserV2mom findOneById(int $id) Return the first ChildUserV2mom filtered by the id column
  * @method     ChildUserV2mom findOneByUserId(int $user_id) Return the first ChildUserV2mom filtered by the user_id column
+ * @method     ChildUserV2mom findOneByAccountId(int $account_id) Return the first ChildUserV2mom filtered by the account_id column
  * @method     ChildUserV2mom findOneByVision(string $vision) Return the first ChildUserV2mom filtered by the vision column
  * @method     ChildUserV2mom findOneByValues(string $values) Return the first ChildUserV2mom filtered by the values column
  * @method     ChildUserV2mom findOneByMethods(string $methods) Return the first ChildUserV2mom filtered by the methods column
  * @method     ChildUserV2mom findOneByObstacles(string $obstacles) Return the first ChildUserV2mom filtered by the obstacles column
  * @method     ChildUserV2mom findOneByCreatedAt(string $created_at) Return the first ChildUserV2mom filtered by the created_at column
+ * @method     ChildUserV2mom findOneByUpdatedAt(string $updated_at) Return the first ChildUserV2mom filtered by the updated_at column
+ * @method     ChildUserV2mom findOneByVersion(int $version) Return the first ChildUserV2mom filtered by the version column
  *
  * @method     array findById(int $id) Return ChildUserV2mom objects filtered by the id column
  * @method     array findByUserId(int $user_id) Return ChildUserV2mom objects filtered by the user_id column
+ * @method     array findByAccountId(int $account_id) Return ChildUserV2mom objects filtered by the account_id column
  * @method     array findByVision(string $vision) Return ChildUserV2mom objects filtered by the vision column
  * @method     array findByValues(string $values) Return ChildUserV2mom objects filtered by the values column
  * @method     array findByMethods(string $methods) Return ChildUserV2mom objects filtered by the methods column
  * @method     array findByObstacles(string $obstacles) Return ChildUserV2mom objects filtered by the obstacles column
  * @method     array findByCreatedAt(string $created_at) Return ChildUserV2mom objects filtered by the created_at column
+ * @method     array findByUpdatedAt(string $updated_at) Return ChildUserV2mom objects filtered by the updated_at column
+ * @method     array findByVersion(int $version) Return ChildUserV2mom objects filtered by the version column
  *
  */
 abstract class UserV2momQuery extends ModelCriteria
 {
+
+    // versionable behavior
+
+    /**
+     * Whether the versioning is enabled
+     */
+    static $isVersioningEnabled = true;
 
     /**
      * Initializes internal state of \Roadmap\Model\Base\UserV2momQuery object.
@@ -151,7 +178,7 @@ abstract class UserV2momQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, USER_ID, VISION, VALUES, METHODS, OBSTACLES, CREATED_AT FROM user_v2mom WHERE ID = :p0';
+        $sql = 'SELECT ID, USER_ID, ACCOUNT_ID, VISION, VALUES, METHODS, OBSTACLES, CREATED_AT, UPDATED_AT, VERSION FROM user_v2mom WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -325,6 +352,49 @@ abstract class UserV2momQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the account_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByAccountId(1234); // WHERE account_id = 1234
+     * $query->filterByAccountId(array(12, 34)); // WHERE account_id IN (12, 34)
+     * $query->filterByAccountId(array('min' => 12)); // WHERE account_id > 12
+     * </code>
+     *
+     * @see       filterByAccount()
+     *
+     * @param     mixed $accountId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserV2momQuery The current query, for fluid interface
+     */
+    public function filterByAccountId($accountId = null, $comparison = null)
+    {
+        if (is_array($accountId)) {
+            $useMinMax = false;
+            if (isset($accountId['min'])) {
+                $this->addUsingAlias(UserV2momTableMap::ACCOUNT_ID, $accountId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($accountId['max'])) {
+                $this->addUsingAlias(UserV2momTableMap::ACCOUNT_ID, $accountId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserV2momTableMap::ACCOUNT_ID, $accountId, $comparison);
+    }
+
+    /**
      * Filter the query on the vision column
      *
      * Example usage:
@@ -484,6 +554,90 @@ abstract class UserV2momQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the updated_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUpdatedAt('2011-03-14'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt('now'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt(array('max' => 'yesterday')); // WHERE updated_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $updatedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserV2momQuery The current query, for fluid interface
+     */
+    public function filterByUpdatedAt($updatedAt = null, $comparison = null)
+    {
+        if (is_array($updatedAt)) {
+            $useMinMax = false;
+            if (isset($updatedAt['min'])) {
+                $this->addUsingAlias(UserV2momTableMap::UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($updatedAt['max'])) {
+                $this->addUsingAlias(UserV2momTableMap::UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserV2momTableMap::UPDATED_AT, $updatedAt, $comparison);
+    }
+
+    /**
+     * Filter the query on the version column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByVersion(1234); // WHERE version = 1234
+     * $query->filterByVersion(array(12, 34)); // WHERE version IN (12, 34)
+     * $query->filterByVersion(array('min' => 12)); // WHERE version > 12
+     * </code>
+     *
+     * @param     mixed $version The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserV2momQuery The current query, for fluid interface
+     */
+    public function filterByVersion($version = null, $comparison = null)
+    {
+        if (is_array($version)) {
+            $useMinMax = false;
+            if (isset($version['min'])) {
+                $this->addUsingAlias(UserV2momTableMap::VERSION, $version['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($version['max'])) {
+                $this->addUsingAlias(UserV2momTableMap::VERSION, $version['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserV2momTableMap::VERSION, $version, $comparison);
+    }
+
+    /**
      * Filter the query by a related \Roadmap\Model\User object
      *
      * @param \Roadmap\Model\User|ObjectCollection $user The related object(s) to use as filter
@@ -556,6 +710,154 @@ abstract class UserV2momQuery extends ModelCriteria
         return $this
             ->joinUser($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'User', '\Roadmap\Model\UserQuery');
+    }
+
+    /**
+     * Filter the query by a related \Roadmap\Model\Account object
+     *
+     * @param \Roadmap\Model\Account|ObjectCollection $account The related object(s) to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserV2momQuery The current query, for fluid interface
+     */
+    public function filterByAccount($account, $comparison = null)
+    {
+        if ($account instanceof \Roadmap\Model\Account) {
+            return $this
+                ->addUsingAlias(UserV2momTableMap::ACCOUNT_ID, $account->getId(), $comparison);
+        } elseif ($account instanceof ObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(UserV2momTableMap::ACCOUNT_ID, $account->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByAccount() only accepts arguments of type \Roadmap\Model\Account or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Account relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ChildUserV2momQuery The current query, for fluid interface
+     */
+    public function joinAccount($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Account');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Account');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Account relation Account object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Roadmap\Model\AccountQuery A secondary query class using the current class as primary query
+     */
+    public function useAccountQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinAccount($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Account', '\Roadmap\Model\AccountQuery');
+    }
+
+    /**
+     * Filter the query by a related \Roadmap\Model\UserV2momVersion object
+     *
+     * @param \Roadmap\Model\UserV2momVersion|ObjectCollection $userV2momVersion  the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserV2momQuery The current query, for fluid interface
+     */
+    public function filterByUserV2momVersion($userV2momVersion, $comparison = null)
+    {
+        if ($userV2momVersion instanceof \Roadmap\Model\UserV2momVersion) {
+            return $this
+                ->addUsingAlias(UserV2momTableMap::ID, $userV2momVersion->getId(), $comparison);
+        } elseif ($userV2momVersion instanceof ObjectCollection) {
+            return $this
+                ->useUserV2momVersionQuery()
+                ->filterByPrimaryKeys($userV2momVersion->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByUserV2momVersion() only accepts arguments of type \Roadmap\Model\UserV2momVersion or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the UserV2momVersion relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ChildUserV2momQuery The current query, for fluid interface
+     */
+    public function joinUserV2momVersion($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('UserV2momVersion');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'UserV2momVersion');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the UserV2momVersion relation UserV2momVersion object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Roadmap\Model\UserV2momVersionQuery A secondary query class using the current class as primary query
+     */
+    public function useUserV2momVersionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinUserV2momVersion($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'UserV2momVersion', '\Roadmap\Model\UserV2momVersionQuery');
     }
 
     /**
@@ -647,6 +949,100 @@ abstract class UserV2momQuery extends ModelCriteria
             $con->rollBack();
             throw $e;
         }
+    }
+
+    // versionable behavior
+
+    /**
+     * Checks whether versioning is enabled
+     *
+     * @return boolean
+     */
+    static public function isVersioningEnabled()
+    {
+        return self::$isVersioningEnabled;
+    }
+
+    /**
+     * Enables versioning
+     */
+    static public function enableVersioning()
+    {
+        self::$isVersioningEnabled = true;
+    }
+
+    /**
+     * Disables versioning
+     */
+    static public function disableVersioning()
+    {
+        self::$isVersioningEnabled = false;
+    }
+
+    // timestampable behavior
+
+    /**
+     * Filter by the latest updated
+     *
+     * @param      int $nbDays Maximum age of the latest update in days
+     *
+     * @return     ChildUserV2momQuery The current query, for fluid interface
+     */
+    public function recentlyUpdated($nbDays = 7)
+    {
+        return $this->addUsingAlias(UserV2momTableMap::UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Filter by the latest created
+     *
+     * @param      int $nbDays Maximum age of in days
+     *
+     * @return     ChildUserV2momQuery The current query, for fluid interface
+     */
+    public function recentlyCreated($nbDays = 7)
+    {
+        return $this->addUsingAlias(UserV2momTableMap::CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by update date desc
+     *
+     * @return     ChildUserV2momQuery The current query, for fluid interface
+     */
+    public function lastUpdatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(UserV2momTableMap::UPDATED_AT);
+    }
+
+    /**
+     * Order by update date asc
+     *
+     * @return     ChildUserV2momQuery The current query, for fluid interface
+     */
+    public function firstUpdatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(UserV2momTableMap::UPDATED_AT);
+    }
+
+    /**
+     * Order by create date desc
+     *
+     * @return     ChildUserV2momQuery The current query, for fluid interface
+     */
+    public function lastCreatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(UserV2momTableMap::CREATED_AT);
+    }
+
+    /**
+     * Order by create date asc
+     *
+     * @return     ChildUserV2momQuery The current query, for fluid interface
+     */
+    public function firstCreatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(UserV2momTableMap::CREATED_AT);
     }
 
 } // UserV2momQuery

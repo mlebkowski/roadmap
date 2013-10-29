@@ -22,20 +22,28 @@ use Roadmap\Model\Map\ProjectTableMap;
  *
  *
  * @method     ChildProjectQuery orderById($order = Criteria::ASC) Order by the id column
+ * @method     ChildProjectQuery orderByAccountId($order = Criteria::ASC) Order by the account_id column
  * @method     ChildProjectQuery orderByTitle($order = Criteria::ASC) Order by the title column
  * @method     ChildProjectQuery orderBySlug($order = Criteria::ASC) Order by the slug column
  * @method     ChildProjectQuery orderByState($order = Criteria::ASC) Order by the state column
  * @method     ChildProjectQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
+ * @method     ChildProjectQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildProjectQuery groupById() Group by the id column
+ * @method     ChildProjectQuery groupByAccountId() Group by the account_id column
  * @method     ChildProjectQuery groupByTitle() Group by the title column
  * @method     ChildProjectQuery groupBySlug() Group by the slug column
  * @method     ChildProjectQuery groupByState() Group by the state column
  * @method     ChildProjectQuery groupByCreatedAt() Group by the created_at column
+ * @method     ChildProjectQuery groupByUpdatedAt() Group by the updated_at column
  *
  * @method     ChildProjectQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildProjectQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildProjectQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ *
+ * @method     ChildProjectQuery leftJoinAccount($relationAlias = null) Adds a LEFT JOIN clause to the query using the Account relation
+ * @method     ChildProjectQuery rightJoinAccount($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Account relation
+ * @method     ChildProjectQuery innerJoinAccount($relationAlias = null) Adds a INNER JOIN clause to the query using the Account relation
  *
  * @method     ChildProjectQuery leftJoinProjectUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the ProjectUser relation
  * @method     ChildProjectQuery rightJoinProjectUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ProjectUser relation
@@ -49,16 +57,20 @@ use Roadmap\Model\Map\ProjectTableMap;
  * @method     ChildProject findOneOrCreate(ConnectionInterface $con = null) Return the first ChildProject matching the query, or a new ChildProject object populated from the query conditions when no match is found
  *
  * @method     ChildProject findOneById(int $id) Return the first ChildProject filtered by the id column
+ * @method     ChildProject findOneByAccountId(int $account_id) Return the first ChildProject filtered by the account_id column
  * @method     ChildProject findOneByTitle(string $title) Return the first ChildProject filtered by the title column
  * @method     ChildProject findOneBySlug(string $slug) Return the first ChildProject filtered by the slug column
  * @method     ChildProject findOneByState(string $state) Return the first ChildProject filtered by the state column
  * @method     ChildProject findOneByCreatedAt(string $created_at) Return the first ChildProject filtered by the created_at column
+ * @method     ChildProject findOneByUpdatedAt(string $updated_at) Return the first ChildProject filtered by the updated_at column
  *
  * @method     array findById(int $id) Return ChildProject objects filtered by the id column
+ * @method     array findByAccountId(int $account_id) Return ChildProject objects filtered by the account_id column
  * @method     array findByTitle(string $title) Return ChildProject objects filtered by the title column
  * @method     array findBySlug(string $slug) Return ChildProject objects filtered by the slug column
  * @method     array findByState(string $state) Return ChildProject objects filtered by the state column
  * @method     array findByCreatedAt(string $created_at) Return ChildProject objects filtered by the created_at column
+ * @method     array findByUpdatedAt(string $updated_at) Return ChildProject objects filtered by the updated_at column
  *
  */
 abstract class ProjectQuery extends ModelCriteria
@@ -147,7 +159,7 @@ abstract class ProjectQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, TITLE, SLUG, STATE, CREATED_AT FROM project WHERE ID = :p0';
+        $sql = 'SELECT ID, ACCOUNT_ID, TITLE, SLUG, STATE, CREATED_AT, UPDATED_AT FROM project WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -278,6 +290,49 @@ abstract class ProjectQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the account_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByAccountId(1234); // WHERE account_id = 1234
+     * $query->filterByAccountId(array(12, 34)); // WHERE account_id IN (12, 34)
+     * $query->filterByAccountId(array('min' => 12)); // WHERE account_id > 12
+     * </code>
+     *
+     * @see       filterByAccount()
+     *
+     * @param     mixed $accountId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildProjectQuery The current query, for fluid interface
+     */
+    public function filterByAccountId($accountId = null, $comparison = null)
+    {
+        if (is_array($accountId)) {
+            $useMinMax = false;
+            if (isset($accountId['min'])) {
+                $this->addUsingAlias(ProjectTableMap::ACCOUNT_ID, $accountId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($accountId['max'])) {
+                $this->addUsingAlias(ProjectTableMap::ACCOUNT_ID, $accountId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ProjectTableMap::ACCOUNT_ID, $accountId, $comparison);
+    }
+
+    /**
      * Filter the query on the title column
      *
      * Example usage:
@@ -405,6 +460,124 @@ abstract class ProjectQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ProjectTableMap::CREATED_AT, $createdAt, $comparison);
+    }
+
+    /**
+     * Filter the query on the updated_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUpdatedAt('2011-03-14'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt('now'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt(array('max' => 'yesterday')); // WHERE updated_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $updatedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildProjectQuery The current query, for fluid interface
+     */
+    public function filterByUpdatedAt($updatedAt = null, $comparison = null)
+    {
+        if (is_array($updatedAt)) {
+            $useMinMax = false;
+            if (isset($updatedAt['min'])) {
+                $this->addUsingAlias(ProjectTableMap::UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($updatedAt['max'])) {
+                $this->addUsingAlias(ProjectTableMap::UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ProjectTableMap::UPDATED_AT, $updatedAt, $comparison);
+    }
+
+    /**
+     * Filter the query by a related \Roadmap\Model\Account object
+     *
+     * @param \Roadmap\Model\Account|ObjectCollection $account The related object(s) to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildProjectQuery The current query, for fluid interface
+     */
+    public function filterByAccount($account, $comparison = null)
+    {
+        if ($account instanceof \Roadmap\Model\Account) {
+            return $this
+                ->addUsingAlias(ProjectTableMap::ACCOUNT_ID, $account->getId(), $comparison);
+        } elseif ($account instanceof ObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(ProjectTableMap::ACCOUNT_ID, $account->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByAccount() only accepts arguments of type \Roadmap\Model\Account or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Account relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ChildProjectQuery The current query, for fluid interface
+     */
+    public function joinAccount($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Account');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Account');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Account relation Account object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Roadmap\Model\AccountQuery A secondary query class using the current class as primary query
+     */
+    public function useAccountQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinAccount($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Account', '\Roadmap\Model\AccountQuery');
     }
 
     /**
@@ -659,6 +832,87 @@ abstract class ProjectQuery extends ModelCriteria
             $con->rollBack();
             throw $e;
         }
+    }
+
+    // timestampable behavior
+
+    /**
+     * Filter by the latest updated
+     *
+     * @param      int $nbDays Maximum age of the latest update in days
+     *
+     * @return     ChildProjectQuery The current query, for fluid interface
+     */
+    public function recentlyUpdated($nbDays = 7)
+    {
+        return $this->addUsingAlias(ProjectTableMap::UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Filter by the latest created
+     *
+     * @param      int $nbDays Maximum age of in days
+     *
+     * @return     ChildProjectQuery The current query, for fluid interface
+     */
+    public function recentlyCreated($nbDays = 7)
+    {
+        return $this->addUsingAlias(ProjectTableMap::CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by update date desc
+     *
+     * @return     ChildProjectQuery The current query, for fluid interface
+     */
+    public function lastUpdatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(ProjectTableMap::UPDATED_AT);
+    }
+
+    /**
+     * Order by update date asc
+     *
+     * @return     ChildProjectQuery The current query, for fluid interface
+     */
+    public function firstUpdatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(ProjectTableMap::UPDATED_AT);
+    }
+
+    /**
+     * Order by create date desc
+     *
+     * @return     ChildProjectQuery The current query, for fluid interface
+     */
+    public function lastCreatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(ProjectTableMap::CREATED_AT);
+    }
+
+    /**
+     * Order by create date asc
+     *
+     * @return     ChildProjectQuery The current query, for fluid interface
+     */
+    public function firstCreatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(ProjectTableMap::CREATED_AT);
+    }
+
+    // sluggable behavior
+
+    /**
+     * Find one object based on its slug
+     *
+     * @param     string $slug The value to use as filter.
+     * @param     ConnectionInterface $con The optional connection object
+     *
+     * @return    ChildProject the result, formatted by the current formatter
+     */
+    public function findOneBySlug($slug, $con = null)
+    {
+        return $this->filterBySlug($slug)->findOne($con);
     }
 
 } // ProjectQuery

@@ -57,7 +57,7 @@ class ProjectUserTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -67,7 +67,7 @@ class ProjectUserTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the ID field
@@ -90,6 +90,11 @@ class ProjectUserTableMap extends TableMap
     const CREATED_AT = 'project_user.CREATED_AT';
 
     /**
+     * the column name for the UPDATED_AT field
+     */
+    const UPDATED_AT = 'project_user.UPDATED_AT';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -101,12 +106,12 @@ class ProjectUserTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'UserId', 'ProjectId', 'CreatedAt', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'userId', 'projectId', 'createdAt', ),
-        self::TYPE_COLNAME       => array(ProjectUserTableMap::ID, ProjectUserTableMap::USER_ID, ProjectUserTableMap::PROJECT_ID, ProjectUserTableMap::CREATED_AT, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'USER_ID', 'PROJECT_ID', 'CREATED_AT', ),
-        self::TYPE_FIELDNAME     => array('id', 'user_id', 'project_id', 'created_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id', 'UserId', 'ProjectId', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'userId', 'projectId', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(ProjectUserTableMap::ID, ProjectUserTableMap::USER_ID, ProjectUserTableMap::PROJECT_ID, ProjectUserTableMap::CREATED_AT, ProjectUserTableMap::UPDATED_AT, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'USER_ID', 'PROJECT_ID', 'CREATED_AT', 'UPDATED_AT', ),
+        self::TYPE_FIELDNAME     => array('id', 'user_id', 'project_id', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -116,12 +121,12 @@ class ProjectUserTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'ProjectId' => 2, 'CreatedAt' => 3, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'userId' => 1, 'projectId' => 2, 'createdAt' => 3, ),
-        self::TYPE_COLNAME       => array(ProjectUserTableMap::ID => 0, ProjectUserTableMap::USER_ID => 1, ProjectUserTableMap::PROJECT_ID => 2, ProjectUserTableMap::CREATED_AT => 3, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'USER_ID' => 1, 'PROJECT_ID' => 2, 'CREATED_AT' => 3, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'project_id' => 2, 'created_at' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'ProjectId' => 2, 'CreatedAt' => 3, 'UpdatedAt' => 4, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'userId' => 1, 'projectId' => 2, 'createdAt' => 3, 'updatedAt' => 4, ),
+        self::TYPE_COLNAME       => array(ProjectUserTableMap::ID => 0, ProjectUserTableMap::USER_ID => 1, ProjectUserTableMap::PROJECT_ID => 2, ProjectUserTableMap::CREATED_AT => 3, ProjectUserTableMap::UPDATED_AT => 4, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'USER_ID' => 1, 'PROJECT_ID' => 2, 'CREATED_AT' => 3, 'UPDATED_AT' => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'project_id' => 2, 'created_at' => 3, 'updated_at' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -144,7 +149,8 @@ class ProjectUserTableMap extends TableMap
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
         $this->addForeignKey('USER_ID', 'UserId', 'INTEGER', 'user', 'ID', true, null, null);
         $this->addForeignKey('PROJECT_ID', 'ProjectId', 'INTEGER', 'project', 'ID', true, null, null);
-        $this->addColumn('CREATED_AT', 'CreatedAt', 'DATE', true, null, null);
+        $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -155,6 +161,19 @@ class ProjectUserTableMap extends TableMap
         $this->addRelation('Project', '\\Roadmap\\Model\\Project', RelationMap::MANY_TO_ONE, array('project_id' => 'id', ), null, null);
         $this->addRelation('User', '\\Roadmap\\Model\\User', RelationMap::MANY_TO_ONE, array('user_id' => 'id', ), null, null);
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', ),
+        );
+    } // getBehaviors()
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -298,11 +317,13 @@ class ProjectUserTableMap extends TableMap
             $criteria->addSelectColumn(ProjectUserTableMap::USER_ID);
             $criteria->addSelectColumn(ProjectUserTableMap::PROJECT_ID);
             $criteria->addSelectColumn(ProjectUserTableMap::CREATED_AT);
+            $criteria->addSelectColumn(ProjectUserTableMap::UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.USER_ID');
             $criteria->addSelectColumn($alias . '.PROJECT_ID');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
+            $criteria->addSelectColumn($alias . '.UPDATED_AT');
         }
     }
 

@@ -10,30 +10,23 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\PropelDateTime;
-use Roadmap\Model\Account as ChildAccount;
-use Roadmap\Model\AccountQuery as ChildAccountQuery;
-use Roadmap\Model\User as ChildUser;
-use Roadmap\Model\UserQuery as ChildUserQuery;
 use Roadmap\Model\UserV2mom as ChildUserV2mom;
 use Roadmap\Model\UserV2momQuery as ChildUserV2momQuery;
-use Roadmap\Model\UserV2momVersion as ChildUserV2momVersion;
 use Roadmap\Model\UserV2momVersionQuery as ChildUserV2momVersionQuery;
-use Roadmap\Model\Map\UserV2momTableMap;
 use Roadmap\Model\Map\UserV2momVersionTableMap;
 
-abstract class UserV2mom implements ActiveRecordInterface
+abstract class UserV2momVersion implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Roadmap\\Model\\Map\\UserV2momTableMap';
+    const TABLE_MAP = '\\Roadmap\\Model\\Map\\UserV2momVersionTableMap';
 
 
     /**
@@ -124,20 +117,9 @@ abstract class UserV2mom implements ActiveRecordInterface
     protected $version;
 
     /**
-     * @var        User
+     * @var        UserV2mom
      */
-    protected $aUser;
-
-    /**
-     * @var        Account
-     */
-    protected $aAccount;
-
-    /**
-     * @var        ObjectCollection|ChildUserV2momVersion[] Collection to store aggregation of ChildUserV2momVersion objects.
-     */
-    protected $collUserV2momVersions;
-    protected $collUserV2momVersionsPartial;
+    protected $aUserV2mom;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -146,20 +128,6 @@ abstract class UserV2mom implements ActiveRecordInterface
      * @var boolean
      */
     protected $alreadyInSave = false;
-
-    // versionable behavior
-
-
-    /**
-     * @var bool
-     */
-    protected $enforceVersion = false;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection
-     */
-    protected $userV2momVersionsScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -173,7 +141,7 @@ abstract class UserV2mom implements ActiveRecordInterface
     }
 
     /**
-     * Initializes internal state of Roadmap\Model\Base\UserV2mom object.
+     * Initializes internal state of Roadmap\Model\Base\UserV2momVersion object.
      * @see applyDefaults()
      */
     public function __construct()
@@ -270,9 +238,9 @@ abstract class UserV2mom implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>UserV2mom</code> instance.  If
-     * <code>obj</code> is an instance of <code>UserV2mom</code>, delegates to
-     * <code>equals(UserV2mom)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>UserV2momVersion</code> instance.  If
+     * <code>obj</code> is an instance of <code>UserV2momVersion</code>, delegates to
+     * <code>equals(UserV2momVersion)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -355,7 +323,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return UserV2mom The current object, for fluid interface
+     * @return UserV2momVersion The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -387,7 +355,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string $data The source data to import from
      *
-     * @return UserV2mom The current object, for fluid interface
+     * @return UserV2momVersion The current object, for fluid interface
      */
     public function importFrom($parser, $data)
     {
@@ -564,7 +532,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      * Set the value of [id] column.
      *
      * @param      int $v new value
-     * @return   \Roadmap\Model\UserV2mom The current object (for fluent API support)
+     * @return   \Roadmap\Model\UserV2momVersion The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -574,7 +542,11 @@ abstract class UserV2mom implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[] = UserV2momTableMap::ID;
+            $this->modifiedColumns[] = UserV2momVersionTableMap::ID;
+        }
+
+        if ($this->aUserV2mom !== null && $this->aUserV2mom->getId() !== $v) {
+            $this->aUserV2mom = null;
         }
 
 
@@ -585,7 +557,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      * Set the value of [user_id] column.
      *
      * @param      int $v new value
-     * @return   \Roadmap\Model\UserV2mom The current object (for fluent API support)
+     * @return   \Roadmap\Model\UserV2momVersion The current object (for fluent API support)
      */
     public function setUserId($v)
     {
@@ -595,11 +567,7 @@ abstract class UserV2mom implements ActiveRecordInterface
 
         if ($this->user_id !== $v) {
             $this->user_id = $v;
-            $this->modifiedColumns[] = UserV2momTableMap::USER_ID;
-        }
-
-        if ($this->aUser !== null && $this->aUser->getId() !== $v) {
-            $this->aUser = null;
+            $this->modifiedColumns[] = UserV2momVersionTableMap::USER_ID;
         }
 
 
@@ -610,7 +578,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      * Set the value of [account_id] column.
      *
      * @param      int $v new value
-     * @return   \Roadmap\Model\UserV2mom The current object (for fluent API support)
+     * @return   \Roadmap\Model\UserV2momVersion The current object (for fluent API support)
      */
     public function setAccountId($v)
     {
@@ -620,11 +588,7 @@ abstract class UserV2mom implements ActiveRecordInterface
 
         if ($this->account_id !== $v) {
             $this->account_id = $v;
-            $this->modifiedColumns[] = UserV2momTableMap::ACCOUNT_ID;
-        }
-
-        if ($this->aAccount !== null && $this->aAccount->getId() !== $v) {
-            $this->aAccount = null;
+            $this->modifiedColumns[] = UserV2momVersionTableMap::ACCOUNT_ID;
         }
 
 
@@ -635,7 +599,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      * Set the value of [vision] column.
      *
      * @param      string $v new value
-     * @return   \Roadmap\Model\UserV2mom The current object (for fluent API support)
+     * @return   \Roadmap\Model\UserV2momVersion The current object (for fluent API support)
      */
     public function setVision($v)
     {
@@ -645,7 +609,7 @@ abstract class UserV2mom implements ActiveRecordInterface
 
         if ($this->vision !== $v) {
             $this->vision = $v;
-            $this->modifiedColumns[] = UserV2momTableMap::VISION;
+            $this->modifiedColumns[] = UserV2momVersionTableMap::VISION;
         }
 
 
@@ -656,7 +620,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      * Set the value of [values] column.
      *
      * @param      string $v new value
-     * @return   \Roadmap\Model\UserV2mom The current object (for fluent API support)
+     * @return   \Roadmap\Model\UserV2momVersion The current object (for fluent API support)
      */
     public function setValues($v)
     {
@@ -666,7 +630,7 @@ abstract class UserV2mom implements ActiveRecordInterface
 
         if ($this->values !== $v) {
             $this->values = $v;
-            $this->modifiedColumns[] = UserV2momTableMap::VALUES;
+            $this->modifiedColumns[] = UserV2momVersionTableMap::VALUES;
         }
 
 
@@ -677,7 +641,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      * Set the value of [methods] column.
      *
      * @param      string $v new value
-     * @return   \Roadmap\Model\UserV2mom The current object (for fluent API support)
+     * @return   \Roadmap\Model\UserV2momVersion The current object (for fluent API support)
      */
     public function setMethods($v)
     {
@@ -687,7 +651,7 @@ abstract class UserV2mom implements ActiveRecordInterface
 
         if ($this->methods !== $v) {
             $this->methods = $v;
-            $this->modifiedColumns[] = UserV2momTableMap::METHODS;
+            $this->modifiedColumns[] = UserV2momVersionTableMap::METHODS;
         }
 
 
@@ -698,7 +662,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      * Set the value of [obstacles] column.
      *
      * @param      string $v new value
-     * @return   \Roadmap\Model\UserV2mom The current object (for fluent API support)
+     * @return   \Roadmap\Model\UserV2momVersion The current object (for fluent API support)
      */
     public function setObstacles($v)
     {
@@ -708,7 +672,7 @@ abstract class UserV2mom implements ActiveRecordInterface
 
         if ($this->obstacles !== $v) {
             $this->obstacles = $v;
-            $this->modifiedColumns[] = UserV2momTableMap::OBSTACLES;
+            $this->modifiedColumns[] = UserV2momVersionTableMap::OBSTACLES;
         }
 
 
@@ -720,7 +684,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      *
      * @param      mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return   \Roadmap\Model\UserV2mom The current object (for fluent API support)
+     * @return   \Roadmap\Model\UserV2momVersion The current object (for fluent API support)
      */
     public function setCreatedAt($v)
     {
@@ -728,7 +692,7 @@ abstract class UserV2mom implements ActiveRecordInterface
         if ($this->created_at !== null || $dt !== null) {
             if ($dt !== $this->created_at) {
                 $this->created_at = $dt;
-                $this->modifiedColumns[] = UserV2momTableMap::CREATED_AT;
+                $this->modifiedColumns[] = UserV2momVersionTableMap::CREATED_AT;
             }
         } // if either are not null
 
@@ -741,7 +705,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      *
      * @param      mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return   \Roadmap\Model\UserV2mom The current object (for fluent API support)
+     * @return   \Roadmap\Model\UserV2momVersion The current object (for fluent API support)
      */
     public function setUpdatedAt($v)
     {
@@ -749,7 +713,7 @@ abstract class UserV2mom implements ActiveRecordInterface
         if ($this->updated_at !== null || $dt !== null) {
             if ($dt !== $this->updated_at) {
                 $this->updated_at = $dt;
-                $this->modifiedColumns[] = UserV2momTableMap::UPDATED_AT;
+                $this->modifiedColumns[] = UserV2momVersionTableMap::UPDATED_AT;
             }
         } // if either are not null
 
@@ -761,7 +725,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      * Set the value of [version] column.
      *
      * @param      int $v new value
-     * @return   \Roadmap\Model\UserV2mom The current object (for fluent API support)
+     * @return   \Roadmap\Model\UserV2momVersion The current object (for fluent API support)
      */
     public function setVersion($v)
     {
@@ -771,7 +735,7 @@ abstract class UserV2mom implements ActiveRecordInterface
 
         if ($this->version !== $v) {
             $this->version = $v;
-            $this->modifiedColumns[] = UserV2momTableMap::VERSION;
+            $this->modifiedColumns[] = UserV2momVersionTableMap::VERSION;
         }
 
 
@@ -819,40 +783,40 @@ abstract class UserV2mom implements ActiveRecordInterface
         try {
 
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : UserV2momTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : UserV2momVersionTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserV2momTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserV2momVersionTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->user_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserV2momTableMap::translateFieldName('AccountId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserV2momVersionTableMap::translateFieldName('AccountId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->account_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserV2momTableMap::translateFieldName('Vision', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserV2momVersionTableMap::translateFieldName('Vision', TableMap::TYPE_PHPNAME, $indexType)];
             $this->vision = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserV2momTableMap::translateFieldName('Values', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserV2momVersionTableMap::translateFieldName('Values', TableMap::TYPE_PHPNAME, $indexType)];
             $this->values = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserV2momTableMap::translateFieldName('Methods', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserV2momVersionTableMap::translateFieldName('Methods', TableMap::TYPE_PHPNAME, $indexType)];
             $this->methods = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserV2momTableMap::translateFieldName('Obstacles', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserV2momVersionTableMap::translateFieldName('Obstacles', TableMap::TYPE_PHPNAME, $indexType)];
             $this->obstacles = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : UserV2momTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : UserV2momVersionTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : UserV2momTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : UserV2momVersionTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : UserV2momTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : UserV2momVersionTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
             $this->version = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
@@ -862,10 +826,10 @@ abstract class UserV2mom implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 10; // 10 = UserV2momTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 10; // 10 = UserV2momVersionTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating \Roadmap\Model\UserV2mom object", 0, $e);
+            throw new PropelException("Error populating \Roadmap\Model\UserV2momVersion object", 0, $e);
         }
     }
 
@@ -884,11 +848,8 @@ abstract class UserV2mom implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
-            $this->aUser = null;
-        }
-        if ($this->aAccount !== null && $this->account_id !== $this->aAccount->getId()) {
-            $this->aAccount = null;
+        if ($this->aUserV2mom !== null && $this->id !== $this->aUserV2mom->getId()) {
+            $this->aUserV2mom = null;
         }
     } // ensureConsistency
 
@@ -913,13 +874,13 @@ abstract class UserV2mom implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(UserV2momTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(UserV2momVersionTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildUserV2momQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildUserV2momVersionQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -929,10 +890,7 @@ abstract class UserV2mom implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aUser = null;
-            $this->aAccount = null;
-            $this->collUserV2momVersions = null;
-
+            $this->aUserV2mom = null;
         } // if (deep)
     }
 
@@ -942,8 +900,8 @@ abstract class UserV2mom implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see UserV2mom::setDeleted()
-     * @see UserV2mom::isDeleted()
+     * @see UserV2momVersion::setDeleted()
+     * @see UserV2momVersion::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -952,12 +910,12 @@ abstract class UserV2mom implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserV2momTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UserV2momVersionTableMap::DATABASE_NAME);
         }
 
         $con->beginTransaction();
         try {
-            $deleteQuery = ChildUserV2momQuery::create()
+            $deleteQuery = ChildUserV2momVersionQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -994,33 +952,17 @@ abstract class UserV2mom implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserV2momTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UserV2momVersionTableMap::DATABASE_NAME);
         }
 
         $con->beginTransaction();
         $isInsert = $this->isNew();
         try {
             $ret = $this->preSave($con);
-            // versionable behavior
-            if ($this->isVersioningNecessary()) {
-                $this->setVersion($this->isNew() ? 1 : $this->getLastVersionNumber($con) + 1);
-                $createVersion = true; // for postSave hook
-            }
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
-                // timestampable behavior
-                if (!$this->isColumnModified(UserV2momTableMap::CREATED_AT)) {
-                    $this->setCreatedAt(time());
-                }
-                if (!$this->isColumnModified(UserV2momTableMap::UPDATED_AT)) {
-                    $this->setUpdatedAt(time());
-                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
-                // timestampable behavior
-                if ($this->isModified() && !$this->isColumnModified(UserV2momTableMap::UPDATED_AT)) {
-                    $this->setUpdatedAt(time());
-                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -1030,11 +972,7 @@ abstract class UserV2mom implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                // versionable behavior
-                if (isset($createVersion)) {
-                    $this->addVersion($con);
-                }
-                UserV2momTableMap::addInstanceToPool($this);
+                UserV2momVersionTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -1069,18 +1007,11 @@ abstract class UserV2mom implements ActiveRecordInterface
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if ($this->aUser->isModified() || $this->aUser->isNew()) {
-                    $affectedRows += $this->aUser->save($con);
+            if ($this->aUserV2mom !== null) {
+                if ($this->aUserV2mom->isModified() || $this->aUserV2mom->isNew()) {
+                    $affectedRows += $this->aUserV2mom->save($con);
                 }
-                $this->setUser($this->aUser);
-            }
-
-            if ($this->aAccount !== null) {
-                if ($this->aAccount->isModified() || $this->aAccount->isNew()) {
-                    $affectedRows += $this->aAccount->save($con);
-                }
-                $this->setAccount($this->aAccount);
+                $this->setUserV2mom($this->aUserV2mom);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -1092,23 +1023,6 @@ abstract class UserV2mom implements ActiveRecordInterface
                 }
                 $affectedRows += 1;
                 $this->resetModified();
-            }
-
-            if ($this->userV2momVersionsScheduledForDeletion !== null) {
-                if (!$this->userV2momVersionsScheduledForDeletion->isEmpty()) {
-                    \Roadmap\Model\UserV2momVersionQuery::create()
-                        ->filterByPrimaryKeys($this->userV2momVersionsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->userV2momVersionsScheduledForDeletion = null;
-                }
-            }
-
-                if ($this->collUserV2momVersions !== null) {
-            foreach ($this->collUserV2momVersions as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
             }
 
             $this->alreadyInSave = false;
@@ -1131,45 +1045,41 @@ abstract class UserV2mom implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[] = UserV2momTableMap::ID;
-        if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . UserV2momTableMap::ID . ')');
-        }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(UserV2momTableMap::ID)) {
+        if ($this->isColumnModified(UserV2momVersionTableMap::ID)) {
             $modifiedColumns[':p' . $index++]  = 'ID';
         }
-        if ($this->isColumnModified(UserV2momTableMap::USER_ID)) {
+        if ($this->isColumnModified(UserV2momVersionTableMap::USER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'USER_ID';
         }
-        if ($this->isColumnModified(UserV2momTableMap::ACCOUNT_ID)) {
+        if ($this->isColumnModified(UserV2momVersionTableMap::ACCOUNT_ID)) {
             $modifiedColumns[':p' . $index++]  = 'ACCOUNT_ID';
         }
-        if ($this->isColumnModified(UserV2momTableMap::VISION)) {
+        if ($this->isColumnModified(UserV2momVersionTableMap::VISION)) {
             $modifiedColumns[':p' . $index++]  = 'VISION';
         }
-        if ($this->isColumnModified(UserV2momTableMap::VALUES)) {
+        if ($this->isColumnModified(UserV2momVersionTableMap::VALUES)) {
             $modifiedColumns[':p' . $index++]  = 'VALUES';
         }
-        if ($this->isColumnModified(UserV2momTableMap::METHODS)) {
+        if ($this->isColumnModified(UserV2momVersionTableMap::METHODS)) {
             $modifiedColumns[':p' . $index++]  = 'METHODS';
         }
-        if ($this->isColumnModified(UserV2momTableMap::OBSTACLES)) {
+        if ($this->isColumnModified(UserV2momVersionTableMap::OBSTACLES)) {
             $modifiedColumns[':p' . $index++]  = 'OBSTACLES';
         }
-        if ($this->isColumnModified(UserV2momTableMap::CREATED_AT)) {
+        if ($this->isColumnModified(UserV2momVersionTableMap::CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'CREATED_AT';
         }
-        if ($this->isColumnModified(UserV2momTableMap::UPDATED_AT)) {
+        if ($this->isColumnModified(UserV2momVersionTableMap::UPDATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'UPDATED_AT';
         }
-        if ($this->isColumnModified(UserV2momTableMap::VERSION)) {
+        if ($this->isColumnModified(UserV2momVersionTableMap::VERSION)) {
             $modifiedColumns[':p' . $index++]  = 'VERSION';
         }
 
         $sql = sprintf(
-            'INSERT INTO user_v2mom (%s) VALUES (%s)',
+            'INSERT INTO user_v2mom_version (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -1216,13 +1126,6 @@ abstract class UserV2mom implements ActiveRecordInterface
             throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
         }
 
-        try {
-            $pk = $con->lastInsertId();
-        } catch (Exception $e) {
-            throw new PropelException('Unable to get autoincrement id.', 0, $e);
-        }
-        $this->setId($pk);
-
         $this->setNew(false);
     }
 
@@ -1254,7 +1157,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = UserV2momTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = UserV2momVersionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -1323,11 +1226,11 @@ abstract class UserV2mom implements ActiveRecordInterface
      */
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
-        if (isset($alreadyDumpedObjects['UserV2mom'][$this->getPrimaryKey()])) {
+        if (isset($alreadyDumpedObjects['UserV2momVersion'][serialize($this->getPrimaryKey())])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['UserV2mom'][$this->getPrimaryKey()] = true;
-        $keys = UserV2momTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['UserV2momVersion'][serialize($this->getPrimaryKey())] = true;
+        $keys = UserV2momVersionTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getUserId(),
@@ -1346,14 +1249,8 @@ abstract class UserV2mom implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aUser) {
-                $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aAccount) {
-                $result['Account'] = $this->aAccount->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->collUserV2momVersions) {
-                $result['UserV2momVersions'] = $this->collUserV2momVersions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            if (null !== $this->aUserV2mom) {
+                $result['UserV2mom'] = $this->aUserV2mom->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -1373,7 +1270,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = UserV2momTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = UserV2momVersionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -1441,7 +1338,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = UserV2momTableMap::getFieldNames($keyType);
+        $keys = UserV2momVersionTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setUserId($arr[$keys[1]]);
@@ -1462,18 +1359,18 @@ abstract class UserV2mom implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(UserV2momTableMap::DATABASE_NAME);
+        $criteria = new Criteria(UserV2momVersionTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(UserV2momTableMap::ID)) $criteria->add(UserV2momTableMap::ID, $this->id);
-        if ($this->isColumnModified(UserV2momTableMap::USER_ID)) $criteria->add(UserV2momTableMap::USER_ID, $this->user_id);
-        if ($this->isColumnModified(UserV2momTableMap::ACCOUNT_ID)) $criteria->add(UserV2momTableMap::ACCOUNT_ID, $this->account_id);
-        if ($this->isColumnModified(UserV2momTableMap::VISION)) $criteria->add(UserV2momTableMap::VISION, $this->vision);
-        if ($this->isColumnModified(UserV2momTableMap::VALUES)) $criteria->add(UserV2momTableMap::VALUES, $this->values);
-        if ($this->isColumnModified(UserV2momTableMap::METHODS)) $criteria->add(UserV2momTableMap::METHODS, $this->methods);
-        if ($this->isColumnModified(UserV2momTableMap::OBSTACLES)) $criteria->add(UserV2momTableMap::OBSTACLES, $this->obstacles);
-        if ($this->isColumnModified(UserV2momTableMap::CREATED_AT)) $criteria->add(UserV2momTableMap::CREATED_AT, $this->created_at);
-        if ($this->isColumnModified(UserV2momTableMap::UPDATED_AT)) $criteria->add(UserV2momTableMap::UPDATED_AT, $this->updated_at);
-        if ($this->isColumnModified(UserV2momTableMap::VERSION)) $criteria->add(UserV2momTableMap::VERSION, $this->version);
+        if ($this->isColumnModified(UserV2momVersionTableMap::ID)) $criteria->add(UserV2momVersionTableMap::ID, $this->id);
+        if ($this->isColumnModified(UserV2momVersionTableMap::USER_ID)) $criteria->add(UserV2momVersionTableMap::USER_ID, $this->user_id);
+        if ($this->isColumnModified(UserV2momVersionTableMap::ACCOUNT_ID)) $criteria->add(UserV2momVersionTableMap::ACCOUNT_ID, $this->account_id);
+        if ($this->isColumnModified(UserV2momVersionTableMap::VISION)) $criteria->add(UserV2momVersionTableMap::VISION, $this->vision);
+        if ($this->isColumnModified(UserV2momVersionTableMap::VALUES)) $criteria->add(UserV2momVersionTableMap::VALUES, $this->values);
+        if ($this->isColumnModified(UserV2momVersionTableMap::METHODS)) $criteria->add(UserV2momVersionTableMap::METHODS, $this->methods);
+        if ($this->isColumnModified(UserV2momVersionTableMap::OBSTACLES)) $criteria->add(UserV2momVersionTableMap::OBSTACLES, $this->obstacles);
+        if ($this->isColumnModified(UserV2momVersionTableMap::CREATED_AT)) $criteria->add(UserV2momVersionTableMap::CREATED_AT, $this->created_at);
+        if ($this->isColumnModified(UserV2momVersionTableMap::UPDATED_AT)) $criteria->add(UserV2momVersionTableMap::UPDATED_AT, $this->updated_at);
+        if ($this->isColumnModified(UserV2momVersionTableMap::VERSION)) $criteria->add(UserV2momVersionTableMap::VERSION, $this->version);
 
         return $criteria;
     }
@@ -1488,30 +1385,37 @@ abstract class UserV2mom implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(UserV2momTableMap::DATABASE_NAME);
-        $criteria->add(UserV2momTableMap::ID, $this->id);
+        $criteria = new Criteria(UserV2momVersionTableMap::DATABASE_NAME);
+        $criteria->add(UserV2momVersionTableMap::ID, $this->id);
+        $criteria->add(UserV2momVersionTableMap::VERSION, $this->version);
 
         return $criteria;
     }
 
     /**
-     * Returns the primary key for this object (row).
-     * @return   int
+     * Returns the composite primary key for this object.
+     * The array elements will be in same order as specified in XML.
+     * @return array
      */
     public function getPrimaryKey()
     {
-        return $this->getId();
+        $pks = array();
+        $pks[0] = $this->getId();
+        $pks[1] = $this->getVersion();
+
+        return $pks;
     }
 
     /**
-     * Generic method to set the primary key (id column).
+     * Set the [composite] primary key.
      *
-     * @param       int $key Primary key.
+     * @param      array $keys The elements of the composite key (order must match the order in XML file).
      * @return void
      */
-    public function setPrimaryKey($key)
+    public function setPrimaryKey($keys)
     {
-        $this->setId($key);
+        $this->setId($keys[0]);
+        $this->setVersion($keys[1]);
     }
 
     /**
@@ -1521,7 +1425,7 @@ abstract class UserV2mom implements ActiveRecordInterface
     public function isPrimaryKeyNull()
     {
 
-        return null === $this->getId();
+        return (null === $this->getId()) && (null === $this->getVersion());
     }
 
     /**
@@ -1530,13 +1434,14 @@ abstract class UserV2mom implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Roadmap\Model\UserV2mom (or compatible) type.
+     * @param      object $copyObj An object of \Roadmap\Model\UserV2momVersion (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
+        $copyObj->setId($this->getId());
         $copyObj->setUserId($this->getUserId());
         $copyObj->setAccountId($this->getAccountId());
         $copyObj->setVision($this->getVision());
@@ -1546,23 +1451,8 @@ abstract class UserV2mom implements ActiveRecordInterface
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         $copyObj->setVersion($this->getVersion());
-
-        if ($deepCopy) {
-            // important: temporarily setNew(false) because this affects the behavior of
-            // the getter/setter methods for fkey referrer objects.
-            $copyObj->setNew(false);
-
-            foreach ($this->getUserV2momVersions() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addUserV2momVersion($relObj->copy($deepCopy));
-                }
-            }
-
-        } // if ($deepCopy)
-
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1575,7 +1465,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      * objects.
      *
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return                 \Roadmap\Model\UserV2mom Clone of current object.
+     * @return                 \Roadmap\Model\UserV2momVersion Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1589,26 +1479,26 @@ abstract class UserV2mom implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildUser object.
+     * Declares an association between this object and a ChildUserV2mom object.
      *
-     * @param                  ChildUser $v
-     * @return                 \Roadmap\Model\UserV2mom The current object (for fluent API support)
+     * @param                  ChildUserV2mom $v
+     * @return                 \Roadmap\Model\UserV2momVersion The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setUser(ChildUser $v = null)
+    public function setUserV2mom(ChildUserV2mom $v = null)
     {
         if ($v === null) {
-            $this->setUserId(NULL);
+            $this->setId(NULL);
         } else {
-            $this->setUserId($v->getId());
+            $this->setId($v->getId());
         }
 
-        $this->aUser = $v;
+        $this->aUserV2mom = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildUser object, it will not be re-added.
+        // If this object has already been added to the ChildUserV2mom object, it will not be re-added.
         if ($v !== null) {
-            $v->addUserV2mom($this);
+            $v->addUserV2momVersion($this);
         }
 
 
@@ -1617,314 +1507,26 @@ abstract class UserV2mom implements ActiveRecordInterface
 
 
     /**
-     * Get the associated ChildUser object
+     * Get the associated ChildUserV2mom object
      *
      * @param      ConnectionInterface $con Optional Connection object.
-     * @return                 ChildUser The associated ChildUser object.
+     * @return                 ChildUserV2mom The associated ChildUserV2mom object.
      * @throws PropelException
      */
-    public function getUser(ConnectionInterface $con = null)
+    public function getUserV2mom(ConnectionInterface $con = null)
     {
-        if ($this->aUser === null && ($this->user_id !== null)) {
-            $this->aUser = ChildUserQuery::create()->findPk($this->user_id, $con);
+        if ($this->aUserV2mom === null && ($this->id !== null)) {
+            $this->aUserV2mom = ChildUserV2momQuery::create()->findPk($this->id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aUser->addUserV2moms($this);
+                $this->aUserV2mom->addUserV2momVersions($this);
              */
         }
 
-        return $this->aUser;
-    }
-
-    /**
-     * Declares an association between this object and a ChildAccount object.
-     *
-     * @param                  ChildAccount $v
-     * @return                 \Roadmap\Model\UserV2mom The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setAccount(ChildAccount $v = null)
-    {
-        if ($v === null) {
-            $this->setAccountId(NULL);
-        } else {
-            $this->setAccountId($v->getId());
-        }
-
-        $this->aAccount = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildAccount object, it will not be re-added.
-        if ($v !== null) {
-            $v->addUserV2mom($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated ChildAccount object
-     *
-     * @param      ConnectionInterface $con Optional Connection object.
-     * @return                 ChildAccount The associated ChildAccount object.
-     * @throws PropelException
-     */
-    public function getAccount(ConnectionInterface $con = null)
-    {
-        if ($this->aAccount === null && ($this->account_id !== null)) {
-            $this->aAccount = ChildAccountQuery::create()->findPk($this->account_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aAccount->addUserV2moms($this);
-             */
-        }
-
-        return $this->aAccount;
-    }
-
-
-    /**
-     * Initializes a collection based on the name of a relation.
-     * Avoids crafting an 'init[$relationName]s' method name
-     * that wouldn't work when StandardEnglishPluralizer is used.
-     *
-     * @param      string $relationName The name of the relation to initialize
-     * @return void
-     */
-    public function initRelation($relationName)
-    {
-        if ('UserV2momVersion' == $relationName) {
-            return $this->initUserV2momVersions();
-        }
-    }
-
-    /**
-     * Clears out the collUserV2momVersions collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addUserV2momVersions()
-     */
-    public function clearUserV2momVersions()
-    {
-        $this->collUserV2momVersions = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collUserV2momVersions collection loaded partially.
-     */
-    public function resetPartialUserV2momVersions($v = true)
-    {
-        $this->collUserV2momVersionsPartial = $v;
-    }
-
-    /**
-     * Initializes the collUserV2momVersions collection.
-     *
-     * By default this just sets the collUserV2momVersions collection to an empty array (like clearcollUserV2momVersions());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initUserV2momVersions($overrideExisting = true)
-    {
-        if (null !== $this->collUserV2momVersions && !$overrideExisting) {
-            return;
-        }
-        $this->collUserV2momVersions = new ObjectCollection();
-        $this->collUserV2momVersions->setModel('\Roadmap\Model\UserV2momVersion');
-    }
-
-    /**
-     * Gets an array of ChildUserV2momVersion objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildUserV2mom is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return Collection|ChildUserV2momVersion[] List of ChildUserV2momVersion objects
-     * @throws PropelException
-     */
-    public function getUserV2momVersions($criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collUserV2momVersionsPartial && !$this->isNew();
-        if (null === $this->collUserV2momVersions || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collUserV2momVersions) {
-                // return empty collection
-                $this->initUserV2momVersions();
-            } else {
-                $collUserV2momVersions = ChildUserV2momVersionQuery::create(null, $criteria)
-                    ->filterByUserV2mom($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collUserV2momVersionsPartial && count($collUserV2momVersions)) {
-                        $this->initUserV2momVersions(false);
-
-                        foreach ($collUserV2momVersions as $obj) {
-                            if (false == $this->collUserV2momVersions->contains($obj)) {
-                                $this->collUserV2momVersions->append($obj);
-                            }
-                        }
-
-                        $this->collUserV2momVersionsPartial = true;
-                    }
-
-                    $collUserV2momVersions->getInternalIterator()->rewind();
-
-                    return $collUserV2momVersions;
-                }
-
-                if ($partial && $this->collUserV2momVersions) {
-                    foreach ($this->collUserV2momVersions as $obj) {
-                        if ($obj->isNew()) {
-                            $collUserV2momVersions[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collUserV2momVersions = $collUserV2momVersions;
-                $this->collUserV2momVersionsPartial = false;
-            }
-        }
-
-        return $this->collUserV2momVersions;
-    }
-
-    /**
-     * Sets a collection of UserV2momVersion objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $userV2momVersions A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return   ChildUserV2mom The current object (for fluent API support)
-     */
-    public function setUserV2momVersions(Collection $userV2momVersions, ConnectionInterface $con = null)
-    {
-        $userV2momVersionsToDelete = $this->getUserV2momVersions(new Criteria(), $con)->diff($userV2momVersions);
-
-
-        //since at least one column in the foreign key is at the same time a PK
-        //we can not just set a PK to NULL in the lines below. We have to store
-        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
-        $this->userV2momVersionsScheduledForDeletion = clone $userV2momVersionsToDelete;
-
-        foreach ($userV2momVersionsToDelete as $userV2momVersionRemoved) {
-            $userV2momVersionRemoved->setUserV2mom(null);
-        }
-
-        $this->collUserV2momVersions = null;
-        foreach ($userV2momVersions as $userV2momVersion) {
-            $this->addUserV2momVersion($userV2momVersion);
-        }
-
-        $this->collUserV2momVersions = $userV2momVersions;
-        $this->collUserV2momVersionsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related UserV2momVersion objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related UserV2momVersion objects.
-     * @throws PropelException
-     */
-    public function countUserV2momVersions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collUserV2momVersionsPartial && !$this->isNew();
-        if (null === $this->collUserV2momVersions || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collUserV2momVersions) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getUserV2momVersions());
-            }
-
-            $query = ChildUserV2momVersionQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByUserV2mom($this)
-                ->count($con);
-        }
-
-        return count($this->collUserV2momVersions);
-    }
-
-    /**
-     * Method called to associate a ChildUserV2momVersion object to this object
-     * through the ChildUserV2momVersion foreign key attribute.
-     *
-     * @param    ChildUserV2momVersion $l ChildUserV2momVersion
-     * @return   \Roadmap\Model\UserV2mom The current object (for fluent API support)
-     */
-    public function addUserV2momVersion(ChildUserV2momVersion $l)
-    {
-        if ($this->collUserV2momVersions === null) {
-            $this->initUserV2momVersions();
-            $this->collUserV2momVersionsPartial = true;
-        }
-
-        if (!in_array($l, $this->collUserV2momVersions->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddUserV2momVersion($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param UserV2momVersion $userV2momVersion The userV2momVersion object to add.
-     */
-    protected function doAddUserV2momVersion($userV2momVersion)
-    {
-        $this->collUserV2momVersions[]= $userV2momVersion;
-        $userV2momVersion->setUserV2mom($this);
-    }
-
-    /**
-     * @param  UserV2momVersion $userV2momVersion The userV2momVersion object to remove.
-     * @return ChildUserV2mom The current object (for fluent API support)
-     */
-    public function removeUserV2momVersion($userV2momVersion)
-    {
-        if ($this->getUserV2momVersions()->contains($userV2momVersion)) {
-            $this->collUserV2momVersions->remove($this->collUserV2momVersions->search($userV2momVersion));
-            if (null === $this->userV2momVersionsScheduledForDeletion) {
-                $this->userV2momVersionsScheduledForDeletion = clone $this->collUserV2momVersions;
-                $this->userV2momVersionsScheduledForDeletion->clear();
-            }
-            $this->userV2momVersionsScheduledForDeletion[]= clone $userV2momVersion;
-            $userV2momVersion->setUserV2mom(null);
-        }
-
-        return $this;
+        return $this->aUserV2mom;
     }
 
     /**
@@ -1962,19 +1564,9 @@ abstract class UserV2mom implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collUserV2momVersions) {
-                foreach ($this->collUserV2momVersions as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
         } // if ($deep)
 
-        if ($this->collUserV2momVersions instanceof Collection) {
-            $this->collUserV2momVersions->clearIterator();
-        }
-        $this->collUserV2momVersions = null;
-        $this->aUser = null;
-        $this->aAccount = null;
+        $this->aUserV2mom = null;
     }
 
     /**
@@ -1984,305 +1576,7 @@ abstract class UserV2mom implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(UserV2momTableMap::DEFAULT_STRING_FORMAT);
-    }
-
-    // versionable behavior
-
-    /**
-     * Enforce a new Version of this object upon next save.
-     *
-     * @return \Roadmap\Model\UserV2mom
-     */
-    public function enforceVersioning()
-    {
-        $this->enforceVersion = true;
-
-        return $this;
-    }
-
-    /**
-     * Checks whether the current state must be recorded as a version
-     *
-     * @return  boolean
-     */
-    public function isVersioningNecessary($con = null)
-    {
-        if ($this->alreadyInSave) {
-            return false;
-        }
-
-        if ($this->enforceVersion) {
-            return true;
-        }
-
-        if (ChildUserV2momQuery::isVersioningEnabled() && ($this->isNew() || $this->isModified()) || $this->isDeleted()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Creates a version of the current object and saves it.
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  ChildUserV2momVersion A version object
-     */
-    public function addVersion($con = null)
-    {
-        $this->enforceVersion = false;
-
-        $version = new ChildUserV2momVersion();
-        $version->setId($this->getId());
-        $version->setUserId($this->getUserId());
-        $version->setAccountId($this->getAccountId());
-        $version->setVision($this->getVision());
-        $version->setValues($this->getValues());
-        $version->setMethods($this->getMethods());
-        $version->setObstacles($this->getObstacles());
-        $version->setCreatedAt($this->getCreatedAt());
-        $version->setUpdatedAt($this->getUpdatedAt());
-        $version->setVersion($this->getVersion());
-        $version->setUserV2mom($this);
-        $version->save($con);
-
-        return $version;
-    }
-
-    /**
-     * Sets the properties of the current object to the value they had at a specific version
-     *
-     * @param   integer $versionNumber The version number to read
-     * @param   ConnectionInterface $con The connection to use
-     *
-     * @return  ChildUserV2mom The current object (for fluent API support)
-     */
-    public function toVersion($versionNumber, $con = null)
-    {
-        $version = $this->getOneVersion($versionNumber, $con);
-        if (!$version) {
-            throw new PropelException(sprintf('No ChildUserV2mom object found with version %d', $version));
-        }
-        $this->populateFromVersion($version, $con);
-
-        return $this;
-    }
-
-    /**
-     * Sets the properties of the current object to the value they had at a specific version
-     *
-     * @param ChildUserV2momVersion $version The version object to use
-     * @param ConnectionInterface   $con the connection to use
-     * @param array                 $loadedObjects objects that been loaded in a chain of populateFromVersion calls on referrer or fk objects.
-     *
-     * @return ChildUserV2mom The current object (for fluent API support)
-     */
-    public function populateFromVersion($version, $con = null, &$loadedObjects = array())
-    {
-        $loadedObjects['ChildUserV2mom'][$version->getId()][$version->getVersion()] = $this;
-        $this->setId($version->getId());
-        $this->setUserId($version->getUserId());
-        $this->setAccountId($version->getAccountId());
-        $this->setVision($version->getVision());
-        $this->setValues($version->getValues());
-        $this->setMethods($version->getMethods());
-        $this->setObstacles($version->getObstacles());
-        $this->setCreatedAt($version->getCreatedAt());
-        $this->setUpdatedAt($version->getUpdatedAt());
-        $this->setVersion($version->getVersion());
-
-        return $this;
-    }
-
-    /**
-     * Gets the latest persisted version number for the current object
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  integer
-     */
-    public function getLastVersionNumber($con = null)
-    {
-        $v = ChildUserV2momVersionQuery::create()
-            ->filterByUserV2mom($this)
-            ->orderByVersion('desc')
-            ->findOne($con);
-        if (!$v) {
-            return 0;
-        }
-
-        return $v->getVersion();
-    }
-
-    /**
-     * Checks whether the current object is the latest one
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  Boolean
-     */
-    public function isLastVersion($con = null)
-    {
-        return $this->getLastVersionNumber($con) == $this->getVersion();
-    }
-
-    /**
-     * Retrieves a version object for this entity and a version number
-     *
-     * @param   integer $versionNumber The version number to read
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  ChildUserV2momVersion A version object
-     */
-    public function getOneVersion($versionNumber, $con = null)
-    {
-        return ChildUserV2momVersionQuery::create()
-            ->filterByUserV2mom($this)
-            ->filterByVersion($versionNumber)
-            ->findOne($con);
-    }
-
-    /**
-     * Gets all the versions of this object, in incremental order
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  ObjectCollection A list of ChildUserV2momVersion objects
-     */
-    public function getAllVersions($con = null)
-    {
-        $criteria = new Criteria();
-        $criteria->addAscendingOrderByColumn(UserV2momVersionTableMap::VERSION);
-
-        return $this->getUserV2momVersions($criteria, $con);
-    }
-
-    /**
-     * Compares the current object with another of its version.
-     * <code>
-     * print_r($book->compareVersion(1));
-     * => array(
-     *   '1' => array('Title' => 'Book title at version 1'),
-     *   '2' => array('Title' => 'Book title at version 2')
-     * );
-     * </code>
-     *
-     * @param   integer             $versionNumber
-     * @param   string              $keys Main key used for the result diff (versions|columns)
-     * @param   ConnectionInterface $con the connection to use
-     * @param   array               $ignoredColumns  The columns to exclude from the diff.
-     *
-     * @return  array A list of differences
-     */
-    public function compareVersion($versionNumber, $keys = 'columns', $con = null, $ignoredColumns = array())
-    {
-        $fromVersion = $this->toArray();
-        $toVersion = $this->getOneVersion($versionNumber, $con)->toArray();
-
-        return $this->computeDiff($fromVersion, $toVersion, $keys, $ignoredColumns);
-    }
-
-    /**
-     * Compares two versions of the current object.
-     * <code>
-     * print_r($book->compareVersions(1, 2));
-     * => array(
-     *   '1' => array('Title' => 'Book title at version 1'),
-     *   '2' => array('Title' => 'Book title at version 2')
-     * );
-     * </code>
-     *
-     * @param   integer             $fromVersionNumber
-     * @param   integer             $toVersionNumber
-     * @param   string              $keys Main key used for the result diff (versions|columns)
-     * @param   ConnectionInterface $con the connection to use
-     * @param   array               $ignoredColumns  The columns to exclude from the diff.
-     *
-     * @return  array A list of differences
-     */
-    public function compareVersions($fromVersionNumber, $toVersionNumber, $keys = 'columns', $con = null, $ignoredColumns = array())
-    {
-        $fromVersion = $this->getOneVersion($fromVersionNumber, $con)->toArray();
-        $toVersion = $this->getOneVersion($toVersionNumber, $con)->toArray();
-
-        return $this->computeDiff($fromVersion, $toVersion, $keys, $ignoredColumns);
-    }
-
-    /**
-     * Computes the diff between two versions.
-     * <code>
-     * print_r($book->computeDiff(1, 2));
-     * => array(
-     *   '1' => array('Title' => 'Book title at version 1'),
-     *   '2' => array('Title' => 'Book title at version 2')
-     * );
-     * </code>
-     *
-     * @param   array     $fromVersion     An array representing the original version.
-     * @param   array     $toVersion       An array representing the destination version.
-     * @param   string    $keys            Main key used for the result diff (versions|columns).
-     * @param   array     $ignoredColumns  The columns to exclude from the diff.
-     *
-     * @return  array A list of differences
-     */
-    protected function computeDiff($fromVersion, $toVersion, $keys = 'columns', $ignoredColumns = array())
-    {
-        $fromVersionNumber = $fromVersion['Version'];
-        $toVersionNumber = $toVersion['Version'];
-        $ignoredColumns = array_merge(array(
-            'Version',
-        ), $ignoredColumns);
-        $diff = array();
-        foreach ($fromVersion as $key => $value) {
-            if (in_array($key, $ignoredColumns)) {
-                continue;
-            }
-            if ($toVersion[$key] != $value) {
-                switch ($keys) {
-                    case 'versions':
-                        $diff[$fromVersionNumber][$key] = $value;
-                        $diff[$toVersionNumber][$key] = $toVersion[$key];
-                        break;
-                    default:
-                        $diff[$key] = array(
-                            $fromVersionNumber => $value,
-                            $toVersionNumber => $toVersion[$key],
-                        );
-                        break;
-                }
-            }
-        }
-
-        return $diff;
-    }
-    /**
-     * retrieve the last $number versions.
-     *
-     * @param Integer $number the number of record to return.
-     * @return PropelCollection|array \Roadmap\Model\UserV2momVersion[] List of \Roadmap\Model\UserV2momVersion objects
-     */
-    public function getLastVersions($number = 10, $criteria = null, $con = null)
-    {
-        $criteria = ChildUserV2momVersionQuery::create(null, $criteria);
-        $criteria->addDescendingOrderByColumn(UserV2momVersionTableMap::VERSION);
-        $criteria->limit($number);
-
-        return $this->getUserV2momVersions($criteria, $con);
-    }
-    // timestampable behavior
-
-    /**
-     * Mark the current object so that the update date doesn't get updated during next save
-     *
-     * @return     ChildUserV2mom The current object (for fluent API support)
-     */
-    public function keepUpdateDateUnchanged()
-    {
-        $this->modifiedColumns[] = UserV2momTableMap::UPDATED_AT;
-
-        return $this;
+        return (string) $this->exportTo(UserV2momVersionTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

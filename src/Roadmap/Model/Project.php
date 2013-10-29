@@ -3,6 +3,7 @@
 namespace Roadmap\Model;
 
 use Finite\StatefulInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Roadmap\Model\Base\Project as BaseProject;
 use Roadmap\FSM\Project as FSMProject;
 
@@ -59,6 +60,5 @@ class Project extends BaseProject implements StatefulInterface
 	{
 		return $this->getState();
 	}
-
 
 }

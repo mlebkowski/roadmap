@@ -1,111 +1,77 @@
 {% extends 'layouts/roadmap.layout.html.twig' %}
 
-{% block title %}{{ "overview"|trans({ "%project%": projectName }) }}{% endblock %}
+{% block title %}{{ "overview"|trans({ "%project%": account.name }) }}{% endblock %}
 {% block content %}
-    <div class="project-list" id="recent-projects">
-        <p class="project-list-type">{{ "recent"|trans }}</p>
+    <div class="project-list" id="recent">
+        <p class="project-list-type">{{ "project.group.recent"|trans }}</p>
         <ul class="list-unstyled">
             {% for project in recent %}
             <li class="project row">
-                <div class="project-title col-md-8">
-                    <h3><a href="/{{ project.slug }}">{{ project.title }}</a></h3>
-                    <p class="date text-muted">{{ project.date|nicedate }}</p>
-                </div>
-                <div class="col-md-4">
-                    <ul class="people list-unstyled pull-right">
-                        {% for user in project.users %}
-                        <li>
-                            <img src="{{ user.gravatar }}" title="{{ user.name }}" class="img-circle">
-                        </li>
-                        {% endfor %}
-                        {% if project.stateMachine.canAssign %}
-                        <li class="assign-yourself">
-                            <i class="fa fa-check-square-o"></i>
-                        </li>
-                        {% endif %}
+                {% include 'project.block.html.twig' with {"project": project} %}
+            </li>
+            {% endfor %}
+        </ul>
 
-                    </ul>
-                </div>
+        {% if finished %}<p class="pull-right"><a class="text-muted" href="#finished">
+            {{ "more"|trans }} <i class="fa fa-angle-double-down"></i>
+        </a></p>{% endif %}
+    </div>
+
+    <div class="project-list" id="ongoing">
+        <p class="project-list-type">{{ "project.group.ongoing"|trans }}</p>
+        <ul class="list-unstyled">
+            {% for project in ongoing %}
+            <li class="project row">
+                {% include 'project.block.html.twig' with {"project": project} %}
             </li>
             {% endfor %}
         </ul>
     </div>
-    <style type="text/css">
-        @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800);
-        @font-face {
-            font-family: 'museo_slab100';
-            src: url('http://randomuser.me/fonts/Museo100-Regular.otf');
-            font-weight: normal;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'museo_slab500';
-            src: url('http://randomuser.me/fonts/Museo_Slab_500_2-webfont.eot');
-            src: url('http://randomuser.me/fonts/Museo_Slab_500_2-webfont.eot?#iefix') format('embedded-opentype'), url('http://randomuser.me/fonts/Museo_Slab_500_2-webfont.woff') format('woff'), url('http://randomuser.me/fonts/Museo_Slab_500_2-webfont.ttf') format('truetype'), url('http://randomuser.me/fonts/Museo_Slab_500_2-webfont.svg#museo_slab500') format('svg');
-            font-weight: normal;
-            font-style: normal;
-        }        
-        body {
-            font-family: 'Open sans', sans-serif;
-        }
-        .project h3 {
-            font-size: 2.5em;
-            margin-top: .4em;
-            font-family: 'museo_slab500', serif;
-        }
-        .project .date {
-            font-style: italic;
-            margin-top: -.5em;
-        }
-        .project {
-            margin-bottom: 2em;;
-        }
-        .people li {
-            float: left;
-            margin-right: 8px;
-        }
-        .people img {
-            width: 64px;
-            height: 64px;
-        }
-        .people .assign-yourself {
-            font-size: 48px;
-            color: #666;
-            margin-left: 15px;
-        }
-        .people .assign-yourself:hover {
-            color: #111;
-            cursor: pointer;
-        }
+
+    {% if new %}
+    <div class="project-list" id="ongoing">
+        <p class="project-list-type">{{ "project.group.new"|trans }}</p>
+        <ul class="list-unstyled">
+            {% for project in new %}
+            <li class="project row">
+                {% include 'project.block.html.twig' with {"project": project} %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if finished %}
+    <div class="project-list" id="finished">
+        <p class="project-list-type">{{ "project.group.finished"|trans }}</p>
+        <ul class="list-unstyled">
+            {% for project in finished %}
+            <li class="project row">
+                {% include 'project.block.html.twig' with {"project": project} %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
 
 
-        .project-list {
-            border-top: 1px dotted silver;
-            padding-top:1px;
-            margin-top: 2em;
-        }
-        .project-list-type {
-            background-color: white;
-            margin: -.8em auto 2em;
-            padding: 0 1em;
-            font-style: italic;
-            color: #999;
-            display: block;
-            width: 7em;
-            text-align: center;
-        }
-    </style>
     <script type="text/javascript">
         $(".people img").tooltip({
             "placement": "bottom"
         });
         $(".people").on('click', '.assign-yourself', function () {
-            var src = 'https://1.gravatar.com/avatar/78fd997a650fcb4ab88ffe059a240114?r=x&s=64';
-            $(this)
-                    .removeClass('assign-yourself')
-                    .html('<img src="'+src+'" class="img-circle" title="maciej lebkowski">')
-                    .find("img").tooltip({ "placement": "bottom" });
-
+            var $this = $(this);
+            $.ajax({
+                'method': 'POST',
+                'url': '/project/' + $this.attr('data-slug') + '/assign',
+                'beforeSend': function () {
+                    $this.html('<i class="spinner"></i>');
+                },
+                'success': function (rsp) {
+                    $this.replaceWith(rsp);
+                    $(".people img").tooltip({ "placement": "bottom" });
+                }
+            });
         });
     </script>
 {% endblock %}

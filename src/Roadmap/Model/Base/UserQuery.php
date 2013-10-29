@@ -22,20 +22,28 @@ use Roadmap\Model\Map\UserTableMap;
  *
  *
  * @method     ChildUserQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildUserQuery orderByEmail($order = Criteria::ASC) Order by the email column
+ * @method     ChildUserQuery orderByLogin($order = Criteria::ASC) Order by the login column
  * @method     ChildUserQuery orderByName($order = Criteria::ASC) Order by the name column
+ * @method     ChildUserQuery orderByGravatarHash($order = Criteria::ASC) Order by the gravatar_hash column
  * @method     ChildUserQuery orderByPicture($order = Criteria::ASC) Order by the picture column
  * @method     ChildUserQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
+ * @method     ChildUserQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildUserQuery groupById() Group by the id column
- * @method     ChildUserQuery groupByEmail() Group by the email column
+ * @method     ChildUserQuery groupByLogin() Group by the login column
  * @method     ChildUserQuery groupByName() Group by the name column
+ * @method     ChildUserQuery groupByGravatarHash() Group by the gravatar_hash column
  * @method     ChildUserQuery groupByPicture() Group by the picture column
  * @method     ChildUserQuery groupByCreatedAt() Group by the created_at column
+ * @method     ChildUserQuery groupByUpdatedAt() Group by the updated_at column
  *
  * @method     ChildUserQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildUserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildUserQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ *
+ * @method     ChildUserQuery leftJoinAccountUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the AccountUser relation
+ * @method     ChildUserQuery rightJoinAccountUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the AccountUser relation
+ * @method     ChildUserQuery innerJoinAccountUser($relationAlias = null) Adds a INNER JOIN clause to the query using the AccountUser relation
  *
  * @method     ChildUserQuery leftJoinProjectUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the ProjectUser relation
  * @method     ChildUserQuery rightJoinProjectUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ProjectUser relation
@@ -53,16 +61,20 @@ use Roadmap\Model\Map\UserTableMap;
  * @method     ChildUser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUser matching the query, or a new ChildUser object populated from the query conditions when no match is found
  *
  * @method     ChildUser findOneById(int $id) Return the first ChildUser filtered by the id column
- * @method     ChildUser findOneByEmail(string $email) Return the first ChildUser filtered by the email column
+ * @method     ChildUser findOneByLogin(string $login) Return the first ChildUser filtered by the login column
  * @method     ChildUser findOneByName(string $name) Return the first ChildUser filtered by the name column
+ * @method     ChildUser findOneByGravatarHash(string $gravatar_hash) Return the first ChildUser filtered by the gravatar_hash column
  * @method     ChildUser findOneByPicture(string $picture) Return the first ChildUser filtered by the picture column
  * @method     ChildUser findOneByCreatedAt(string $created_at) Return the first ChildUser filtered by the created_at column
+ * @method     ChildUser findOneByUpdatedAt(string $updated_at) Return the first ChildUser filtered by the updated_at column
  *
  * @method     array findById(int $id) Return ChildUser objects filtered by the id column
- * @method     array findByEmail(string $email) Return ChildUser objects filtered by the email column
+ * @method     array findByLogin(string $login) Return ChildUser objects filtered by the login column
  * @method     array findByName(string $name) Return ChildUser objects filtered by the name column
+ * @method     array findByGravatarHash(string $gravatar_hash) Return ChildUser objects filtered by the gravatar_hash column
  * @method     array findByPicture(string $picture) Return ChildUser objects filtered by the picture column
  * @method     array findByCreatedAt(string $created_at) Return ChildUser objects filtered by the created_at column
+ * @method     array findByUpdatedAt(string $updated_at) Return ChildUser objects filtered by the updated_at column
  *
  */
 abstract class UserQuery extends ModelCriteria
@@ -151,7 +163,7 @@ abstract class UserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, EMAIL, NAME, PICTURE, CREATED_AT FROM user WHERE ID = :p0';
+        $sql = 'SELECT ID, LOGIN, NAME, GRAVATAR_HASH, PICTURE, CREATED_AT, UPDATED_AT FROM user WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -282,32 +294,32 @@ abstract class UserQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the email column
+     * Filter the query on the login column
      *
      * Example usage:
      * <code>
-     * $query->filterByEmail('fooValue');   // WHERE email = 'fooValue'
-     * $query->filterByEmail('%fooValue%'); // WHERE email LIKE '%fooValue%'
+     * $query->filterByLogin('fooValue');   // WHERE login = 'fooValue'
+     * $query->filterByLogin('%fooValue%'); // WHERE login LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $email The value to use as filter.
+     * @param     string $login The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildUserQuery The current query, for fluid interface
      */
-    public function filterByEmail($email = null, $comparison = null)
+    public function filterByLogin($login = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($email)) {
+            if (is_array($login)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $email)) {
-                $email = str_replace('*', '%', $email);
+            } elseif (preg_match('/[\%\*]/', $login)) {
+                $login = str_replace('*', '%', $login);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::EMAIL, $email, $comparison);
+        return $this->addUsingAlias(UserTableMap::LOGIN, $login, $comparison);
     }
 
     /**
@@ -337,6 +349,35 @@ abstract class UserQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(UserTableMap::NAME, $name, $comparison);
+    }
+
+    /**
+     * Filter the query on the gravatar_hash column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByGravatarHash('fooValue');   // WHERE gravatar_hash = 'fooValue'
+     * $query->filterByGravatarHash('%fooValue%'); // WHERE gravatar_hash LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $gravatarHash The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByGravatarHash($gravatarHash = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($gravatarHash)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $gravatarHash)) {
+                $gravatarHash = str_replace('*', '%', $gravatarHash);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::GRAVATAR_HASH, $gravatarHash, $comparison);
     }
 
     /**
@@ -409,6 +450,122 @@ abstract class UserQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(UserTableMap::CREATED_AT, $createdAt, $comparison);
+    }
+
+    /**
+     * Filter the query on the updated_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUpdatedAt('2011-03-14'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt('now'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt(array('max' => 'yesterday')); // WHERE updated_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $updatedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByUpdatedAt($updatedAt = null, $comparison = null)
+    {
+        if (is_array($updatedAt)) {
+            $useMinMax = false;
+            if (isset($updatedAt['min'])) {
+                $this->addUsingAlias(UserTableMap::UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($updatedAt['max'])) {
+                $this->addUsingAlias(UserTableMap::UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::UPDATED_AT, $updatedAt, $comparison);
+    }
+
+    /**
+     * Filter the query by a related \Roadmap\Model\AccountUser object
+     *
+     * @param \Roadmap\Model\AccountUser|ObjectCollection $accountUser  the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByAccountUser($accountUser, $comparison = null)
+    {
+        if ($accountUser instanceof \Roadmap\Model\AccountUser) {
+            return $this
+                ->addUsingAlias(UserTableMap::ID, $accountUser->getUserId(), $comparison);
+        } elseif ($accountUser instanceof ObjectCollection) {
+            return $this
+                ->useAccountUserQuery()
+                ->filterByPrimaryKeys($accountUser->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByAccountUser() only accepts arguments of type \Roadmap\Model\AccountUser or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the AccountUser relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function joinAccountUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('AccountUser');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'AccountUser');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the AccountUser relation AccountUser object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Roadmap\Model\AccountUserQuery A secondary query class using the current class as primary query
+     */
+    public function useAccountUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinAccountUser($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'AccountUser', '\Roadmap\Model\AccountUserQuery');
     }
 
     /**
@@ -631,6 +788,23 @@ abstract class UserQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related Account object
+     * using the account_user table as cross reference
+     *
+     * @param Account $account the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByAccount($account, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useAccountUserQuery()
+            ->filterByAccount($account, $comparison)
+            ->endUse();
+    }
+
+    /**
      * Filter the query by a related Project object
      * using the project_user table as cross reference
      *
@@ -736,6 +910,72 @@ abstract class UserQuery extends ModelCriteria
             $con->rollBack();
             throw $e;
         }
+    }
+
+    // timestampable behavior
+
+    /**
+     * Filter by the latest updated
+     *
+     * @param      int $nbDays Maximum age of the latest update in days
+     *
+     * @return     ChildUserQuery The current query, for fluid interface
+     */
+    public function recentlyUpdated($nbDays = 7)
+    {
+        return $this->addUsingAlias(UserTableMap::UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Filter by the latest created
+     *
+     * @param      int $nbDays Maximum age of in days
+     *
+     * @return     ChildUserQuery The current query, for fluid interface
+     */
+    public function recentlyCreated($nbDays = 7)
+    {
+        return $this->addUsingAlias(UserTableMap::CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by update date desc
+     *
+     * @return     ChildUserQuery The current query, for fluid interface
+     */
+    public function lastUpdatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(UserTableMap::UPDATED_AT);
+    }
+
+    /**
+     * Order by update date asc
+     *
+     * @return     ChildUserQuery The current query, for fluid interface
+     */
+    public function firstUpdatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(UserTableMap::UPDATED_AT);
+    }
+
+    /**
+     * Order by create date desc
+     *
+     * @return     ChildUserQuery The current query, for fluid interface
+     */
+    public function lastCreatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(UserTableMap::CREATED_AT);
+    }
+
+    /**
+     * Order by create date asc
+     *
+     * @return     ChildUserQuery The current query, for fluid interface
+     */
+    public function firstCreatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(UserTableMap::CREATED_AT);
     }
 
 } // UserQuery

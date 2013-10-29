@@ -1,0 +1,44 @@
+<div class="project-title col-md-8">
+    <h3>
+        <a href="/project/{{ project.slug }}">{{ project.title }}</a>
+        {% if not project.stateMachine.isFinal %}
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-cog"></i>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                {% if project.stateMachine.canResearch %}
+                <li><a href="#">{{ "project.transition.research"|trans }}</a></li>
+                {% endif %}
+                {% if project.stateMachine.canStart %}
+                <li><a href="#">{{ "project.transition.start"|trans }}</a></li>
+                {% endif %}
+                {% if project.stateMachine.canDeploy %}
+                <li><a href="#">{{ "project.transition.deploy"|trans }}</a></li>
+                {% endif %}
+                {% if project.stateMachine.canDelay %}
+                <li><a href="#">{{ "project.transition.delay"|trans }}</a></li>
+                {% endif %}
+                {% if project.stateMachine.canRestore %}
+                <li><a href="#">{{ "project.transition.restore"|trans }}</a></li>
+                {% endif %}
+                {% if project.stateMachine.canCancel %}
+                <li class="divider"></li>
+                <li><a href="#" class="btn-danger">{{ "project.transition.cancel"|trans }}</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        {% endif %}
+    </h3>
+    <p class="date text-muted">{{ project.date|nicedate }}</p>
+</div>
+<div class="col-md-4">
+    <ul class="people list-unstyled pull-right">
+        {% for user in project.users %}
+            <li>
+                <img src="{{ user.gravatar }}" title="{{ user.name }}" class="img-circle">
+            </li>
+        {% endfor %}
+        {% include 'blocks/assign-yourself.twig' with {"project": project, "user": user} %}
+    </ul>
+</div>

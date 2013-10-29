@@ -57,7 +57,7 @@ class ProjectTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 7;
 
     /**
      * The number of lazy-loaded columns
@@ -67,12 +67,17 @@ class ProjectTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 7;
 
     /**
      * the column name for the ID field
      */
     const ID = 'project.ID';
+
+    /**
+     * the column name for the ACCOUNT_ID field
+     */
+    const ACCOUNT_ID = 'project.ACCOUNT_ID';
 
     /**
      * the column name for the TITLE field
@@ -95,6 +100,11 @@ class ProjectTableMap extends TableMap
     const CREATED_AT = 'project.CREATED_AT';
 
     /**
+     * the column name for the UPDATED_AT field
+     */
+    const UPDATED_AT = 'project.UPDATED_AT';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -106,12 +116,12 @@ class ProjectTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Title', 'Slug', 'State', 'CreatedAt', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'title', 'slug', 'state', 'createdAt', ),
-        self::TYPE_COLNAME       => array(ProjectTableMap::ID, ProjectTableMap::TITLE, ProjectTableMap::SLUG, ProjectTableMap::STATE, ProjectTableMap::CREATED_AT, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'TITLE', 'SLUG', 'STATE', 'CREATED_AT', ),
-        self::TYPE_FIELDNAME     => array('id', 'title', 'slug', 'state', 'created_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id', 'AccountId', 'Title', 'Slug', 'State', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'accountId', 'title', 'slug', 'state', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(ProjectTableMap::ID, ProjectTableMap::ACCOUNT_ID, ProjectTableMap::TITLE, ProjectTableMap::SLUG, ProjectTableMap::STATE, ProjectTableMap::CREATED_AT, ProjectTableMap::UPDATED_AT, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'ACCOUNT_ID', 'TITLE', 'SLUG', 'STATE', 'CREATED_AT', 'UPDATED_AT', ),
+        self::TYPE_FIELDNAME     => array('id', 'account_id', 'title', 'slug', 'state', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -121,12 +131,12 @@ class ProjectTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Title' => 1, 'Slug' => 2, 'State' => 3, 'CreatedAt' => 4, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'title' => 1, 'slug' => 2, 'state' => 3, 'createdAt' => 4, ),
-        self::TYPE_COLNAME       => array(ProjectTableMap::ID => 0, ProjectTableMap::TITLE => 1, ProjectTableMap::SLUG => 2, ProjectTableMap::STATE => 3, ProjectTableMap::CREATED_AT => 4, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'TITLE' => 1, 'SLUG' => 2, 'STATE' => 3, 'CREATED_AT' => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'title' => 1, 'slug' => 2, 'state' => 3, 'created_at' => 4, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'AccountId' => 1, 'Title' => 2, 'Slug' => 3, 'State' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'accountId' => 1, 'title' => 2, 'slug' => 3, 'state' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
+        self::TYPE_COLNAME       => array(ProjectTableMap::ID => 0, ProjectTableMap::ACCOUNT_ID => 1, ProjectTableMap::TITLE => 2, ProjectTableMap::SLUG => 3, ProjectTableMap::STATE => 4, ProjectTableMap::CREATED_AT => 5, ProjectTableMap::UPDATED_AT => 6, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'ACCOUNT_ID' => 1, 'TITLE' => 2, 'SLUG' => 3, 'STATE' => 4, 'CREATED_AT' => 5, 'UPDATED_AT' => 6, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'account_id' => 1, 'title' => 2, 'slug' => 3, 'state' => 4, 'created_at' => 5, 'updated_at' => 6, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -146,10 +156,12 @@ class ProjectTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
+        $this->addForeignKey('ACCOUNT_ID', 'AccountId', 'INTEGER', 'account', 'ID', true, null, null);
         $this->addColumn('TITLE', 'Title', 'CHAR', true, 128, null);
         $this->addColumn('SLUG', 'Slug', 'CHAR', true, 128, null);
         $this->addColumn('STATE', 'State', 'CHAR', true, null, 'new');
-        $this->addColumn('CREATED_AT', 'CreatedAt', 'DATE', true, null, null);
+        $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -157,10 +169,25 @@ class ProjectTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Account', '\\Roadmap\\Model\\Account', RelationMap::MANY_TO_ONE, array('account_id' => 'id', ), null, null);
         $this->addRelation('ProjectUser', '\\Roadmap\\Model\\ProjectUser', RelationMap::ONE_TO_MANY, array('id' => 'project_id', ), null, null, 'ProjectUsers');
         $this->addRelation('ProjectActivity', '\\Roadmap\\Model\\ProjectActivity', RelationMap::ONE_TO_MANY, array('id' => 'project_id', ), null, null, 'ProjectActivities');
         $this->addRelation('User', '\\Roadmap\\Model\\User', RelationMap::MANY_TO_MANY, array(), null, null, 'Users');
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', ),
+            'sluggable' => array('slug_column' => 'slug', 'slug_pattern' => '{Title}', 'replace_pattern' => '/\W+/', 'replacement' => '-', 'separator' => '-', 'permanent' => 'true', 'scope_column' => '', ),
+        );
+    } // getBehaviors()
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -301,16 +328,20 @@ class ProjectTableMap extends TableMap
     {
         if (null === $alias) {
             $criteria->addSelectColumn(ProjectTableMap::ID);
+            $criteria->addSelectColumn(ProjectTableMap::ACCOUNT_ID);
             $criteria->addSelectColumn(ProjectTableMap::TITLE);
             $criteria->addSelectColumn(ProjectTableMap::SLUG);
             $criteria->addSelectColumn(ProjectTableMap::STATE);
             $criteria->addSelectColumn(ProjectTableMap::CREATED_AT);
+            $criteria->addSelectColumn(ProjectTableMap::UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
+            $criteria->addSelectColumn($alias . '.ACCOUNT_ID');
             $criteria->addSelectColumn($alias . '.TITLE');
             $criteria->addSelectColumn($alias . '.SLUG');
             $criteria->addSelectColumn($alias . '.STATE');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
+            $criteria->addSelectColumn($alias . '.UPDATED_AT');
         }
     }
 

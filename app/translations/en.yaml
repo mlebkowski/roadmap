@@ -1,10 +1,31 @@
+add-project: Add project
 projects: Projects
 team: Team
 you: Your Profile
 
 overview: Projects overview for %project%
 
-recent: recent
+
+more: more
+
+choose_organization: Choose your organization
+no_organizations: You are not a part of any organization on Github. <a href="%url%">Create one!</a>
+
+project:
+  transition:
+    research: Start researching
+    start: Start implementing
+    delay: Put on a shelve
+    restore: Start over
+    cancel: Cancel
+    deploy: Finish and deploy
+  group:
+    recent: recent
+    ongoing: ongoing
+    finished: finished
+    new: waiting
+
+
 
 nicedate: %month% %day%, %year%
 months:

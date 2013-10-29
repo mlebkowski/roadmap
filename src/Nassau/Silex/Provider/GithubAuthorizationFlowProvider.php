@@ -2,11 +2,11 @@
 
 namespace Nassau\Silex\Provider;
 
-use PDO;
+use Nassau\GitHub\AuthorizationFlow;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 
-class DatabaseProvider implements ServiceProviderInterface
+class GithubAuthorizationFlowProvider implements ServiceProviderInterface
 {
 	/**
 	 * Registers services on the given app.
@@ -18,13 +18,9 @@ class DatabaseProvider implements ServiceProviderInterface
 	 */
 	public function register(Application $app)
 	{
-		$app['db'] = $app->share(function (Application $app)
+		$app['github.auth'] = $app->share(function (Application $app)
 		{
-			$dsn = sprintf('sqlite:%s/db.sqlite', $app['path.data']);
-			$pdo = new PDO($dsn);
-			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-			return $pdo;
+			return new AuthorizationFlow($app['github.client-id'], $app['github.client-secret'], $app['session']);
 		});
 	}
 
@@ -37,13 +33,7 @@ class DatabaseProvider implements ServiceProviderInterface
 	 */
 	public function boot(Application $app)
 	{
-		$app['db'] = $app->share($app->extend('db', function (PDO $db, Application $app)
-		{
-			foreach ($app['db.tables'] as $name => $columns)
-			{
-				$db->exec(sprintf('CREATE TABLE IF NOT EXISTS `%s` (%s)', $name, implode(',', $columns)));
-			}
-			return $db;
-		}));
+		$app->before([$app['github.auth'], 'onBeforeRequest'], Application::LATE_EVENT/4);
 	}
+
 }
