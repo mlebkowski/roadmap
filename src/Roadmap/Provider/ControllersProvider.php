@@ -45,6 +45,7 @@ class ControllersProvider implements ServiceProviderInterface, ControllerProvide
 				return $value === 'assign';
 			});
 
+		$controllers->get('/team', 'controller.users:showTeamList');
 		$controllers->get('/you', 'controller.users:showProfileAction');
 		$controllers->get('/user/{login}/{version}', 'controller.users:showProfileAction')->value('version', null);
 

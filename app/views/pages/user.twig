@@ -28,7 +28,7 @@
     <div class="col-md-3 col-md-offset-1">
         <h3>Activities</h3>
         <ul class="list-unstyled">
-        {% for activity in profile.projectActivities|slice(1, 10) %}
+        {% for activity in profile.projectActivities|reverse|slice(0, 10) %}
             <li>
                 {{ ("user.activity." ~ activity.activityType) | trans({
                     "%project%": activity.project.title,

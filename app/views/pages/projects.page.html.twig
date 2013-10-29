@@ -3,6 +3,7 @@
 
 {% block title %}{{ "title.overview"|trans({ "%accountName%": account.name }) }}{% endblock %}
 {% block content %}
+    <div class="col-md-8 col-md-offset-2">
     <div class="project-list" id="recent">
         <p class="project-list-type">{{ "project.group.recent"|trans }}</p>
         <ul class="list-unstyled">
@@ -54,7 +55,7 @@
         </ul>
     </div>
     {% endif %}
-
+    </div>
 
     <script type="text/javascript">
         $(".people img").tooltip({
