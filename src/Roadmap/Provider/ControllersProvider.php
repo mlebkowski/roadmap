@@ -39,6 +39,7 @@ class ControllersProvider implements ServiceProviderInterface, ControllerProvide
 		$controllers->get('/add-project', 'controller.projects:addProjectForm');
 		$controllers->post('/add-project', 'controller.projects:saveProject');
 
+		$controllers->get('/project/{slug}', 'controller.projects:projectDetails');
 		$controllers->post('/project/{slug}', 'controller.projects:transitionProject');
 
 		$controllers->post('/project/{slug}/{assign}', 'controller.projects:assignToProject')
@@ -86,7 +87,10 @@ class ControllersProvider implements ServiceProviderInterface, ControllerProvide
 			$response = $e->getResponse();
 			if ($response instanceof TemplateResponse)
 			{
-				$response->render($app['twig']);
+				$response->render($app['twig'], [
+					'account' => $e->getRequest()->attributes->get(AccountManager::KEY_ACCOUNT),
+					'user' => $e->getRequest()->attributes->get(UserManager::KEY_USER),
+				]);
 			}
 		});
 

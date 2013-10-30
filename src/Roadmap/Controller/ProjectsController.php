@@ -4,6 +4,7 @@ namespace Roadmap\Controller;
 
 use Finite\Factory\PimpleFactory;
 use Nassau\GitHub\AuthorizationFlow;
+use Nassau\Silex\HttpKernel\TemplateResponse;
 use Propel\Runtime\Collection\Collection;
 use Roadmap\FSM\Project as FSMProject;
 use Roadmap\Model\Project;
@@ -14,6 +15,7 @@ use Roadmap\User\UserManager;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProjectsController extends AuthorizationAwareController
 {
@@ -71,6 +73,24 @@ class ProjectsController extends AuthorizationAwareController
 
 		$project->save();
 		return new RedirectResponse('/');
+	}
+
+	public function projectDetails($slug)
+	{
+		$projectList = ProjectQuery::create()
+					   ->filterByAccount($this->getAccount())
+					   ->filterBySlug($slug)
+					   ->find();
+		if (0 === $projectList->count())
+		{
+			return new NotFoundHttpException;
+		}
+
+		/** @var Project $project */
+		list ($project) = $this->attachStateMachine($projectList);
+		return new TemplateResponse('details.page.twig', [
+			'project' => $project,
+		]);
 	}
 
 	public function transitionProject($slug, Request $request)

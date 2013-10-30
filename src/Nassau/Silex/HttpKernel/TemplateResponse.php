@@ -25,9 +25,9 @@ class TemplateResponse extends Response
 		$this->context = $context;
 	}
 
-	public function render(\Twig_Environment $twig)
+	public function render(\Twig_Environment $twig, $context = [])
 	{
-		$this->setContent($twig->render($this->template, $this->context));
+		$this->setContent($twig->render($this->template, $context + $this->context));
 	}
 
 }

@@ -1,0 +1,12 @@
+{% extends 'layouts/roadmap.layout.twig' %}
+{% set activeMenu = "projects" %}
+
+{% block title %}{{ project.title ~ " — " ~ account.name }}{% endblock %}
+{% block content %}
+<div class="col-md-8 col-md-offset-2">
+    {% include "blocks/project.block.twig" with { "project" : project} %}
+</div>
+<div class="col-md-8 col-md-offset-2">
+    <p class="alert alert-info">Under construction. <a href="/">Go to homepage</a></p>
+</div>
+{% endblock %}
