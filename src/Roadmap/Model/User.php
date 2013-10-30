@@ -18,6 +18,11 @@ class User extends BaseUser
 			?: $this->v2mom = $this->createV2mom($account);
 	}
 
+	public function getName()
+	{
+		return parent::getName() ?: parent::getLogin();
+	}
+
 	public function getGravatar($size = 64)
 	{
 		$query = http_build_query([
