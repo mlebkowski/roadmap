@@ -37,7 +37,7 @@ class ProjectsController extends AuthorizationAwareController
 		return [
 			'projects.page.twig',
 			'recent' => $this->attachStateMachine($recent->getResults(), 0, 3),
-			'finished' => $this->attachStateMachine($recent->getResults(), 1),
+			'finished' => $this->attachStateMachine($recent->getResults(), 3),
 			'hasArchive' => $recent->haveToPaginate(),
 			'ongoing' => $this->attachStateMachine($ongoing),
 			'new' => $this->attachStateMachine($new),
