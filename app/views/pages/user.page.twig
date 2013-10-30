@@ -64,9 +64,11 @@
         <h3>Obstacles</h3>
         <p>{{ v2mom.obstacles|nl2br }}</p>
 
+        {% if profile.equals(user) %}
         <button class="btn btn-default" data-toggle="edit" data-save-text="{{ "save"|trans }}">
             {{ "edit"|trans }}
         </button>
+        {% endif %}
     {% endif %}
     </form>
 
