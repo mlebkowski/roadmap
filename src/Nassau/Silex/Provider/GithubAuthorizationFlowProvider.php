@@ -20,7 +20,9 @@ class GithubAuthorizationFlowProvider implements ServiceProviderInterface
 	{
 		$app['github.auth'] = $app->share(function (Application $app)
 		{
-			return new AuthorizationFlow($app['github.client-id'], $app['github.client-secret'], $app['session']);
+			$secret = getenv('GITHUB_CLIENT_SECRET') ?: $app['github.client-secret'];
+			$clientId = getenv('GITHUB_CLIENT_ID') ?: $app['github.client-id'];
+			return new AuthorizationFlow($clientId, $secret, $app['session']);
 		});
 	}
 

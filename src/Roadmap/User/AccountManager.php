@@ -35,6 +35,8 @@ class AccountManager
 	 */
 	public function onBeforeRequest(Request $request)
 	{
+		$this->baseDomain = getenv('BASE_DOMAIN') ?: $this->baseDomain;
+	
 		/** @var User $user */
 		$user = $this->userManager->getUser();
 		if (null === $user)
