@@ -79,7 +79,7 @@
                     {% include 'blocks/project.block.twig' with {"project": project, 'profile': profile} %}
                 </li>
             {% else %}
-                <p class="alert alert-message">{{ "message.no-measures"|trans }}</p>
+                <p class="alert alert-warning">{{ "message.no-measures"|trans }}</p>
             {% endfor %}
         </ul>
         </div>
