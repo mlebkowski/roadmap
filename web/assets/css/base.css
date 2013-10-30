@@ -92,6 +92,10 @@ body {
   margin-bottom: 2em;
   min-height: 8em;
 }
+#choose-project img {
+  width: 80px;
+  height: 80px;
+}
 .spinner {
   height: 48px;
   width: 48px;
