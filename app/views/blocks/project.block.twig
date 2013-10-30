@@ -38,7 +38,7 @@
                 {% endif %}
             </ul>
         </div>
-        {% else %}
+        {% elseif profile is defined %}
             <small><span class="label label-default">{{ project.state }}</span></small>
         {% endif %}
     </h3>
