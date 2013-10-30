@@ -82,6 +82,16 @@ body {
 .team-member p {
   margin-top: -6px;
 }
+.member-header {
+  padding: 1em 0;
+}
+.member-header img {
+  margin-top: 20px;
+}
+#user-profile textarea {
+  margin-bottom: 2em;
+  min-height: 8em;
+}
 .spinner {
   height: 48px;
   width: 48px;

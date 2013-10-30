@@ -8,9 +8,12 @@
 {% block title %}{{ "title.profile"|trans({"%name%": profile.name}) }}{% endblock %}
 {% block content %}
     <div class="col-md-6 col-md-offset-3" id="user-profile">
-    <h2>
-        {{ profile.name }}
-    </h2>
+    <div class="member-header team-member">
+        <img src="{{ profile.gravatar }}" alt="{{ profile.name }}" class="pull-right img-circle"/>
+        <h2 class="team-member">
+            {{ profile.name }}
+        </h2>
+    </div>
 
 
     <form method="post" action="/you">
@@ -53,13 +56,13 @@
             <p class="alert alert-info">{{ "message.v2mom-version"|trans({"%date%": v2mom.updatedAt|nicedate}) }}</p>
         {% endif %}
         <h3>Vision</h3>
-        <p>{{ v2mom.vision }}</p>
+        <p>{{ v2mom.vision|nl2br }}</p>
         <h3>Values</h3>
-        <p>{{ v2mom.values }}</p>
+        <p>{{ v2mom.values|nl2br }}</p>
         <h3>Methods</h3>
-        <p>{{ v2mom.methods }}</p>
+        <p>{{ v2mom.methods|nl2br }}</p>
         <h3>Obstacles</h3>
-        <p>{{ v2mom.obstacles }}</p>
+        <p>{{ v2mom.obstacles|nl2br }}</p>
 
         <button class="btn btn-default" data-toggle="edit" data-save-text="{{ "save"|trans }}">
             {{ "edit"|trans }}
