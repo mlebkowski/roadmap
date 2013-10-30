@@ -4,7 +4,7 @@
             <datasource id="roadmap">
                 <adapter>mysql</adapter>
                 <connection>
-                    <dsn>mysql:host=localhost;dbname=roadmap.dev</dsn>
+                    <dsn>mysql:host=127.0.0.1;dbname=roadmap.dev</dsn>
                     <user>roadmap.dev</user>
                     <password>roadmap.dev</password>
                 </connection>

@@ -3,6 +3,7 @@
 namespace Roadmap\Provider;
 
 use ArrayObject;
+use Nassau\Silex\HttpKernel\TemplateResponse;
 use Roadmap\Controller\ProjectsController;
 use Roadmap\Controller\UsersController;
 use Roadmap\User\AccountManager;
@@ -14,6 +15,7 @@ use Silex\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\Kernel;
@@ -51,13 +53,15 @@ class ControllersProvider implements ServiceProviderInterface, ControllerProvide
 
 		$controllers->post('/you', 'controller.users:saveV2mom');
 
+
+		/** @var EventDispatcher $dispatcher */
+		$dispatcher = $app['dispatcher'];
+
 		/** @noinspection PhpUndefinedMethodInspection */
 		$controllers->value('github.scope', $app['github.scope']);
 		/** @noinspection PhpUndefinedMethodInspection */
-		$controllers->before(function (Request $request) use ($app)
+		$controllers->before(function (Request $request) use ($app, $dispatcher)
 		{
-			/** @var EventDispatcher $dispatcher */
-			$dispatcher = $app['dispatcher'];
 			$dispatcher->addListener(KernelEvents::VIEW, function (GetResponseForControllerResultEvent $e) use ($app)
 			{
 				if (false === is_array($e->getControllerResult()))
@@ -76,6 +80,14 @@ class ControllersProvider implements ServiceProviderInterface, ControllerProvide
 				] + $context));
 				$e->setResponse($response);
 			});
+		});
+		$dispatcher->addListener(KernelEvents::RESPONSE, function (FilterResponseEvent $e) use ($app)
+		{
+			$response = $e->getResponse();
+			if ($response instanceof TemplateResponse)
+			{
+				$response->render($app['twig']);
+			}
 		});
 
 

@@ -2,6 +2,7 @@
 
 namespace Roadmap\User;
 
+use Nassau\Silex\HttpKernel\TemplateResponse;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Roadmap\Model\AccountQuery;
 use Roadmap\Model\Map\AccountTableMap;
@@ -82,11 +83,10 @@ class AccountManager
 			return new RedirectResponse($url);
 		}
 
-		return [
-			'choose.page.twig',
+		return new TemplateResponse('choose.page.twig', [
 			'baseDomain' => $this->baseDomain,
 			'choices' => $user->getAccounts(),
-		];
+		]);
 	}
 
 
