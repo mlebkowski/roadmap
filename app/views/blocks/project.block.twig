@@ -1,7 +1,7 @@
-<div class="project-title col-md-8">
+<div class="project-title {% if profile is not defined %}col-md-8{% else %}col-md-12{% endif %}">
     <h3>
         <a href="/project/{{ project.slug }}">{{ project.title }}</a>
-        {% if not project.stateMachine.isFinal %}
+        {% if profile is not defined and not project.stateMachine.isFinal %}
         <div class="btn-group project-transition">
             <i class="fa fa-cog" data-toggle="dropdown"></i>
             <ul class="dropdown-menu" role="menu" data-slug="{{ project.slug }}">
@@ -38,10 +38,15 @@
                 {% endif %}
             </ul>
         </div>
+        {% else %}
+            <small><span class="label label-default">{{ project.state }}</span></small>
         {% endif %}
     </h3>
+    {% if profile is not defined %}
     <p class="date text-muted">{{ project.date|nicedate }}</p>
+    {% endif  %}
 </div>
+{% if profile is not defined %}
 <div class="col-md-4">
     <ul class="people list-unstyled pull-right">
         {% for user in project.users %}
@@ -52,3 +57,4 @@
         {% include 'blocks/assign-yourself.twig' with {"project": project, "user": user} %}
     </ul>
 </div>
+{% endif %}

@@ -19,6 +19,9 @@ body {
 .navbar-brand img {
   margin: -10px 0 -4px;
 }
+#measures .project {
+  margin-bottom: .5em;
+}
 .project {
   margin-bottom: 2em;
 }

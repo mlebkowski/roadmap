@@ -69,6 +69,20 @@
         </button>
     {% endif %}
     </form>
+
+    {% if isLast %}
+        <div id="measures">
+        <h3>Measures:</h3>
+        <ul class="list-unstyled">
+            {% for project in profile.projects %}
+                <li class="project row">
+                    {% include 'blocks/project.block.twig' with {"project": project, 'profile': profile} %}
+                </li>
+            {% endfor %}
+        </ul>
+        </div>
+    {% endif %}
+
         <script type="text/javascript">
             $('button[data-toggle=edit]').click(function () {
                 var $this = $(this),
